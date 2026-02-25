@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { useApp } from '@/context/AppContext';
 import AiLessonEngine from '@/components/AiLessonEngine';
+import ConceptSummaryPanel from '@/components/ConceptSummaryPanel';
 import type { SessionMode, LessonSession } from '@/lib/types';
 import { getClassroomsBySchool } from '@/lib/api';
 import type { Classroom } from '@/lib/types';
@@ -57,6 +58,9 @@ export default function ClassroomPage() {
   const [isMuted, setIsMuted] = useState(getStoredMute);
   const [sessionStartTime, setSessionStartTime] = useState<Date | null>(null);
   const [completedScore, setCompletedScore] = useState<{ score: number; total: number } | null>(null);
+  const [conceptPanelOpen, setConceptPanelOpen] = useState(true);
+  const [showTimer, setShowTimer] = useState(false);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
   useEffect(() => {
     if (user) {
@@ -163,6 +167,21 @@ export default function ClassroomPage() {
     });
   }, []);
 
+  useEffect(() => {
+    if (phase !== 'active' || !sessionStartTime || isPaused) return;
+    const start = sessionStartTime.getTime();
+    const tick = () => setElapsedSeconds(Math.floor((Date.now() - start) / 1000));
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [phase, sessionStartTime, isPaused]);
+
+  const formatTimer = (totalSeconds: number) => {
+    const m = Math.floor(totalSeconds / 60);
+    const s = totalSeconds % 60;
+    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  };
+
   const classroom = classrooms.find((c) => c.id === selectedClassroom);
 
   return (
@@ -189,15 +208,30 @@ export default function ClassroomPage() {
                 <span className="text-slate-500">Topic:</span>{' '}
                 <span className="text-white font-medium">{selectedTopic}</span>
               </span>
-              <span className={`px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide ${
-                selectedMode === 'teach'
-                  ? 'bg-teal-900/50 text-teal-300 border border-teal-700/40'
-                  : selectedMode === 'quiz'
-                  ? 'bg-blue-900/50 text-blue-300 border border-blue-700/40'
-                  : 'bg-amber-900/50 text-amber-300 border border-amber-700/40'
-              }`}>
+              <span
+                title={selectedMode === 'teach' ? 'AI-guided lesson: intro, explanation, example, then one practice question with feedback' : selectedMode === 'quiz' ? 'Direct practice: 3 questions with immediate feedback' : 'Key points then rapid-fire questions'}
+                className={`px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide ${
+                  selectedMode === 'teach'
+                    ? 'bg-teal-900/50 text-teal-300 border border-teal-700/40'
+                    : selectedMode === 'quiz'
+                    ? 'bg-blue-900/50 text-blue-300 border border-blue-700/40'
+                    : 'bg-amber-900/50 text-amber-300 border border-amber-700/40'
+                }`}
+              >
                 {selectedMode} mode
               </span>
+              <button
+                type="button"
+                onClick={() => setShowTimer((prev) => !prev)}
+                className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors ${
+                  showTimer
+                    ? 'bg-slate-600/60 border-slate-500 text-white'
+                    : 'border-slate-600/60 text-slate-400 hover:text-slate-300'
+                }`}
+                title={showTimer ? 'Hide timer' : 'Show timer'}
+              >
+                Timer {showTimer ? formatTimer(elapsedSeconds) : 'Off'}
+              </button>
             </div>
           )}
         </div>
@@ -211,6 +245,49 @@ export default function ClassroomPage() {
       </header>
 
       <div className="flex flex-1 overflow-hidden">
+        {phase === 'active' && (
+          <aside
+            className={`flex-shrink-0 border-r border-white/10 bg-slate-900/40 flex flex-col transition-[width] duration-200 ${
+              conceptPanelOpen ? 'w-80' : 'w-12'
+            }`}
+          >
+            {conceptPanelOpen ? (
+              <>
+                <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 flex-shrink-0">
+                  <span className="text-xs font-semibold uppercase tracking-widest text-slate-400">
+                    Concept summary
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setConceptPanelOpen(false)}
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700/60 transition-colors"
+                    title="Collapse panel"
+                    aria-label="Collapse concept summary panel"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="15 18 9 12 15 6" />
+                    </svg>
+                  </button>
+                </div>
+                <div className="flex-1 min-h-0 overflow-hidden">
+                  <ConceptSummaryPanel subject={selectedSubjectName} topic={selectedTopic} />
+                </div>
+              </>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setConceptPanelOpen(true)}
+                className="flex items-center justify-center w-full h-24 text-slate-400 hover:text-teal-400 hover:bg-slate-700/40 transition-colors"
+                title="Expand concept summary"
+                aria-label="Expand concept summary panel"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+              </button>
+            )}
+          </aside>
+        )}
         {phase === 'setup' && (
           <aside className="w-72 border-r border-white/10 p-6 flex flex-col gap-6 flex-shrink-0">
             <div>

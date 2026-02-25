@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { useApp } from '@/context/AppContext';
 import { generateFollowUpResponse } from '@/lib/api';
 
-type MessageRole = 'user' | 'grio';
+type MessageRole = 'learner' | 'grio';
 
 interface ChatMessage {
   id: string;
@@ -13,21 +14,23 @@ interface ChatMessage {
 }
 
 const SUGGESTED_PROMPTS = [
-  'Generate a 5-question quiz on Newtonian Mechanics',
-  'Suggest a lesson plan for introducing Algebra to S3 students',
-  'Summarise the key concepts in Chemical Bonding',
-  'Identify common misconceptions in Probability',
+  'Explain this concept in simpler terms',
+  'Give me a practice question on this topic',
+  'Summarise the key points I should remember',
+  'I don’t understand — can you give an example?',
+  'What’s the best way to revise this?',
 ];
 
 const WELCOME_MESSAGE: ChatMessage = {
   id: 'welcome',
   role: 'grio',
   content:
-    "Hi! I'm Grio, your AI teaching assistant. I can help you draft lesson plans, generate practice questions, identify student knowledge gaps, and suggest teaching strategies aligned to your curriculum. What would you like help with?",
+    "Hi! I'm Grio, your AI learning assistant. You can ask me to explain topics, give you practice questions, or help you understand something from your lessons. What would you like to work on?",
   title: 'Grio',
 };
 
-export default function AIAssistantPage() {
+export default function LearnWithGrioPage() {
+  const { subjects } = useApp();
   const [messages, setMessages] = useState<ChatMessage[]>([WELCOME_MESSAGE]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -45,12 +48,12 @@ export default function AIAssistantPage() {
     const trimmed = text.trim();
     if (!trimmed || isLoading) return;
 
-    const userMsg: ChatMessage = {
-      id: `user-${Date.now()}`,
-      role: 'user',
+    const learnerMsg: ChatMessage = {
+      id: `learner-${Date.now()}`,
+      role: 'learner',
       content: trimmed,
     };
-    setMessages((prev) => [...prev, userMsg]);
+    setMessages((prev) => [...prev, learnerMsg]);
     setInput('');
     setIsLoading(true);
 
@@ -88,14 +91,17 @@ export default function AIAssistantPage() {
     setInput('');
   };
 
+  const currentSubject =
+    subjects.length > 0 ? subjects[0].name : null;
+
   return (
     <div className="flex flex-col h-[calc(100vh-0px)] max-h-[calc(100vh-0px)]">
       {/* Page header & identity */}
       <div className="flex-shrink-0 p-6 pb-4 bg-slate-50 border-b border-slate-200">
         <div className="max-w-3xl mx-auto">
-          <h1 className="text-2xl font-bold text-slate-900">AI Assistant</h1>
+          <h1 className="text-2xl font-bold text-slate-900">Learn with Grio</h1>
           <p className="text-slate-500 text-sm mt-1">
-            Your intelligent teaching companion. Chat with Grio to get lesson ideas, quizzes, and curriculum support.
+            Chat with Grio to get explanations, practice questions, and feedback on your subjects.
           </p>
           <div className="mt-4 flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-3 bg-[#0f2a4a] text-white rounded-xl px-4 py-2.5">
@@ -106,10 +112,15 @@ export default function AIAssistantPage() {
                 ✦
               </div>
               <div>
-                <p className="font-semibold text-sm">GRIO AI Assistant</p>
-                <p className="text-blue-300 text-xs">Powered by curriculum-aware AI</p>
+                <p className="font-semibold text-sm">Grio</p>
+                <p className="text-blue-300 text-xs">Your AI learning assistant</p>
               </div>
             </div>
+            {currentSubject && (
+              <span className="text-xs text-slate-500 bg-slate-200/80 px-2.5 py-1 rounded-full font-medium">
+                Studying: {currentSubject}
+              </span>
+            )}
             <button
               type="button"
               onClick={startNewChat}
@@ -127,7 +138,7 @@ export default function AIAssistantPage() {
           {messages.map((msg) => (
             <div
               key={msg.id}
-              className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}
+              className={`flex gap-3 ${msg.role === 'learner' ? 'flex-row-reverse' : ''}`}
             >
               {msg.role === 'grio' && (
                 <div
@@ -139,13 +150,13 @@ export default function AIAssistantPage() {
               )}
               <div
                 className={`max-w-[85%] rounded-2xl px-4 py-3 ${
-                  msg.role === 'user'
+                  msg.role === 'learner'
                     ? 'bg-[#0f2a4a] text-white ml-auto'
                     : 'bg-white border border-slate-200 text-slate-800'
                 }`}
               >
                 <p className="text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wide">
-                  {msg.role === 'user' ? 'You' : (msg.title ?? 'Grio')}
+                  {msg.role === 'learner' ? 'You' : (msg.title ?? 'Grio')}
                 </p>
                 <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
               </div>
@@ -199,7 +210,7 @@ export default function AIAssistantPage() {
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask the AI assistant anything about your curriculum..."
+            placeholder="Ask Grio anything about your subject..."
             className="flex-1 rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0f2a4a]/20 focus:border-[#0f2a4a]"
             disabled={isLoading}
             aria-label="Message to Grio"
@@ -213,7 +224,7 @@ export default function AIAssistantPage() {
           </button>
         </form>
         <p className="text-xs text-slate-400 mt-2 text-center max-w-3xl mx-auto">
-          Tip: Ask for quiz ideas, lesson plans, or concept summaries.
+          Tip: Ask for an explanation, a practice question, or a summary of a topic.
         </p>
       </div>
     </div>

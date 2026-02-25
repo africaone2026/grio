@@ -19,6 +19,7 @@ import type {
   GlobalAnalytics,
   CountryStats,
   AiResponse,
+  ConceptSummary,
 } from './types';
 import {
   countries,
@@ -538,6 +539,143 @@ const AI_CONTENT: Record<string, Record<string, { intro: string; explanation: st
     },
   },
 };
+
+type ConceptSummaryData = { definition: string; formulaRules: string[]; example: string; commonMistakes: string[] };
+const CONCEPT_SUMMARIES: Record<string, Record<string, ConceptSummaryData>> = {
+  Mathematics: {
+    Algebra: {
+      definition: 'Algebra is the branch of mathematics that uses letters and symbols to represent numbers and quantities in formulas and equations. Linear equations are equations of the form ax + b = c, where we solve for the unknown x.',
+      formulaRules: [
+        'Same operation on both sides: whatever you do to one side, do to the other.',
+        'Isolate the variable: undo addition/subtraction first, then multiplication/division.',
+        'Inverse operations: addition ↔ subtraction; multiplication ↔ division.',
+      ],
+      example: 'Solve 2x + 6 = 14.\nStep 1: Subtract 6 from both sides → 2x = 8\nStep 2: Divide both sides by 2 → x = 4\nCheck: 2(4) + 6 = 14 ✓',
+      commonMistakes: [
+        'Forgetting to do the same operation on both sides.',
+        'Dividing or multiplying only one term instead of the whole side.',
+        'Mixing up the order of inverse operations (e.g. dividing before subtracting when you should subtract first).',
+      ],
+    },
+    Geometry: {
+      definition: 'Geometry is the study of shapes, sizes, angles, and properties of space. It covers triangles, circles, polygons, and the relationships between their sides and angles.',
+      formulaRules: [
+        'Sum of angles in a triangle = 180°.',
+        'Area of triangle = ½ × base × height.',
+        'Pythagoras: a² + b² = c² for right-angled triangles.',
+      ],
+      example: 'Right-angled triangle with legs 3 and 4. Hypotenuse c: c² = 3² + 4² = 9 + 16 = 25, so c = 5.',
+      commonMistakes: [
+        'Using Pythagoras for non–right-angled triangles.',
+        'Confusing perimeter with area.',
+                'Using degrees when the formula expects radians (or vice versa).',
+      ],
+    },
+    default: {
+      definition: 'Mathematics is the study of numbers, quantities, structures, and patterns. It provides the foundation for science, engineering, and technology.',
+      formulaRules: [
+        'Variables represent unknown values in equations.',
+        'Perform the same operation on both sides to keep equality.',
+        'Always verify your answer by substituting back.',
+      ],
+      example: 'Example: Solve for x in 2x + 6 = 14. Subtract 6: 2x = 8. Divide by 2: x = 4.',
+      commonMistakes: [
+        'Arithmetic errors when simplifying.',
+        'Forgetting to apply an operation to the entire side.',
+      ],
+    },
+  },
+  Physics: {
+    default: {
+      definition: 'Physics is the natural science that studies matter, energy, and the fundamental forces of nature. Newton\'s Laws describe the relationship between forces and motion.',
+      formulaRules: [
+        'Newton\'s First Law: F = 0 ⇒ constant velocity.',
+        'Newton\'s Second Law: F = ma.',
+        'Newton\'s Third Law: For every action there is an equal and opposite reaction.',
+      ],
+      example: 'F = ma: A 1000 kg car at 2 m/s² → F = 1000 × 2 = 2000 N.',
+      commonMistakes: [
+        'Confusing mass and weight.',
+        'Using F = ma when forces are not balanced (correct) vs when they are (a = 0).',
+      ],
+    },
+  },
+  Chemistry: {
+    default: {
+      definition: 'Chemistry studies the composition, structure, properties, and reactions of matter. The Periodic Table organises elements by atomic number.',
+      formulaRules: [
+        'Atomic number = number of protons.',
+        'Elements in the same group share similar chemical properties.',
+        'Chemical equations must be balanced (atoms conserved).',
+      ],
+      example: 'Balancing: H₂ + O₂ → H₂O becomes 2H₂ + O₂ → 2H₂O.',
+      commonMistakes: [
+        'Forgetting to balance equations.',
+        'Confusing atomic number with mass number.',
+      ],
+    },
+  },
+};
+
+export async function getConceptSummary(subject: string, topic: string): Promise<ConceptSummary> {
+  await delay(200);
+  const bySubject = CONCEPT_SUMMARIES[subject] ?? CONCEPT_SUMMARIES['Mathematics'];
+  const summary = bySubject[topic] ?? bySubject['default'];
+  return {
+    definition: summary.definition,
+    formulaRules: [...summary.formulaRules],
+    example: summary.example,
+    commonMistakes: [...summary.commonMistakes],
+  };
+}
+
+type SocraticHintsByQuestion = string[];
+const SOCRATIC_HINTS: Record<string, Record<string, SocraticHintsByQuestion>> = {
+  Mathematics: {
+    Algebra: [
+      'What is the first thing we do to isolate x?',
+      'After you remove the constant from the left, what operation do you do next?',
+      'Which number is being added to the term with x? What inverse operation removes it?',
+    ],
+    default: [
+      'What do we need to do to both sides to keep the equation true?',
+      'What is the inverse of the operation applied to the variable?',
+      'Can you substitute your answer back into the original equation to check?',
+    ],
+  },
+  Physics: {
+    default: [
+      'Which law relates force, mass, and acceleration?',
+      'What are the known quantities and what are you solving for?',
+      'What unit should the answer be in?',
+    ],
+  },
+  Chemistry: {
+    default: [
+      'What quantity defines the identity of an element?',
+      'How many atoms of each element are on each side of the equation?',
+      'What must be equal on both sides of a balanced equation?',
+    ],
+  },
+};
+
+export async function generateSocraticHint(
+  subject: string,
+  topic: string,
+  questionIndex: number,
+  hintLevel = 0
+): Promise<AiResponse> {
+  await delay(500);
+  const bySubject = SOCRATIC_HINTS[subject] ?? SOCRATIC_HINTS['Mathematics'];
+  const hints = bySubject[topic] ?? bySubject['default'];
+  const level = Math.min(hintLevel, hints.length - 1);
+  const content = hints[level] ?? hints[0];
+  return {
+    type: 'followup',
+    title: 'GRIO Response',
+    content,
+  };
+}
 
 function getAiContent(subject: string) {
   const subjectContent = AI_CONTENT[subject] ?? AI_CONTENT['Mathematics'];

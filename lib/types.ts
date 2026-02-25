@@ -191,6 +191,13 @@ export interface AiResponse {
   correctIndex?: number;
 }
 
+export interface ConceptSummary {
+  definition: string;
+  formulaRules: string[];
+  example: string;
+  commonMistakes: string[];
+}
+
 export interface LessonPlanEntry {
   teacherId: string;
   subjectName: string;

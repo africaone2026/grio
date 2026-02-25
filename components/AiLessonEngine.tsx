@@ -11,6 +11,7 @@ import {
   evaluateAnswer,
   generateRevisionPoints,
   generateFollowUpResponse,
+  generateSocraticHint,
 } from '@/lib/api';
 import { useSpeech } from '@/hooks/useSpeech';
 import AnimatedAvatar from '@/components/AnimatedAvatar';
@@ -112,6 +113,10 @@ export default function AiLessonEngine({
   const [revisionAnswer, setRevisionAnswer] = useState<number | null>(null);
   const [revisionFeedback, setRevisionFeedback] = useState<AiResponse | null>(null);
   const [lastCorrect, setLastCorrect] = useState<boolean | null>(null);
+  const [teachFeedbackAcknowledged, setTeachFeedbackAcknowledged] = useState(false);
+  const [socraticHintLevel, setSocraticHintLevel] = useState(0);
+  const [bookmarkedIndices, setBookmarkedIndices] = useState<Set<number>>(new Set());
+  const [confusionReported, setConfusionReported] = useState(false);
 
   const isPausedRef = useRef(isPaused);
   isPausedRef.current = isPaused;
@@ -226,6 +231,7 @@ export default function AiLessonEngine({
     setQuizState((prev) => ({ ...prev, selectedAnswer: selectedIndex }));
     setEngineState('feedback');
     setIsLoading(true);
+    setTeachFeedbackAcknowledged(false);
     speech.stop();
     const feedback = await evaluateAnswer(subject, 0, selectedIndex);
     setIsLoading(false);
@@ -238,21 +244,39 @@ export default function AiLessonEngine({
       score: correct ? 1 : 0,
       showingFeedback: true,
     }));
-    await sleep(3000);
+    if (correct) {
+      await sleep(2500);
+      speech.stop();
+      setLastCorrect(null);
+      setEngineState('completed');
+      const completedResp: AiResponse = {
+        type: 'completed',
+        title: 'Lesson Complete',
+        content: `Well done! You have completed the ${topic} lesson in ${subject}. Your understanding of this topic has been assessed. Continue to the next topic when you are ready.`,
+      };
+      showResponse(completedResp);
+      speakResponse(completedResp);
+      onComplete(1, 1);
+    }
+  }
+
+  function handleTeachContinue() {
     speech.stop();
     setLastCorrect(null);
+    setTeachFeedbackAcknowledged(true);
     setEngineState('completed');
     const completedResp: AiResponse = {
       type: 'completed',
       title: 'Lesson Complete',
-      content: `Well done! You have completed the ${topic} lesson in ${subject}. Your understanding of this topic has been assessed. Continue to the next topic when you are ready.`,
+      content: `You have completed the ${topic} lesson in ${subject}. Review the solution above and continue to the next topic when you are ready.`,
     };
     showResponse(completedResp);
-    speakResponse(completedResp);
-    onComplete(correct ? 1 : 0, 1);
+    onComplete(quizState.score, 1);
   }
 
   async function runQuizMode(startIndex: number) {
+    setSocraticHintLevel(0);
+    setConfusionReported(false);
     setEngineState('asking_question');
     setIsLoading(true);
     speech.stop();
@@ -323,6 +347,8 @@ export default function AiLessonEngine({
   }
 
   async function startRevisionQuestions() {
+    setSocraticHintLevel(0);
+    setConfusionReported(false);
     setRevisionPhase('questions');
     setRevisionQuestionIndex(0);
     setRevisionAnswer(null);
@@ -356,6 +382,7 @@ export default function AiLessonEngine({
       setRevisionQuestionIndex(qIndex + 1);
       setRevisionAnswer(null);
       setRevisionFeedback(null);
+      setConfusionReported(false);
       setIsLoading(true);
       speech.stop();
       const nextQ = await generateQuestion(subject, topic, qIndex + 1);
@@ -399,7 +426,107 @@ export default function AiLessonEngine({
     setFollowUpQuestion('');
   }
 
+  async function handleSkipQuestion() {
+    speech.stop();
+    setShowFollowUp(false);
+    setFollowUpResponse(null);
+
+    if (mode === 'teach') {
+      const q = quizState.responses[0];
+      const skippedFeedback: AiResponse = {
+        type: 'feedback',
+        title: 'Skipped',
+        content: `Review the solution when ready. The correct answer is "${q?.options?.[q?.correctIndex ?? 0] ?? '—'}".`,
+      };
+      setEngineState('feedback');
+      setTeachFeedbackAcknowledged(false);
+      setQuizState((prev) => ({ ...prev, selectedAnswer: null, score: 0, showingFeedback: true }));
+      showResponse(skippedFeedback);
+      return;
+    }
+
+    if (mode === 'quiz') {
+      const qIndex = quizState.currentQuestion;
+      if (qIndex + 1 < QUIZ_TOTAL) {
+        setQuizState((prev) => ({ ...prev, showingFeedback: false }));
+        await runQuizMode(qIndex + 1);
+      } else {
+        setEngineState('completed');
+        speech.stop();
+        const scoreResp: AiResponse = {
+          type: 'score',
+          title: 'Quiz Complete',
+          content: `You scored ${quizState.score} out of ${QUIZ_TOTAL}.`,
+        };
+        showResponse(scoreResp);
+        onComplete(quizState.score, QUIZ_TOTAL);
+      }
+      return;
+    }
+
+    if (mode === 'revision' && revisionPhase === 'questions') {
+      const qIndex = revisionQuestionIndex;
+      const newScore = quizState.score;
+      if (qIndex + 1 < REVISION_TOTAL) {
+        setRevisionQuestionIndex(qIndex + 1);
+        setRevisionAnswer(null);
+        setRevisionFeedback(null);
+        setSocraticHintLevel(0);
+        setConfusionReported(false);
+        setIsLoading(true);
+        speech.stop();
+        const nextQ = await generateQuestion(subject, topic, qIndex + 1);
+        setIsLoading(false);
+        showResponse(nextQ);
+        speakResponse(nextQ);
+        setQuizState((prev) => ({
+          ...prev,
+          score: newScore,
+          currentQuestion: qIndex + 1,
+          responses: [...prev.responses, nextQ],
+          selectedAnswer: null,
+        }));
+      } else {
+        setEngineState('completed');
+        speech.stop();
+        const scoreResp: AiResponse = {
+          type: 'score',
+          title: 'Revision Complete',
+          content: `Rapid-fire complete! You scored ${newScore} out of ${REVISION_TOTAL}.`,
+        };
+        showResponse(scoreResp);
+        onComplete(newScore, REVISION_TOTAL);
+      }
+    }
+  }
+
   const currentQ = quizState.responses[quizState.currentQuestion];
+  const questionIndex =
+    mode === 'teach' ? 0 : mode === 'quiz' ? quizState.currentQuestion : revisionQuestionIndex;
+  const answered =
+    currentResponse?.type === 'question' &&
+    (revisionPhase === 'questions' ? revisionAnswer !== null : quizState.selectedAnswer !== null);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (currentResponse?.type !== 'question' || !currentQ?.options || answered) return;
+      const target = e.target as HTMLElement;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT')
+        return;
+      let index = -1;
+      if (e.key === 'a' || e.key === 'A') index = 0;
+      else if (e.key === 'b' || e.key === 'B') index = 1;
+      else if (e.key === 'c' || e.key === 'C') index = 2;
+      else if (e.key === 'd' || e.key === 'D') index = 3;
+      if (index < 0 || index >= currentQ.options.length) return;
+      e.preventDefault();
+      if (mode === 'teach') handleTeachAnswer(index);
+      else if (mode === 'quiz') handleQuizAnswer(index);
+      else handleRevisionAnswer(index);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentResponse?.type, currentQ?.options?.length, answered, mode]);
 
   return (
     <div className="flex flex-col h-full">
@@ -459,42 +586,87 @@ export default function AiLessonEngine({
                 )}
 
                 {currentResponse.type === 'question' && currentQ?.options && (
-                  <div className="mt-6 grid grid-cols-2 gap-3">
-                    {currentQ.options.map((option, i) => {
-                      const answered =
-                        revisionPhase === 'questions' ? revisionAnswer !== null : quizState.selectedAnswer !== null;
-                      const selectedI =
-                        revisionPhase === 'questions' ? revisionAnswer : quizState.selectedAnswer;
-                      const isCorrect = i === currentQ.correctIndex;
-                      const isSelected = i === selectedI;
+                  <>
+                    <div className="mt-6 grid grid-cols-2 gap-3">
+                      {currentQ.options.map((option, i) => {
+                        const optionAnswered =
+                          revisionPhase === 'questions' ? revisionAnswer !== null : quizState.selectedAnswer !== null;
+                        const selectedI =
+                          revisionPhase === 'questions' ? revisionAnswer : quizState.selectedAnswer;
+                        const isCorrect = i === currentQ.correctIndex;
+                        const isSelected = i === selectedI;
 
-                      return (
+                        return (
+                          <button
+                            key={i}
+                            disabled={optionAnswered}
+                            onClick={() => {
+                              if (mode === 'teach') handleTeachAnswer(i);
+                              else if (mode === 'quiz') handleQuizAnswer(i);
+                              else handleRevisionAnswer(i);
+                            }}
+                            className={`px-5 py-4 rounded-xl border text-left text-base font-medium transition-all ${
+                              optionAnswered
+                                ? isCorrect
+                                  ? 'bg-emerald-600/30 border-emerald-500 text-emerald-300'
+                                  : isSelected
+                                  ? 'bg-red-600/20 border-red-500 text-red-300'
+                                  : 'bg-slate-700/40 border-slate-600 text-slate-500'
+                                : 'bg-slate-700/40 border-slate-600 text-slate-200 hover:bg-slate-600/50 hover:border-teal-500 cursor-pointer'
+                            }`}
+                          >
+                            <span className="text-teal-400 mr-2 font-bold">
+                              {String.fromCharCode(65 + i)}.
+                            </span>
+                            {option}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    {!answered && (
+                      <p className="mt-2 text-slate-500 text-sm">Press A–D to answer</p>
+                    )}
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {!answered && (
                         <button
-                          key={i}
-                          disabled={answered}
-                          onClick={() => {
-                            if (mode === 'teach') handleTeachAnswer(i);
-                            else if (mode === 'quiz') handleQuizAnswer(i);
-                            else handleRevisionAnswer(i);
-                          }}
-                          className={`px-5 py-4 rounded-xl border text-left text-base font-medium transition-all ${
-                            answered
-                              ? isCorrect
-                                ? 'bg-emerald-600/30 border-emerald-500 text-emerald-300'
-                                : isSelected
-                                ? 'bg-red-600/20 border-red-500 text-red-300'
-                                : 'bg-slate-700/40 border-slate-600 text-slate-500'
-                              : 'bg-slate-700/40 border-slate-600 text-slate-200 hover:bg-slate-600/50 hover:border-teal-500 cursor-pointer'
-                          }`}
+                          type="button"
+                          onClick={handleSkipQuestion}
+                          className="px-3 py-2 rounded-lg border border-slate-600/60 text-slate-400 hover:text-white hover:border-slate-500 text-sm font-medium transition-colors"
                         >
-                          <span className="text-teal-400 mr-2 font-bold">
-                            {String.fromCharCode(65 + i)}.
-                          </span>
-                          {option}
+                          Skip question
                         </button>
-                      );
-                    })}
-                  </div>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setBookmarkedIndices((prev) => {
+                            const next = new Set(prev);
+                            if (next.has(questionIndex)) next.delete(questionIndex);
+                            else next.add(questionIndex);
+                            return next;
+                          })
+                        }
+                        className={`px-3 py-2 rounded-lg border text-sm font-medium transition-colors ${
+                          bookmarkedIndices.has(questionIndex)
+                            ? 'border-amber-500/60 text-amber-400 bg-amber-500/10'
+                            : 'border-slate-600/60 text-slate-400 hover:text-white hover:border-slate-500'
+                        }`}
+                      >
+                        {bookmarkedIndices.has(questionIndex) ? 'Bookmarked' : 'Bookmark question'}
+                      </button>
+                      {!confusionReported ? (
+                        <button
+                          type="button"
+                          onClick={() => setConfusionReported(true)}
+                          className="px-3 py-2 rounded-lg border border-slate-600/60 text-slate-400 hover:text-white hover:border-slate-500 text-sm font-medium transition-colors"
+                        >
+                          Report confusion
+                        </button>
+                      ) : (
+                        <span className="px-3 py-2 text-slate-500 text-sm">Thanks, your feedback was recorded.</span>
+                      )}
+                    </div>
+                  </>
                 )}
 
                 {revisionFeedback && revisionPhase === 'questions' && (
@@ -507,6 +679,18 @@ export default function AiLessonEngine({
                   >
                     <p className="text-sm font-semibold text-white mb-1">{revisionFeedback.title}</p>
                     <p className="text-sm text-slate-300">{revisionFeedback.content}</p>
+                  </div>
+                )}
+
+                {mode === 'teach' && engineState === 'feedback' && currentResponse?.type === 'feedback' && quizState.score === 0 && !teachFeedbackAcknowledged && (
+                  <div className="mt-6">
+                    <p className="text-slate-400 text-sm mb-2">Read the solution above, then continue when ready.</p>
+                    <button
+                      onClick={handleTeachContinue}
+                      className="px-6 py-3 bg-teal-600 hover:bg-teal-500 text-white font-semibold rounded-xl transition-colors text-base"
+                    >
+                      Continue
+                    </button>
                   </div>
                 )}
 
@@ -539,40 +723,71 @@ export default function AiLessonEngine({
                   </div>
                 </div>
               )}
+
+              {mode === 'teach' && engineState === 'asking_question' && currentResponse?.type === 'question' && (
+                <div className="mt-3 px-1">
+                  <span className="text-slate-500 text-sm">Practice question (1 of 1)</span>
+                </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
       </div>
 
       <div className="px-8 pb-4 border-t border-white/5 pt-4">
-        {showFollowUp && (
-          <div className="mb-4 p-4 bg-slate-800/60 border border-slate-600/40 rounded-xl">
-            {followUpLoading ? (
-              <motion.p
-                className="text-slate-400 text-sm"
-                animate={{ opacity: [0.4, 1, 0.4] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-              >
-                GRIO is thinking...
-              </motion.p>
-            ) : followUpResponse ? (
-              <>
-                <p className="text-xs uppercase tracking-widest text-teal-400 font-semibold mb-1">
-                  GRIO Response
-                </p>
-                <p className="text-slate-300 text-sm leading-relaxed">{followUpResponse.content}</p>
-              </>
-            ) : null}
-          </div>
-        )}
-        <div className="flex gap-3">
+        <div className="mb-4 p-4 bg-slate-800/60 border border-slate-600/40 rounded-xl">
+          <p className="text-xs uppercase tracking-widest text-teal-400 font-semibold mb-1">
+            GRIO Response
+          </p>
+          {showFollowUp && followUpLoading ? (
+            <motion.p
+              className="text-slate-400 text-sm"
+              animate={{ opacity: [0.4, 1, 0.4] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+            >
+              GRIO is thinking...
+            </motion.p>
+          ) : showFollowUp && followUpResponse ? (
+            <p className="text-slate-300 text-sm leading-relaxed">{followUpResponse.content}</p>
+          ) : currentResponse?.type === 'question' && currentQ ? (
+            <p className="text-slate-400 text-sm leading-relaxed">
+              Select an answer above. Need help? Ask GRIO a question below or click &quot;Get a hint&quot;.
+            </p>
+          ) : (
+            <p className="text-slate-400 text-sm leading-relaxed">
+              Ask GRIO a question below for more help with this lesson.
+            </p>
+          )}
+        </div>
+        <div className="flex gap-3 flex-wrap items-center">
+          {currentResponse?.type === 'question' && !showFollowUp && (
+            <button
+              type="button"
+              onClick={async () => {
+                setFollowUpLoading(true);
+                setShowFollowUp(true);
+                speech.stop();
+                const questionIndex =
+                  mode === 'teach' ? 0 : mode === 'quiz' ? quizState.currentQuestion : revisionQuestionIndex;
+                const response = await generateSocraticHint(subject, topic, questionIndex, socraticHintLevel);
+                setSocraticHintLevel((prev) => prev + 1);
+                setFollowUpLoading(false);
+                setFollowUpResponse(response);
+                speech.speak(response.content);
+              }}
+              disabled={followUpLoading}
+              className="px-4 py-2.5 rounded-xl border border-teal-600/60 text-teal-300 hover:bg-teal-600/20 transition-colors text-sm font-medium disabled:opacity-50"
+            >
+              Get a hint
+            </button>
+          )}
           <input
             type="text"
             value={followUpQuestion}
             onChange={(e) => setFollowUpQuestion(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleFollowUp()}
             placeholder="Ask GRIO a question..."
-            className="flex-1 bg-slate-800/60 border border-slate-600/40 rounded-xl px-5 py-3 text-white text-base placeholder-slate-500 focus:outline-none focus:border-teal-500/60"
+            className="flex-1 min-w-[12rem] bg-slate-800/60 border border-slate-600/40 rounded-xl px-5 py-3 text-white text-base placeholder-slate-500 focus:outline-none focus:border-teal-500/60"
           />
           <button
             onClick={handleFollowUp}

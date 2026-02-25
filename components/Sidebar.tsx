@@ -14,6 +14,7 @@ interface NavItem {
 
 const independentNav: NavItem[] = [
   { label: 'Dashboard', href: '/dashboard', icon: '⊞' },
+  { label: 'Learn with Grio', href: '/dashboard/learn', icon: '✦' },
   { label: 'Subjects', href: '/dashboard/subjects', icon: '📚' },
   { label: 'Progress', href: '/dashboard/progress', icon: '📈' },
   { label: 'Settings', href: '/dashboard/settings', icon: '⚙️' },
