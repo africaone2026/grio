@@ -44,7 +44,7 @@ function SpeakerIcon({ muted }: { muted: boolean }) {
 export default function ClassroomPage() {
   const router = useRouter();
   const { user } = useAuth();
-  const { addSession, subjects: contextSubjects } = useApp();
+  const { addSession, subjects: contextSubjects, initForUser } = useApp();
 
   const [classrooms, setClassrooms] = useState<Classroom[]>([]);
   const [selectedClassroom, setSelectedClassroom] = useState('');
@@ -58,6 +58,12 @@ export default function ClassroomPage() {
   const [isMuted, setIsMuted] = useState(getStoredMute);
   const [sessionStartTime, setSessionStartTime] = useState<Date | null>(null);
   const [completedScore, setCompletedScore] = useState<{ score: number; total: number } | null>(null);
+
+  useEffect(() => {
+    if (user) {
+      initForUser(user);
+    }
+  }, [user, initForUser]);
 
   useEffect(() => {
     if (user?.schoolId) {
