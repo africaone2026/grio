@@ -1,4 +1,5 @@
 node_modules/
 .env
-.next
+.next/*
 next-env.d.ts
+next-development.log

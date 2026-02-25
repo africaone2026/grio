@@ -11,8 +11,10 @@ import { getClassroomsBySchool } from '@/lib/api';
 import type { Classroom } from '@/lib/types';
 
 type SessionPhase = 'setup' | 'active' | 'complete';
+type Theme = 'light' | 'dark';
 
 const MUTE_STORAGE_KEY = 'grio-speech-muted';
+const THEME_STORAGE_KEY = 'grio-classroom-theme';
 
 function getStoredMute(): boolean {
   if (typeof window === 'undefined') return false;
@@ -20,6 +22,16 @@ function getStoredMute(): boolean {
     return localStorage.getItem(MUTE_STORAGE_KEY) === 'true';
   } catch {
     return false;
+  }
+}
+
+function getStoredTheme(): Theme {
+  if (typeof window === 'undefined') return 'dark';
+  try {
+    const v = localStorage.getItem(THEME_STORAGE_KEY);
+    return v === 'light' || v === 'dark' ? v : 'dark';
+  } catch {
+    return 'dark';
   }
 }
 
@@ -61,6 +73,7 @@ export default function ClassroomPage() {
   const [conceptPanelOpen, setConceptPanelOpen] = useState(true);
   const [showTimer, setShowTimer] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [theme, setTheme] = useState<Theme>(getStoredTheme);
 
   useEffect(() => {
     if (user) {
@@ -167,6 +180,16 @@ export default function ClassroomPage() {
     });
   }, []);
 
+  const handleToggleTheme = useCallback(() => {
+    setTheme((prev) => {
+      const next = prev === 'light' ? 'dark' : 'light';
+      try {
+        localStorage.setItem(THEME_STORAGE_KEY, next);
+      } catch {}
+      return next;
+    });
+  }, []);
+
   useEffect(() => {
     if (phase !== 'active' || !sessionStartTime || isPaused) return;
     const start = sessionStartTime.getTime();
@@ -183,38 +206,72 @@ export default function ClassroomPage() {
   };
 
   const classroom = classrooms.find((c) => c.id === selectedClassroom);
+  const isLight = theme === 'light';
+
+  const headerBg = isLight ? 'bg-white border-slate-200' : 'bg-[#0B1220] border-white/10';
+  const headerText = isLight ? 'text-slate-900' : 'text-white';
+  const headerMuted = isLight ? 'text-slate-500' : 'text-slate-400';
+  const headerLabel = isLight ? 'text-slate-600' : 'text-slate-500';
+  const exitBtn = isLight
+    ? 'border-slate-300 text-slate-600 hover:text-slate-900 hover:border-slate-400 hover:bg-slate-50'
+    : 'border-white/10 text-slate-400 hover:text-white hover:border-white/20';
 
   return (
-    <div className="min-h-screen bg-[#0B1220] text-white flex flex-col" style={{ fontFamily: 'system-ui, sans-serif' }}>
-      <header className="flex items-center justify-between px-8 py-5 border-b border-white/10 flex-shrink-0">
-        <div className="flex items-center gap-8">
+    <div
+      className={`min-h-screen flex flex-col transition-colors duration-200 ${
+        isLight ? 'bg-slate-50 text-slate-900' : 'bg-[#0B1220] text-white'
+      }`}
+      style={{ fontFamily: 'system-ui, sans-serif' }}
+    >
+      <header
+        className={`flex items-center justify-between px-6 sm:px-8 py-4 border-b flex-shrink-0 ${headerBg} ${isLight ? '' : 'border-white/10'}`}
+      >
+        <div className="flex items-center gap-4 sm:gap-6 flex-wrap">
           <div className="flex items-center gap-2">
-            <span className="text-white font-bold text-2xl tracking-tight">GRIO</span>
-            <span className="text-teal-300 text-xs font-medium bg-teal-900/50 px-2 py-0.5 rounded-full">AI</span>
+            <span className={`font-bold text-xl sm:text-2xl tracking-tight ${headerText}`}>GRIO</span>
+            <span
+              className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                isLight ? 'bg-teal-100 text-teal-700' : 'bg-teal-900/50 text-teal-300'
+              }`}
+            >
+              AI
+            </span>
           </div>
           {phase === 'active' && (
-            <div className="flex items-center gap-6 text-sm">
+            <div className="flex items-center gap-3 sm:gap-5 text-sm flex-wrap">
               {classroom && (
-                <span className="text-slate-400">
-                  <span className="text-slate-500">Classroom:</span>{' '}
-                  <span className="text-white font-medium">{classroom.name}</span>
+                <span className={headerMuted}>
+                  <span className={headerLabel}>Classroom:</span>{' '}
+                  <span className={`font-medium ${headerText}`}>{classroom.name}</span>
                 </span>
               )}
-              <span className="text-slate-400">
-                <span className="text-slate-500">Subject:</span>{' '}
-                <span className="text-white font-medium">{selectedSubjectName}</span>
+              <span className={headerMuted}>
+                <span className={headerLabel}>Subject:</span>{' '}
+                <span className={`font-medium ${headerText}`}>{selectedSubjectName}</span>
               </span>
-              <span className="text-slate-400">
-                <span className="text-slate-500">Topic:</span>{' '}
-                <span className="text-white font-medium">{selectedTopic}</span>
+              <span className={headerMuted}>
+                <span className={headerLabel}>Topic:</span>{' '}
+                <span className={`font-medium ${headerText}`}>{selectedTopic}</span>
               </span>
               <span
-                title={selectedMode === 'teach' ? 'AI-guided lesson: intro, explanation, example, then one practice question with feedback' : selectedMode === 'quiz' ? 'Direct practice: 3 questions with immediate feedback' : 'Key points then rapid-fire questions'}
+                title={
+                  selectedMode === 'teach'
+                    ? 'AI-guided lesson'
+                    : selectedMode === 'quiz'
+                    ? 'Direct practice'
+                    : 'Key points + rapid-fire'
+                }
                 className={`px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide ${
                   selectedMode === 'teach'
-                    ? 'bg-teal-900/50 text-teal-300 border border-teal-700/40'
+                    ? isLight
+                      ? 'bg-teal-100 text-teal-800 border border-teal-200'
+                      : 'bg-teal-900/50 text-teal-300 border border-teal-700/40'
                     : selectedMode === 'quiz'
-                    ? 'bg-blue-900/50 text-blue-300 border border-blue-700/40'
+                    ? isLight
+                      ? 'bg-blue-100 text-blue-800 border border-blue-200'
+                      : 'bg-blue-900/50 text-blue-300 border border-blue-700/40'
+                    : isLight
+                    ? 'bg-amber-100 text-amber-800 border border-amber-200'
                     : 'bg-amber-900/50 text-amber-300 border border-amber-700/40'
                 }`}
               >
@@ -225,7 +282,11 @@ export default function ClassroomPage() {
                 onClick={() => setShowTimer((prev) => !prev)}
                 className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors ${
                   showTimer
-                    ? 'bg-slate-600/60 border-slate-500 text-white'
+                    ? isLight
+                      ? 'bg-slate-200 border-slate-400 text-slate-800'
+                      : 'bg-slate-600/60 border-slate-500 text-white'
+                    : isLight
+                    ? 'border-slate-300 text-slate-500 hover:text-slate-700 hover:bg-slate-100'
                     : 'border-slate-600/60 text-slate-400 hover:text-slate-300'
                 }`}
                 title={showTimer ? 'Hide timer' : 'Show timer'}
@@ -235,32 +296,75 @@ export default function ClassroomPage() {
             </div>
           )}
         </div>
-        <button
-          onClick={handleExit}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/10 text-slate-400 hover:text-white hover:border-white/20 transition-colors text-sm font-medium"
-        >
-          <span>Exit</span>
-          <span>✕</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handleToggleTheme}
+            className={`p-2.5 rounded-xl border transition-colors ${exitBtn}`}
+            title={isLight ? 'Switch to dark mode' : 'Switch to light mode'}
+            aria-label={isLight ? 'Switch to dark mode' : 'Switch to light mode'}
+          >
+            {isLight ? (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+              </svg>
+            ) : (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="5" />
+                <line x1="12" y1="1" x2="12" y2="3" />
+                <line x1="12" y1="21" x2="12" y2="23" />
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                <line x1="1" y1="12" x2="3" y2="12" />
+                <line x1="21" y1="12" x2="23" y2="12" />
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+              </svg>
+            )}
+          </button>
+          <button
+            onClick={handleExit}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-colors ${exitBtn}`}
+          >
+            <span>Exit</span>
+            <span aria-hidden>✕</span>
+          </button>
+        </div>
       </header>
 
       <div className="flex flex-1 overflow-hidden">
         {phase === 'active' && (
           <aside
-            className={`flex-shrink-0 border-r border-white/10 bg-slate-900/40 flex flex-col transition-[width] duration-200 ${
+            className={`flex-shrink-0 border-r flex flex-col transition-[width] duration-200 ${
               conceptPanelOpen ? 'w-80' : 'w-12'
+            } ${
+              isLight
+                ? 'bg-white border-slate-200'
+                : 'bg-slate-900/40 border-white/10'
             }`}
           >
             {conceptPanelOpen ? (
               <>
-                <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 flex-shrink-0">
-                  <span className="text-xs font-semibold uppercase tracking-widest text-slate-400">
+                <div
+                  className={`flex items-center justify-between px-4 py-3 border-b flex-shrink-0 ${
+                    isLight ? 'border-slate-200' : 'border-white/10'
+                  }`}
+                >
+                  <span
+                    className={`text-xs font-semibold uppercase tracking-widest ${
+                      isLight ? 'text-slate-500' : 'text-slate-400'
+                    }`}
+                  >
                     Concept summary
                   </span>
                   <button
                     type="button"
                     onClick={() => setConceptPanelOpen(false)}
-                    className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700/60 transition-colors"
+                    className={`p-1.5 rounded-lg transition-colors ${
+                      isLight
+                        ? 'text-slate-500 hover:text-slate-800 hover:bg-slate-100'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-700/60'
+                    }`}
                     title="Collapse panel"
                     aria-label="Collapse concept summary panel"
                   >
@@ -270,14 +374,18 @@ export default function ClassroomPage() {
                   </button>
                 </div>
                 <div className="flex-1 min-h-0 overflow-hidden">
-                  <ConceptSummaryPanel subject={selectedSubjectName} topic={selectedTopic} />
+                  <ConceptSummaryPanel subject={selectedSubjectName} topic={selectedTopic} theme={theme} />
                 </div>
               </>
             ) : (
               <button
                 type="button"
                 onClick={() => setConceptPanelOpen(true)}
-                className="flex items-center justify-center w-full h-24 text-slate-400 hover:text-teal-400 hover:bg-slate-700/40 transition-colors"
+                className={`flex items-center justify-center w-full h-24 transition-colors ${
+                  isLight
+                    ? 'text-slate-500 hover:text-teal-600 hover:bg-slate-100'
+                    : 'text-slate-400 hover:text-teal-400 hover:bg-slate-700/40'
+                }`}
                 title="Expand concept summary"
                 aria-label="Expand concept summary panel"
               >
@@ -289,19 +397,33 @@ export default function ClassroomPage() {
           </aside>
         )}
         {phase === 'setup' && (
-          <aside className="w-72 border-r border-white/10 p-6 flex flex-col gap-6 flex-shrink-0">
+          <aside
+            className={`w-72 border-r p-6 flex flex-col gap-6 flex-shrink-0 ${
+              isLight ? 'bg-white border-slate-200' : 'border-white/10'
+            }`}
+          >
             <div>
-              <h2 className="text-xs uppercase tracking-widest text-slate-500 font-semibold mb-4">
+              <h2
+                className={`text-xs uppercase tracking-widest font-semibold mb-4 ${
+                  isLight ? 'text-slate-500' : 'text-slate-500'
+                }`}
+              >
                 Lesson Setup
               </h2>
 
               {classrooms.length > 0 && (
                 <div className="mb-5">
-                  <label className="block text-xs text-slate-400 mb-2 font-medium">Classroom</label>
+                  <label className={`block text-xs mb-2 font-medium ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
+                    Classroom
+                  </label>
                   <select
                     value={selectedClassroom}
                     onChange={(e) => setSelectedClassroom(e.target.value)}
-                    className="w-full bg-slate-800/60 border border-slate-700/60 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-teal-500/60"
+                    className={`w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/50 ${
+                      isLight
+                        ? 'bg-slate-50 border border-slate-300 text-slate-900'
+                        : 'bg-slate-800/60 border border-slate-700/60 text-white'
+                    }`}
                   >
                     {classrooms.map((cls) => (
                       <option key={cls.id} value={cls.id}>
@@ -313,11 +435,17 @@ export default function ClassroomPage() {
               )}
 
               <div className="mb-5">
-                <label className="block text-xs text-slate-400 mb-2 font-medium">Subject</label>
+                <label className={`block text-xs mb-2 font-medium ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
+                  Subject
+                </label>
                 <select
                   value={selectedSubjectId}
                   onChange={(e) => handleSubjectChange(e.target.value)}
-                  className="w-full bg-slate-800/60 border border-slate-700/60 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-teal-500/60"
+                  className={`w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/50 ${
+                    isLight
+                      ? 'bg-slate-50 border border-slate-300 text-slate-900'
+                      : 'bg-slate-800/60 border border-slate-700/60 text-white'
+                  }`}
                 >
                   {contextSubjects.map((s) => (
                     <option key={s.id} value={s.id}>
@@ -328,11 +456,17 @@ export default function ClassroomPage() {
               </div>
 
               <div className="mb-5">
-                <label className="block text-xs text-slate-400 mb-2 font-medium">Topic</label>
+                <label className={`block text-xs mb-2 font-medium ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
+                  Topic
+                </label>
                 <select
                   value={selectedTopic}
                   onChange={(e) => setSelectedTopic(e.target.value)}
-                  className="w-full bg-slate-800/60 border border-slate-700/60 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-teal-500/60"
+                  className={`w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/50 ${
+                    isLight
+                      ? 'bg-slate-50 border border-slate-300 text-slate-900'
+                      : 'bg-slate-800/60 border border-slate-700/60 text-white'
+                  }`}
                 >
                   {topicNames.map((t) => (
                     <option key={t} value={t}>
@@ -344,7 +478,9 @@ export default function ClassroomPage() {
             </div>
 
             <div>
-              <label className="block text-xs text-slate-400 mb-3 font-medium uppercase tracking-widest">Mode</label>
+              <label className={`block text-xs mb-3 font-medium uppercase tracking-widest ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
+                Mode
+              </label>
               <div className="space-y-2">
                 {(['teach', 'quiz', 'revision'] as SessionMode[]).map((m) => (
                   <button
@@ -352,12 +488,16 @@ export default function ClassroomPage() {
                     onClick={() => setSelectedMode(m)}
                     className={`w-full px-4 py-3.5 rounded-xl border text-left transition-all text-sm font-medium ${
                       selectedMode === m
-                        ? 'bg-teal-600/20 border-teal-500/60 text-teal-300'
+                        ? isLight
+                          ? 'bg-teal-50 border-teal-400 text-teal-800'
+                          : 'bg-teal-600/20 border-teal-500/60 text-teal-300'
+                        : isLight
+                        ? 'bg-slate-50 border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-100'
                         : 'bg-slate-800/40 border-slate-700/40 text-slate-400 hover:text-white hover:border-slate-600'
                     }`}
                   >
                     <div className="font-semibold capitalize">{m} Mode</div>
-                    <div className="text-xs mt-0.5 opacity-70">
+                    <div className={`text-xs mt-0.5 ${isLight ? 'text-slate-500' : 'opacity-70'}`}>
                       {m === 'teach'
                         ? 'AI-guided lesson with explanation and examples'
                         : m === 'quiz'
@@ -372,7 +512,7 @@ export default function ClassroomPage() {
             <button
               onClick={handleStartLesson}
               disabled={!selectedTopic}
-              className="mt-auto w-full py-4 bg-teal-600 hover:bg-teal-500 disabled:bg-slate-700 disabled:text-slate-500 text-white font-bold rounded-xl transition-colors text-base"
+              className="mt-auto w-full py-4 bg-teal-600 hover:bg-teal-500 disabled:bg-slate-300 disabled:text-slate-500 text-white font-bold rounded-xl transition-colors text-base shadow-sm disabled:shadow-none"
             >
               Start Lesson
             </button>
@@ -381,15 +521,21 @@ export default function ClassroomPage() {
 
         <main className="flex-1 flex flex-col overflow-hidden">
           {phase === 'setup' && (
-            <div className="flex-1 flex flex-col items-center justify-center p-12 text-center">
-              <div className="w-24 h-24 rounded-full border border-teal-500/30 bg-teal-500/5 flex items-center justify-center mb-6">
-                <div className="text-teal-400 text-4xl font-bold">G</div>
+            <div className="flex-1 flex flex-col items-center justify-center p-8 sm:p-12 text-center">
+              <div
+                className={`w-20 h-20 sm:w-24 sm:h-24 rounded-2xl flex items-center justify-center mb-6 ${
+                  isLight ? 'bg-teal-100 border border-teal-200' : 'border border-teal-500/30 bg-teal-500/5'
+                }`}
+              >
+                <div className={isLight ? 'text-teal-600 text-3xl sm:text-4xl font-bold' : 'text-teal-400 text-3xl sm:text-4xl font-bold'}>G</div>
               </div>
-              <h1 className="text-3xl font-bold text-white mb-3">GRIO Classroom Mode</h1>
-              <p className="text-slate-400 text-lg max-w-md leading-relaxed">
+              <h1 className={`text-2xl sm:text-3xl font-bold mb-3 ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                GRIO Classroom Mode
+              </h1>
+              <p className={`text-lg max-w-md leading-relaxed ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
                 Select a subject, topic, and mode from the panel to begin an AI-powered classroom session.
               </p>
-              <div className="mt-8 grid grid-cols-3 gap-4 max-w-lg">
+              <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-lg">
                 {[
                   { label: 'Teach Mode', desc: 'Full AI-guided lesson' },
                   { label: 'Quiz Mode', desc: 'Direct practice questions' },
@@ -397,10 +543,12 @@ export default function ClassroomPage() {
                 ].map((item) => (
                   <div
                     key={item.label}
-                    className="bg-slate-800/40 border border-slate-700/40 rounded-xl p-4 text-center"
+                    className={`rounded-xl p-4 text-center border ${
+                      isLight ? 'bg-white border-slate-200 shadow-sm' : 'bg-slate-800/40 border-slate-700/40'
+                    }`}
                   >
-                    <p className="text-white font-semibold text-sm mb-1">{item.label}</p>
-                    <p className="text-slate-500 text-xs">{item.desc}</p>
+                    <p className={`font-semibold text-sm mb-1 ${isLight ? 'text-slate-900' : 'text-white'}`}>{item.label}</p>
+                    <p className={isLight ? 'text-slate-500 text-xs' : 'text-slate-500 text-xs'}>{item.desc}</p>
                   </div>
                 ))}
               </div>
@@ -418,29 +566,46 @@ export default function ClassroomPage() {
                   isMuted={isMuted}
                   onToggleMute={handleToggleMute}
                   onComplete={handleSessionComplete}
+                  theme={theme}
                 />
               </div>
-              <div className="flex items-center justify-center gap-4 px-8 py-5 border-t border-white/10 flex-shrink-0">
+              <div
+                className={`flex items-center justify-center gap-3 sm:gap-4 px-6 sm:px-8 py-4 border-t flex-shrink-0 ${
+                  isLight ? 'bg-white border-slate-200' : 'border-white/10'
+                }`}
+              >
                 <button
                   onClick={() => setIsPaused(true)}
                   disabled={isPaused}
-                  className="px-5 py-2.5 rounded-xl border border-slate-700/60 text-slate-300 hover:text-white hover:border-slate-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+                  className={`px-4 py-2.5 rounded-xl border text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
+                    isLight
+                      ? 'border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-400'
+                      : 'border-slate-700/60 text-slate-300 hover:text-white hover:border-slate-500'
+                  }`}
                 >
                   Pause
                 </button>
                 <button
                   onClick={() => setIsPaused(false)}
                   disabled={!isPaused}
-                  className="px-5 py-2.5 rounded-xl border border-teal-700/60 text-teal-300 hover:text-white hover:border-teal-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+                  className={`px-4 py-2.5 rounded-xl border text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
+                    isLight
+                      ? 'border-teal-400 text-teal-700 hover:bg-teal-50'
+                      : 'border-teal-700/60 text-teal-300 hover:text-white hover:border-teal-500'
+                  }`}
                 >
                   Resume
                 </button>
-                <div className="w-px h-6 bg-white/10" />
+                <div className={`w-px h-6 ${isLight ? 'bg-slate-200' : 'bg-white/10'}`} />
                 <button
                   onClick={handleToggleMute}
                   className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border transition-colors text-sm font-medium ${
                     isMuted
-                      ? 'border-red-700/40 text-red-400 hover:text-red-300 hover:border-red-600/60'
+                      ? isLight
+                        ? 'border-red-200 text-red-600 hover:bg-red-50'
+                        : 'border-red-700/40 text-red-400 hover:text-red-300 hover:border-red-600/60'
+                      : isLight
+                      ? 'border-slate-300 text-slate-700 hover:bg-slate-50'
                       : 'border-slate-700/60 text-slate-300 hover:text-white hover:border-slate-500'
                   }`}
                   title={isMuted ? 'Unmute audio' : 'Mute audio'}
@@ -448,12 +613,12 @@ export default function ClassroomPage() {
                   <SpeakerIcon muted={isMuted} />
                   <span>{isMuted ? 'Unmute' : 'Mute'}</span>
                 </button>
-                <div className="w-px h-6 bg-white/10" />
-                <span className="text-slate-500 text-sm">
+                <div className={`w-px h-6 ${isLight ? 'bg-slate-200' : 'bg-white/10'}`} />
+                <span className={isLight ? 'text-slate-500 text-sm' : 'text-slate-500 text-sm'}>
                   {isPaused ? (
-                    <span className="text-amber-400">Paused</span>
+                    <span className="text-amber-500">Paused</span>
                   ) : (
-                    <span className="text-emerald-400">Live</span>
+                    <span className="text-emerald-500">Live</span>
                   )}
                 </span>
               </div>
@@ -461,38 +626,52 @@ export default function ClassroomPage() {
           )}
 
           {phase === 'complete' && (
-            <div className="flex-1 flex flex-col items-center justify-center p-12 text-center">
-              <div className="w-24 h-24 rounded-full border border-emerald-500/40 bg-emerald-500/10 flex items-center justify-center mb-6">
-                <span className="text-emerald-400 text-4xl">✓</span>
+            <div className="flex-1 flex flex-col items-center justify-center p-8 sm:p-12 text-center">
+              <div
+                className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full flex items-center justify-center mb-6 ${
+                  isLight ? 'bg-emerald-100 border border-emerald-200' : 'border border-emerald-500/40 bg-emerald-500/10'
+                }`}
+              >
+                <span className="text-emerald-500 text-4xl">✓</span>
               </div>
-              <h1 className="text-3xl font-bold text-white mb-3">Session Complete</h1>
-              <p className="text-slate-400 text-lg mb-2">
+              <h1 className={`text-2xl sm:text-3xl font-bold mb-3 ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                Session Complete
+              </h1>
+              <p className={`text-lg mb-2 ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
                 {selectedSubjectName} — {selectedTopic}
               </p>
-              <p className="text-slate-500 text-sm mb-6 capitalize">{selectedMode} Mode</p>
+              <p className={`text-sm mb-6 capitalize ${isLight ? 'text-slate-500' : 'text-slate-500'}`}>{selectedMode} Mode</p>
 
               {completedScore && (
-                <div className="bg-slate-800/60 border border-slate-600/40 rounded-2xl px-10 py-6 mb-8">
-                  <p className="text-slate-400 text-sm mb-2">Score</p>
-                  <p className="text-5xl font-bold text-teal-400 mb-1">
+                <div
+                  className={`rounded-2xl px-8 sm:px-10 py-6 mb-8 border ${
+                    isLight ? 'bg-white border-slate-200 shadow-sm' : 'bg-slate-800/60 border-slate-600/40'
+                  }`}
+                >
+                  <p className={`text-sm mb-2 ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>Score</p>
+                  <p className="text-4xl sm:text-5xl font-bold text-teal-500 mb-1">
                     {completedScore.score}/{completedScore.total}
                   </p>
-                  <p className="text-slate-400 text-sm">
+                  <p className={isLight ? 'text-slate-500 text-sm' : 'text-slate-400 text-sm'}>
                     {Math.round((completedScore.score / completedScore.total) * 100)}% correct
                   </p>
                 </div>
               )}
 
-              <div className="flex gap-4">
+              <div className="flex flex-wrap gap-3 justify-center">
                 <button
                   onClick={handleNewSession}
-                  className="px-8 py-3.5 bg-teal-600 hover:bg-teal-500 text-white font-bold rounded-xl transition-colors"
+                  className="px-6 sm:px-8 py-3.5 bg-teal-600 hover:bg-teal-500 text-white font-bold rounded-xl transition-colors shadow-sm"
                 >
                   New Session
                 </button>
                 <button
                   onClick={handleExit}
-                  className="px-8 py-3.5 border border-slate-700/60 text-slate-300 hover:text-white hover:border-slate-500 font-medium rounded-xl transition-colors"
+                  className={`px-6 sm:px-8 py-3.5 border font-medium rounded-xl transition-colors ${
+                    isLight
+                      ? 'border-slate-300 text-slate-700 hover:bg-slate-50'
+                      : 'border-slate-700/60 text-slate-300 hover:text-white hover:border-slate-500'
+                  }`}
                 >
                   Exit
                 </button>
