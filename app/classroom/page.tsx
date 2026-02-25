@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { useApp } from '@/context/AppContext';
@@ -10,6 +10,36 @@ import { getClassroomsBySchool, getTopics } from '@/lib/api';
 import type { Classroom } from '@/lib/types';
 
 type SessionPhase = 'setup' | 'active' | 'complete';
+
+const MUTE_STORAGE_KEY = 'grio-speech-muted';
+
+function getStoredMute(): boolean {
+  if (typeof window === 'undefined') return false;
+  try {
+    return localStorage.getItem(MUTE_STORAGE_KEY) === 'true';
+  } catch {
+    return false;
+  }
+}
+
+function SpeakerIcon({ muted }: { muted: boolean }) {
+  if (muted) {
+    return (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+        <line x1="23" y1="9" x2="17" y2="15" />
+        <line x1="17" y1="9" x2="23" y2="15" />
+      </svg>
+    );
+  }
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+      <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+      <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+    </svg>
+  );
+}
 
 export default function ClassroomPage() {
   const router = useRouter();
@@ -25,6 +55,7 @@ export default function ClassroomPage() {
   const [selectedMode, setSelectedMode] = useState<SessionMode>('teach');
   const [phase, setPhase] = useState<SessionPhase>('setup');
   const [isPaused, setIsPaused] = useState(false);
+  const [isMuted, setIsMuted] = useState(getStoredMute);
   const [sessionStartTime, setSessionStartTime] = useState<Date | null>(null);
   const [completedScore, setCompletedScore] = useState<{ score: number; total: number } | null>(null);
 
@@ -112,6 +143,16 @@ export default function ClassroomPage() {
     setCompletedScore(null);
     setSessionStartTime(null);
   };
+
+  const handleToggleMute = useCallback(() => {
+    setIsMuted((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem(MUTE_STORAGE_KEY, String(next));
+      } catch {}
+      return next;
+    });
+  }, []);
 
   const classroom = classrooms.find((c) => c.id === selectedClassroom);
 
@@ -288,6 +329,8 @@ export default function ClassroomPage() {
                   topic={selectedTopic}
                   mode={selectedMode}
                   isPaused={isPaused}
+                  isMuted={isMuted}
+                  onToggleMute={handleToggleMute}
                   onComplete={handleSessionComplete}
                 />
               </div>
@@ -305,6 +348,19 @@ export default function ClassroomPage() {
                   className="px-5 py-2.5 rounded-xl border border-teal-700/60 text-teal-300 hover:text-white hover:border-teal-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-sm font-medium"
                 >
                   Resume
+                </button>
+                <div className="w-px h-6 bg-white/10" />
+                <button
+                  onClick={handleToggleMute}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border transition-colors text-sm font-medium ${
+                    isMuted
+                      ? 'border-red-700/40 text-red-400 hover:text-red-300 hover:border-red-600/60'
+                      : 'border-slate-700/60 text-slate-300 hover:text-white hover:border-slate-500'
+                  }`}
+                  title={isMuted ? 'Unmute audio' : 'Mute audio'}
+                >
+                  <SpeakerIcon muted={isMuted} />
+                  <span>{isMuted ? 'Unmute' : 'Mute'}</span>
                 </button>
                 <div className="w-px h-6 bg-white/10" />
                 <span className="text-slate-500 text-sm">
