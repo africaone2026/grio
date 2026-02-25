@@ -129,6 +129,30 @@ export const topics: Topic[] = [
   { id: 'geo-human', name: 'Human Geography', subjectId: 'geo-ug-sec', order: 2, description: 'Population, settlement, and economic activities.' },
   { id: 'geo-eastafrica', name: 'East Africa', subjectId: 'geo-ug-sec', order: 3, description: 'Physical and human geography of East Africa.' },
   { id: 'geo-mapwork', name: 'Map Reading & Cartography', subjectId: 'geo-ug-sec', order: 4, description: 'Reading topographical maps, scales, and grid references.' },
+
+  // Mathematics - Zambia Secondary
+  { id: 'math-zm-algebra', name: 'Algebra', subjectId: 'math-zm-sec', order: 1, description: 'Expressions, equations, and algebraic manipulation.' },
+  { id: 'math-zm-geometry', name: 'Geometry', subjectId: 'math-zm-sec', order: 2, description: 'Shapes, angles, and spatial reasoning.' },
+  { id: 'math-zm-trigonometry', name: 'Trigonometry', subjectId: 'math-zm-sec', order: 3, description: 'Sine, cosine, tangent and their applications.' },
+  { id: 'math-zm-statistics', name: 'Statistics & Probability', subjectId: 'math-zm-sec', order: 4, description: 'Data handling, probability, and statistical methods.' },
+  { id: 'math-zm-calculus', name: 'Calculus', subjectId: 'math-zm-sec', order: 5, description: 'Differentiation and integration fundamentals.' },
+
+  // English - Zambia Secondary
+  { id: 'eng-zm-grammar', name: 'Grammar & Usage', subjectId: 'eng-zm-sec', order: 1, description: 'Parts of speech, sentence structure, and punctuation.' },
+  { id: 'eng-zm-comprehension', name: 'Reading Comprehension', subjectId: 'eng-zm-sec', order: 2, description: 'Strategies for understanding and analysing texts.' },
+  { id: 'eng-zm-writing', name: 'Writing Skills', subjectId: 'eng-zm-sec', order: 3, description: 'Essay writing, creative writing, and reports.' },
+  { id: 'eng-zm-literature', name: 'Literature', subjectId: 'eng-zm-sec', order: 4, description: 'Poetry, prose, and drama analysis.' },
+
+  // Mathematics - IGCSE
+  { id: 'math-igcse-number', name: 'Number', subjectId: 'math-igcse', order: 1, description: 'Number systems, operations, and number theory.' },
+  { id: 'math-igcse-algebra', name: 'Algebra & Graphs', subjectId: 'math-igcse', order: 2, description: 'Algebraic manipulation, equations, and graphing.' },
+  { id: 'math-igcse-geometry', name: 'Geometry', subjectId: 'math-igcse', order: 3, description: 'Shape, space, and measurement.' },
+  { id: 'math-igcse-statistics', name: 'Statistics & Probability', subjectId: 'math-igcse', order: 4, description: 'Data analysis, probability, and statistical measures.' },
+
+  // Combined Science - IGCSE
+  { id: 'sci-igcse-biology', name: 'Biology', subjectId: 'sci-igcse', order: 1, description: 'Living organisms, cells, and biological processes.' },
+  { id: 'sci-igcse-chemistry', name: 'Chemistry', subjectId: 'sci-igcse', order: 2, description: 'Matter, reactions, and the periodic table.' },
+  { id: 'sci-igcse-physics', name: 'Physics', subjectId: 'sci-igcse', order: 3, description: 'Forces, energy, waves, and electricity.' },
 ];
 
 export const lessons: Lesson[] = [

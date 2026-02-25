@@ -6,7 +6,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useApp } from '@/context/AppContext';
 import AiLessonEngine from '@/components/AiLessonEngine';
 import type { SessionMode, LessonSession } from '@/lib/types';
-import { getClassroomsBySchool, getTopics } from '@/lib/api';
+import { getClassroomsBySchool } from '@/lib/api';
 import type { Classroom } from '@/lib/types';
 
 type SessionPhase = 'setup' | 'active' | 'complete';
@@ -44,13 +44,12 @@ function SpeakerIcon({ muted }: { muted: boolean }) {
 export default function ClassroomPage() {
   const router = useRouter();
   const { user } = useAuth();
-  const { addSession, subjects: contextSubjects, initForUser } = useApp();
+  const { addSession, subjects: contextSubjects, initForUser, loadTopics, topics: contextTopics } = useApp();
 
   const [classrooms, setClassrooms] = useState<Classroom[]>([]);
   const [selectedClassroom, setSelectedClassroom] = useState('');
   const [selectedSubjectId, setSelectedSubjectId] = useState('');
   const [selectedSubjectName, setSelectedSubjectName] = useState('');
-  const [topics, setTopics] = useState<string[]>([]);
   const [selectedTopic, setSelectedTopic] = useState('');
   const [selectedMode, setSelectedMode] = useState<SessionMode>('teach');
   const [phase, setPhase] = useState<SessionPhase>('setup');
@@ -84,12 +83,16 @@ export default function ClassroomPage() {
 
   useEffect(() => {
     if (!selectedSubjectId) return;
-    getTopics(selectedSubjectId).then((t) => {
-      const names = t.map((topic) => topic.name);
-      setTopics(names);
-      setSelectedTopic(names[0] ?? '');
-    });
-  }, [selectedSubjectId]);
+    loadTopics(selectedSubjectId);
+  }, [selectedSubjectId, loadTopics]);
+
+  useEffect(() => {
+    if (contextTopics.length > 0 && !selectedTopic) {
+      setSelectedTopic(contextTopics[0].name);
+    }
+  }, [contextTopics, selectedTopic]);
+
+  const topicNames = contextTopics.map((t) => t.name);
 
   const handleSubjectChange = (subjectId: string) => {
     const subject = contextSubjects.find((s) => s.id === subjectId);
@@ -254,7 +257,7 @@ export default function ClassroomPage() {
                   onChange={(e) => setSelectedTopic(e.target.value)}
                   className="w-full bg-slate-800/60 border border-slate-700/60 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-teal-500/60"
                 >
-                  {topics.map((t) => (
+                  {topicNames.map((t) => (
                     <option key={t} value={t}>
                       {t}
                     </option>
