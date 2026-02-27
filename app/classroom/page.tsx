@@ -7,6 +7,7 @@ import { useApp } from '@/context/AppContext';
 import { useUI } from '@/context/UIContext';
 import AiLessonEngine from '@/components/AiLessonEngine';
 import ConceptSummaryPanel from '@/components/ConceptSummaryPanel';
+import VirtualAcademicKeyboard from '@/components/VirtualAcademicKeyboard';
 import type { SessionMode, LessonSession } from '@/lib/types';
 import { getClassroomsBySchool } from '@/lib/api';
 import type { Classroom } from '@/lib/types';
@@ -685,6 +686,7 @@ export default function ClassroomPage() {
                   Timer {showTimer ? formatTimer(elapsedSeconds) : 'Off'}
                 </button>
               </div>
+              <VirtualAcademicKeyboard />
             </>
           )}
 

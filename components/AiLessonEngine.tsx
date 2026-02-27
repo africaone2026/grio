@@ -15,6 +15,7 @@ import {
 } from '@/lib/api';
 import { useSpeech } from '@/hooks/useSpeech';
 import { useSpeechRecognition } from '@/hooks/useSpeechRecognition';
+import { useAcademicKeyboard } from '@/context/AcademicKeyboardContext';
 import AnimatedAvatar from '@/components/AnimatedAvatar';
 import type { AvatarState } from '@/components/AnimatedAvatar';
 
@@ -150,6 +151,15 @@ export default function AiLessonEngine({
   });
 
   const speech = useSpeech();
+
+  const { registerInput, unregisterInput, open: openKeyboard } = useAcademicKeyboard();
+  const followUpInputRef = useRef<HTMLInputElement>(null);
+  const getValueRef = useRef<() => string>(() => '');
+  getValueRef.current = () => followUpQuestion;
+  useEffect(() => {
+    registerInput(followUpInputRef, () => getValueRef.current(), setFollowUpQuestion);
+    return () => unregisterInput();
+  }, [registerInput, unregisterInput]);
 
   useEffect(() => {
     if (isPaused) {
@@ -870,7 +880,31 @@ export default function AiLessonEngine({
               Get a hint
             </button>
           )}
+          <button
+            type="button"
+            onClick={openKeyboard}
+            title="Insert academic symbols"
+            aria-label="Open academic symbols keyboard"
+            className={`flex items-center justify-center w-12 h-12 rounded-xl border transition-colors flex-shrink-0 ${
+              isLight
+                ? 'border-slate-300 text-slate-600 hover:bg-slate-100 hover:border-teal-400 hover:text-teal-600'
+                : 'border-slate-600/60 text-slate-400 hover:text-teal-400 hover:border-teal-500/60 hover:bg-teal-500/10'
+            }`}
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 3v2" />
+              <path d="M12 19v2" />
+              <path d="M3 12h2" />
+              <path d="M19 12h2" />
+              <path d="M5.64 5.64l1.42 1.42" />
+              <path d="M16.94 16.94l1.42 1.42" />
+              <path d="M5.64 18.36l1.42-1.42" />
+              <path d="M16.94 7.06l1.42-1.42" />
+              <path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z" />
+            </svg>
+          </button>
           <input
+            ref={followUpInputRef}
             type="text"
             value={
               speechRecognition.isListening
