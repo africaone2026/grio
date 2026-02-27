@@ -58,7 +58,7 @@ export default function ConceptSummaryPanel({ subject, topic, theme = 'dark' }: 
   }`;
 
   return (
-    <div className="p-5 sm:p-6 flex flex-col gap-6 overflow-y-auto h-full">
+    <div className="p-5 sm:p-6 flex flex-col gap-6 overflow-y-auto h-full min-h-0">
       <h2
         className={`text-base sm:text-lg font-bold pb-2 border-b ${
           isLight ? 'text-slate-900 border-slate-200' : 'text-white border-white/10'

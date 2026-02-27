@@ -561,12 +561,14 @@ export default function AiLessonEngine({
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex-1 flex flex-col items-center justify-center px-8 pb-4">
-        <AnimatedAvatar
-          state={avatarState}
-          isSpeaking={speech.isSpeaking}
-          glowColor={getGlowColor(currentResponse?.type)}
-        />
+      <div className="flex-1 min-h-0 flex flex-col items-center px-8 pb-4 overflow-y-auto">
+        <div className="flex-shrink-0 pt-4">
+          <AnimatedAvatar
+            state={avatarState}
+            isSpeaking={speech.isSpeaking}
+            glowColor={getGlowColor(currentResponse?.type)}
+          />
+        </div>
 
         {isLoading && !currentResponse && (
           <motion.div
@@ -582,7 +584,7 @@ export default function AiLessonEngine({
           {currentResponse && (
             <motion.div
               key={responseKey}
-              className="w-full max-w-3xl"
+              className="w-full max-w-3xl flex-shrink-0"
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
@@ -808,7 +810,7 @@ export default function AiLessonEngine({
       </div>
 
       <div
-        className={`px-6 sm:px-8 pb-4 pt-4 border-t ${
+        className={`flex-shrink-0 px-6 sm:px-8 pb-4 pt-4 border-t ${
           isLight ? 'border-slate-200' : 'border-white/5'
         }`}
       >
