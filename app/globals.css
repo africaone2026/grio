@@ -132,3 +132,11 @@ html[data-presentation="true"] [data-main] {
   max-width: 100% !important;
   width: 100% !important;
 }
+
+/* ── Virtual Academic Keyboard in presentation mode ── */
+html[data-presentation="true"] [data-virtual-keyboard] {
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
