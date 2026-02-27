@@ -15,6 +15,9 @@ type Theme = 'light' | 'dark';
 
 const MUTE_STORAGE_KEY = 'grio-speech-muted';
 const THEME_STORAGE_KEY = 'grio-classroom-theme';
+const HIGH_CONTRAST_KEY = 'grio-teach-high-contrast';
+const LARGE_TYPE_KEY = 'grio-teach-large-type';
+const PRESENTATION_KEY = 'grio-teach-presentation-mode';
 
 function getStoredMute(): boolean {
   if (typeof window === 'undefined') return false;
@@ -32,6 +35,15 @@ function getStoredTheme(): Theme {
     return v === 'light' || v === 'dark' ? v : 'dark';
   } catch {
     return 'dark';
+  }
+}
+
+function getStoredBool(key: string): boolean {
+  if (typeof window === 'undefined') return false;
+  try {
+    return localStorage.getItem(key) === 'true';
+  } catch {
+    return false;
   }
 }
 
@@ -74,6 +86,9 @@ export default function ClassroomPage() {
   const [showTimer, setShowTimer] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [theme, setTheme] = useState<Theme>(getStoredTheme);
+  const [highContrast, setHighContrast] = useState(() => getStoredBool(HIGH_CONTRAST_KEY));
+  const [largeTypography, setLargeTypography] = useState(() => getStoredBool(LARGE_TYPE_KEY));
+  const [presentationMode, setPresentationMode] = useState(() => getStoredBool(PRESENTATION_KEY));
 
   useEffect(() => {
     if (user) {
@@ -190,6 +205,30 @@ export default function ClassroomPage() {
     });
   }, []);
 
+  const handleToggleHighContrast = useCallback(() => {
+    setHighContrast((prev) => {
+      const next = !prev;
+      try { localStorage.setItem(HIGH_CONTRAST_KEY, String(next)); } catch {}
+      return next;
+    });
+  }, []);
+
+  const handleToggleLargeType = useCallback(() => {
+    setLargeTypography((prev) => {
+      const next = !prev;
+      try { localStorage.setItem(LARGE_TYPE_KEY, String(next)); } catch {}
+      return next;
+    });
+  }, []);
+
+  const handleTogglePresentation = useCallback(() => {
+    setPresentationMode((prev) => {
+      const next = !prev;
+      try { localStorage.setItem(PRESENTATION_KEY, String(next)); } catch {}
+      return next;
+    });
+  }, []);
+
   useEffect(() => {
     if (phase !== 'active' || !sessionStartTime || isPaused) return;
     const start = sessionStartTime.getTime();
@@ -205,6 +244,18 @@ export default function ClassroomPage() {
     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
+  useEffect(() => {
+    if (!presentationMode) return;
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setPresentationMode(false);
+        try { localStorage.setItem(PRESENTATION_KEY, 'false'); } catch {}
+      }
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [presentationMode]);
+
   const classroom = classrooms.find((c) => c.id === selectedClassroom);
   const isLight = theme === 'light';
 
@@ -216,124 +267,183 @@ export default function ClassroomPage() {
     ? 'border-slate-300 text-slate-600 hover:text-slate-900 hover:border-slate-400 hover:bg-slate-50'
     : 'border-white/10 text-slate-400 hover:text-white hover:border-white/20';
 
+  const isTeachActive = phase === 'active' && selectedMode === 'teach';
+
   return (
     <div
-      className={`min-h-screen flex flex-col transition-colors duration-200 ${
+      className={`flex flex-col transition-colors duration-200 ${
+        isTeachActive ? 'h-screen min-h-[768px] min-w-[1366px] overflow-hidden' : 'min-h-screen'
+      } ${
         isLight ? 'bg-slate-50 text-slate-900' : 'bg-[#0B1220] text-white'
       }`}
       style={{ fontFamily: 'system-ui, sans-serif' }}
+      {...(isTeachActive ? {
+        'data-teach-mode': 'true',
+        ...(highContrast ? { 'data-high-contrast': 'true' } : {}),
+        ...(largeTypography ? { 'data-large-type': 'true' } : {}),
+      } : {})}
     >
-      <header
-        className={`flex items-center justify-between px-6 sm:px-8 py-4 border-b flex-shrink-0 ${headerBg} ${isLight ? '' : 'border-white/10'}`}
-      >
-        <div className="flex items-center gap-4 sm:gap-6 flex-wrap">
-          <div className="flex items-center gap-2">
-            <span className={`font-bold text-xl sm:text-2xl tracking-tight ${headerText}`}>GRIO</span>
-            <span
-              className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                isLight ? 'bg-teal-100 text-teal-700' : 'bg-teal-900/50 text-teal-300'
-              }`}
-            >
-              AI
-            </span>
-          </div>
-          {phase === 'active' && (
-            <div className="flex items-center gap-3 sm:gap-5 text-sm flex-wrap">
-              {classroom && (
-                <span className={headerMuted}>
-                  <span className={headerLabel}>Classroom:</span>{' '}
-                  <span className={`font-medium ${headerText}`}>{classroom.name}</span>
-                </span>
-              )}
-              <span className={headerMuted}>
-                <span className={headerLabel}>Subject:</span>{' '}
-                <span className={`font-medium ${headerText}`}>{selectedSubjectName}</span>
-              </span>
-              <span className={headerMuted}>
-                <span className={headerLabel}>Topic:</span>{' '}
-                <span className={`font-medium ${headerText}`}>{selectedTopic}</span>
-              </span>
+      {!(isTeachActive && presentationMode) && (
+        <header
+          className={`flex items-center justify-between px-6 sm:px-8 py-4 border-b flex-shrink-0 ${headerBg} ${isLight ? '' : 'border-white/10'}`}
+        >
+          <div className="flex items-center gap-4 sm:gap-6 flex-wrap">
+            <div className="flex items-center gap-2">
+              <span className={`font-bold text-xl sm:text-2xl tracking-tight ${headerText}`}>GRIO</span>
               <span
-                title={
-                  selectedMode === 'teach'
-                    ? 'AI-guided lesson'
-                    : selectedMode === 'quiz'
-                    ? 'Direct practice'
-                    : 'Key points + rapid-fire'
-                }
-                className={`px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide ${
-                  selectedMode === 'teach'
-                    ? isLight
-                      ? 'bg-teal-100 text-teal-800 border border-teal-200'
-                      : 'bg-teal-900/50 text-teal-300 border border-teal-700/40'
-                    : selectedMode === 'quiz'
-                    ? isLight
-                      ? 'bg-blue-100 text-blue-800 border border-blue-200'
-                      : 'bg-blue-900/50 text-blue-300 border border-blue-700/40'
-                    : isLight
-                    ? 'bg-amber-100 text-amber-800 border border-amber-200'
-                    : 'bg-amber-900/50 text-amber-300 border border-amber-700/40'
+                className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                  isLight ? 'bg-teal-100 text-teal-700' : 'bg-teal-900/50 text-teal-300'
                 }`}
               >
-                {selectedMode} mode
+                AI
               </span>
-              <button
-                type="button"
-                onClick={() => setShowTimer((prev) => !prev)}
-                className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors ${
-                  showTimer
-                    ? isLight
-                      ? 'bg-slate-200 border-slate-400 text-slate-800'
-                      : 'bg-slate-600/60 border-slate-500 text-white'
-                    : isLight
-                    ? 'border-slate-300 text-slate-500 hover:text-slate-700 hover:bg-slate-100'
-                    : 'border-slate-600/60 text-slate-400 hover:text-slate-300'
-                }`}
-                title={showTimer ? 'Hide timer' : 'Show timer'}
-              >
-                Timer {showTimer ? formatTimer(elapsedSeconds) : 'Off'}
-              </button>
             </div>
-          )}
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={handleToggleTheme}
-            className={`p-2.5 rounded-xl border transition-colors ${exitBtn}`}
-            title={isLight ? 'Switch to dark mode' : 'Switch to light mode'}
-            aria-label={isLight ? 'Switch to dark mode' : 'Switch to light mode'}
-          >
-            {isLight ? (
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-              </svg>
-            ) : (
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="5" />
-                <line x1="12" y1="1" x2="12" y2="3" />
-                <line x1="12" y1="21" x2="12" y2="23" />
-                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                <line x1="1" y1="12" x2="3" y2="12" />
-                <line x1="21" y1="12" x2="23" y2="12" />
-                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-              </svg>
+            {phase === 'active' && (
+              <div className="flex items-center gap-3 sm:gap-5 text-sm flex-wrap">
+                {classroom && (
+                  <span className={headerMuted}>
+                    <span className={headerLabel}>Classroom:</span>{' '}
+                    <span className={`font-medium ${headerText}`}>{classroom.name}</span>
+                  </span>
+                )}
+                <span className={headerMuted}>
+                  <span className={headerLabel}>Subject:</span>{' '}
+                  <span className={`font-medium ${headerText}`}>{selectedSubjectName}</span>
+                </span>
+                <span className={headerMuted}>
+                  <span className={headerLabel}>Topic:</span>{' '}
+                  <span className={`font-medium ${headerText}`}>{selectedTopic}</span>
+                </span>
+                <span
+                  title={
+                    selectedMode === 'teach'
+                      ? 'AI-guided lesson'
+                      : selectedMode === 'quiz'
+                      ? 'Direct practice'
+                      : 'Key points + rapid-fire'
+                  }
+                  className={`px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide ${
+                    selectedMode === 'teach'
+                      ? isLight
+                        ? 'bg-teal-100 text-teal-800 border border-teal-200'
+                        : 'bg-teal-900/50 text-teal-300 border border-teal-700/40'
+                      : selectedMode === 'quiz'
+                      ? isLight
+                        ? 'bg-blue-100 text-blue-800 border border-blue-200'
+                        : 'bg-blue-900/50 text-blue-300 border border-blue-700/40'
+                      : isLight
+                      ? 'bg-amber-100 text-amber-800 border border-amber-200'
+                      : 'bg-amber-900/50 text-amber-300 border border-amber-700/40'
+                  }`}
+                >
+                  {selectedMode} mode
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setShowTimer((prev) => !prev)}
+                  className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors ${
+                    showTimer
+                      ? isLight
+                        ? 'bg-slate-200 border-slate-400 text-slate-800'
+                        : 'bg-slate-600/60 border-slate-500 text-white'
+                      : isLight
+                      ? 'border-slate-300 text-slate-500 hover:text-slate-700 hover:bg-slate-100'
+                      : 'border-slate-600/60 text-slate-400 hover:text-slate-300'
+                  }`}
+                  title={showTimer ? 'Hide timer' : 'Show timer'}
+                >
+                  Timer {showTimer ? formatTimer(elapsedSeconds) : 'Off'}
+                </button>
+                {isTeachActive && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={handleToggleHighContrast}
+                      className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors ${
+                        highContrast
+                          ? isLight
+                            ? 'bg-slate-200 border-slate-400 text-slate-800'
+                            : 'bg-slate-600/60 border-slate-500 text-white'
+                          : isLight
+                          ? 'border-slate-300 text-slate-500 hover:text-slate-700 hover:bg-slate-100'
+                          : 'border-slate-600/60 text-slate-400 hover:text-slate-300'
+                      }`}
+                      title={highContrast ? 'Disable high contrast' : 'Enable high contrast'}
+                    >
+                      Contrast {highContrast ? 'On' : 'Off'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleToggleLargeType}
+                      className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors ${
+                        largeTypography
+                          ? isLight
+                            ? 'bg-slate-200 border-slate-400 text-slate-800'
+                            : 'bg-slate-600/60 border-slate-500 text-white'
+                          : isLight
+                          ? 'border-slate-300 text-slate-500 hover:text-slate-700 hover:bg-slate-100'
+                          : 'border-slate-600/60 text-slate-400 hover:text-slate-300'
+                      }`}
+                      title={largeTypography ? 'Disable large text' : 'Enable large text'}
+                    >
+                      Large Text {largeTypography ? 'On' : 'Off'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleTogglePresentation}
+                      className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors ${
+                        isLight
+                          ? 'border-slate-300 text-slate-500 hover:text-slate-700 hover:bg-slate-100'
+                          : 'border-slate-600/60 text-slate-400 hover:text-slate-300'
+                      }`}
+                      title="Enter presentation mode"
+                    >
+                      Present
+                    </button>
+                  </>
+                )}
+              </div>
             )}
-          </button>
-          <button
-            onClick={handleExit}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-colors ${exitBtn}`}
-          >
-            <span>Exit</span>
-            <span aria-hidden>✕</span>
-          </button>
-        </div>
-      </header>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={handleToggleTheme}
+              className={`p-2.5 rounded-xl border transition-colors ${exitBtn}`}
+              title={isLight ? 'Switch to dark mode' : 'Switch to light mode'}
+              aria-label={isLight ? 'Switch to dark mode' : 'Switch to light mode'}
+            >
+              {isLight ? (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                </svg>
+              ) : (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="5" />
+                  <line x1="12" y1="1" x2="12" y2="3" />
+                  <line x1="12" y1="21" x2="12" y2="23" />
+                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                  <line x1="1" y1="12" x2="3" y2="12" />
+                  <line x1="21" y1="12" x2="23" y2="12" />
+                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                  <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                </svg>
+              )}
+            </button>
+            <button
+              onClick={handleExit}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-colors ${exitBtn}`}
+            >
+              <span>Exit</span>
+              <span aria-hidden>✕</span>
+            </button>
+          </div>
+        </header>
+      )}
 
       <div className="flex flex-1 overflow-hidden">
-        {phase === 'active' && (
+        {phase === 'active' && !(isTeachActive && presentationMode) && (
           <aside
             className={`flex-shrink-0 border-r flex flex-col transition-[width] duration-200 ${
               conceptPanelOpen ? 'w-80' : 'w-12'
@@ -557,7 +667,10 @@ export default function ClassroomPage() {
 
           {phase === 'active' && (
             <>
-              <div className="flex-1 overflow-y-auto">
+              <div
+                className={`flex-1 min-h-0 ${isTeachActive ? 'overflow-hidden' : 'overflow-y-auto'}`}
+                {...(isTeachActive ? { 'data-teach-main': '' } : {})}
+              >
                 <AiLessonEngine
                   subject={selectedSubjectName}
                   topic={selectedTopic}
@@ -622,6 +735,19 @@ export default function ClassroomPage() {
                   )}
                 </span>
               </div>
+              {isTeachActive && presentationMode && (
+                <button
+                  type="button"
+                  onClick={handleTogglePresentation}
+                  className={`fixed bottom-6 right-6 z-50 px-5 py-3 rounded-xl text-sm font-semibold shadow-lg transition-colors ${
+                    isLight
+                      ? 'bg-white/90 border border-slate-300 text-slate-700 hover:bg-white'
+                      : 'bg-slate-800/90 border border-slate-600 text-slate-200 hover:bg-slate-700'
+                  }`}
+                >
+                  Exit Presentation
+                </button>
+              )}
             </>
           )}
 

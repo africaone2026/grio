@@ -13,3 +13,49 @@ body {
 * {
   box-sizing: border-box;
 }
+
+/* ── Teach-mode layout scaling ── */
+[data-teach-mode="true"] [data-teach-main] {
+  --teach-content-max-width: 56rem; /* max-w-4xl */
+}
+
+@media (min-width: 1920px) {
+  [data-teach-mode="true"] [data-teach-main] {
+    --teach-content-max-width: 64rem;
+  }
+}
+
+@media (min-width: 2560px) {
+  [data-teach-mode="true"] [data-teach-main] {
+    --teach-content-max-width: 80rem;
+  }
+}
+
+@media (min-width: 3840px) {
+  [data-teach-mode="true"] [data-teach-main] {
+    --teach-content-max-width: 96rem;
+  }
+}
+
+/* ── High contrast overrides (teach mode only) ── */
+[data-teach-mode="true"][data-high-contrast="true"] {
+  --teach-border-strength: 2px;
+}
+
+[data-teach-mode="true"][data-high-contrast="true"] .rounded-2xl,
+[data-teach-mode="true"][data-high-contrast="true"] .rounded-xl {
+  border-width: var(--teach-border-strength);
+}
+
+[data-teach-mode="true"][data-high-contrast="true"] p,
+[data-teach-mode="true"][data-high-contrast="true"] span,
+[data-teach-mode="true"][data-high-contrast="true"] h1,
+[data-teach-mode="true"][data-high-contrast="true"] h2,
+[data-teach-mode="true"][data-high-contrast="true"] h3 {
+  filter: contrast(1.15);
+}
+
+/* ── Large typography overrides (teach mode only) ── */
+[data-teach-mode="true"][data-large-type="true"] {
+  font-size: 112.5%; /* 18px base */
+}
