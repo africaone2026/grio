@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import { useUI } from '@/context/UIContext';
 import { useState } from 'react';
 import type { UserRole } from '@/lib/types';
 
@@ -70,6 +71,7 @@ const ROOT_HREFS = new Set(['/dashboard', '/teacher', '/admin', '/school-admin']
 
 export default function Sidebar() {
   const { user, logout } = useAuth();
+  const { highContrast, largeTypography, presentationMode, toggleHighContrast, toggleLargeTypography, togglePresentationMode } = useUI();
   const pathname = usePathname();
   const [confirmingLogout, setConfirmingLogout] = useState(false);
 
@@ -87,7 +89,7 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="w-64 bg-[#0b1f36] min-h-screen flex flex-col flex-shrink-0">
+    <aside data-sidebar className="w-64 bg-[#0b1f36] min-h-screen flex flex-col flex-shrink-0">
       <div className="px-6 py-6 border-b border-white/10">
         <Link href="/" className="flex items-center gap-2">
           <span className="text-white font-bold text-xl tracking-tight">GRIO</span>
@@ -133,6 +135,63 @@ export default function Sidebar() {
           );
         })}
       </nav>
+
+      <div className="px-3 py-3 border-t border-white/10">
+        <p className="text-[10px] uppercase tracking-widest text-slate-500 font-semibold px-3 mb-2">Display</p>
+        <div className="space-y-1">
+          <button
+            type="button"
+            onClick={toggleHighContrast}
+            className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
+              highContrast
+                ? 'bg-blue-600/20 text-blue-300'
+                : 'text-slate-400 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <span className="flex items-center gap-2">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20z"/></svg>
+              High Contrast
+            </span>
+            <span className={`text-[10px] px-1.5 py-0.5 rounded ${highContrast ? 'bg-blue-600/40 text-blue-200' : 'bg-white/5 text-slate-500'}`}>
+              {highContrast ? 'ON' : 'OFF'}
+            </span>
+          </button>
+          <button
+            type="button"
+            onClick={toggleLargeTypography}
+            className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
+              largeTypography
+                ? 'bg-blue-600/20 text-blue-300'
+                : 'text-slate-400 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <span className="flex items-center gap-2">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
+              Large Text
+            </span>
+            <span className={`text-[10px] px-1.5 py-0.5 rounded ${largeTypography ? 'bg-blue-600/40 text-blue-200' : 'bg-white/5 text-slate-500'}`}>
+              {largeTypography ? 'ON' : 'OFF'}
+            </span>
+          </button>
+          <button
+            type="button"
+            onClick={togglePresentationMode}
+            className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
+              presentationMode
+                ? 'bg-blue-600/20 text-blue-300'
+                : 'text-slate-400 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <span className="flex items-center gap-2">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>
+              Presentation
+            </span>
+            <span className={`text-[10px] px-1.5 py-0.5 rounded ${presentationMode ? 'bg-blue-600/40 text-blue-200' : 'bg-white/5 text-slate-500'}`}>
+              {presentationMode ? 'ON' : 'OFF'}
+            </span>
+          </button>
+        </div>
+      </div>
 
       <div className="px-3 pb-6 mt-auto border-t border-white/10 pt-4">
         {user.subscriptionStatus === 'active' ? (

@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { useApp } from '@/context/AppContext';
+import { useUI } from '@/context/UIContext';
 import AiLessonEngine from '@/components/AiLessonEngine';
 import ConceptSummaryPanel from '@/components/ConceptSummaryPanel';
 import type { SessionMode, LessonSession } from '@/lib/types';
@@ -15,9 +16,6 @@ type Theme = 'light' | 'dark';
 
 const MUTE_STORAGE_KEY = 'grio-speech-muted';
 const THEME_STORAGE_KEY = 'grio-classroom-theme';
-const HIGH_CONTRAST_KEY = 'grio-teach-high-contrast';
-const LARGE_TYPE_KEY = 'grio-teach-large-type';
-const PRESENTATION_KEY = 'grio-teach-presentation-mode';
 
 function getStoredMute(): boolean {
   if (typeof window === 'undefined') return false;
@@ -35,15 +33,6 @@ function getStoredTheme(): Theme {
     return v === 'light' || v === 'dark' ? v : 'dark';
   } catch {
     return 'dark';
-  }
-}
-
-function getStoredBool(key: string): boolean {
-  if (typeof window === 'undefined') return false;
-  try {
-    return localStorage.getItem(key) === 'true';
-  } catch {
-    return false;
   }
 }
 
@@ -70,6 +59,7 @@ export default function ClassroomPage() {
   const router = useRouter();
   const { user } = useAuth();
   const { addSession, subjects: contextSubjects, initForUser, loadTopics, topics: contextTopics } = useApp();
+  const { highContrast, largeTypography, presentationMode, toggleHighContrast, toggleLargeTypography, togglePresentationMode, setPresentationMode } = useUI();
 
   const [classrooms, setClassrooms] = useState<Classroom[]>([]);
   const [selectedClassroom, setSelectedClassroom] = useState('');
@@ -86,9 +76,6 @@ export default function ClassroomPage() {
   const [showTimer, setShowTimer] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [theme, setTheme] = useState<Theme>(getStoredTheme);
-  const [highContrast, setHighContrast] = useState(() => getStoredBool(HIGH_CONTRAST_KEY));
-  const [largeTypography, setLargeTypography] = useState(() => getStoredBool(LARGE_TYPE_KEY));
-  const [presentationMode, setPresentationMode] = useState(() => getStoredBool(PRESENTATION_KEY));
 
   useEffect(() => {
     if (user) {
@@ -205,29 +192,6 @@ export default function ClassroomPage() {
     });
   }, []);
 
-  const handleToggleHighContrast = useCallback(() => {
-    setHighContrast((prev) => {
-      const next = !prev;
-      try { localStorage.setItem(HIGH_CONTRAST_KEY, String(next)); } catch {}
-      return next;
-    });
-  }, []);
-
-  const handleToggleLargeType = useCallback(() => {
-    setLargeTypography((prev) => {
-      const next = !prev;
-      try { localStorage.setItem(LARGE_TYPE_KEY, String(next)); } catch {}
-      return next;
-    });
-  }, []);
-
-  const handleTogglePresentation = useCallback(() => {
-    setPresentationMode((prev) => {
-      const next = !prev;
-      try { localStorage.setItem(PRESENTATION_KEY, String(next)); } catch {}
-      return next;
-    });
-  }, []);
 
   useEffect(() => {
     if (phase !== 'active' || !sessionStartTime || isPaused) return;
@@ -244,18 +208,6 @@ export default function ClassroomPage() {
     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
-  useEffect(() => {
-    if (!presentationMode) return;
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setPresentationMode(false);
-        try { localStorage.setItem(PRESENTATION_KEY, 'false'); } catch {}
-      }
-    };
-    window.addEventListener('keydown', handleEsc);
-    return () => window.removeEventListener('keydown', handleEsc);
-  }, [presentationMode]);
-
   const classroom = classrooms.find((c) => c.id === selectedClassroom);
   const isLight = theme === 'light';
 
@@ -268,22 +220,19 @@ export default function ClassroomPage() {
     : 'border-white/10 text-slate-400 hover:text-white hover:border-white/20';
 
   const isTeachActive = phase === 'active' && selectedMode === 'teach';
+  const isSessionActive = phase === 'active';
 
   return (
     <div
       className={`flex flex-col transition-colors duration-200 ${
-        isTeachActive ? 'h-screen min-h-[768px] min-w-[1366px] overflow-hidden' : 'min-h-screen'
+        isSessionActive ? 'h-screen min-h-[768px] min-w-[1366px] overflow-hidden' : 'min-h-screen'
       } ${
         isLight ? 'bg-slate-50 text-slate-900' : 'bg-[#0B1220] text-white'
       }`}
       style={{ fontFamily: 'system-ui, sans-serif' }}
-      {...(isTeachActive ? {
-        'data-teach-mode': 'true',
-        ...(highContrast ? { 'data-high-contrast': 'true' } : {}),
-        ...(largeTypography ? { 'data-large-type': 'true' } : {}),
-      } : {})}
+      {...(isSessionActive ? { 'data-teach-mode': 'true' } : {})}
     >
-      {!(isTeachActive && presentationMode) && (
+      {!(isSessionActive && presentationMode) && (
         <header
           className={`flex items-center justify-between px-6 sm:px-8 py-4 border-b flex-shrink-0 ${headerBg} ${isLight ? '' : 'border-white/10'}`}
         >
@@ -338,27 +287,11 @@ export default function ClassroomPage() {
                 >
                   {selectedMode} mode
                 </span>
-                <button
-                  type="button"
-                  onClick={() => setShowTimer((prev) => !prev)}
-                  className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors ${
-                    showTimer
-                      ? isLight
-                        ? 'bg-slate-200 border-slate-400 text-slate-800'
-                        : 'bg-slate-600/60 border-slate-500 text-white'
-                      : isLight
-                      ? 'border-slate-300 text-slate-500 hover:text-slate-700 hover:bg-slate-100'
-                      : 'border-slate-600/60 text-slate-400 hover:text-slate-300'
-                  }`}
-                  title={showTimer ? 'Hide timer' : 'Show timer'}
-                >
-                  Timer {showTimer ? formatTimer(elapsedSeconds) : 'Off'}
-                </button>
-                {isTeachActive && (
+                {isSessionActive && (
                   <>
                     <button
                       type="button"
-                      onClick={handleToggleHighContrast}
+                      onClick={toggleHighContrast}
                       className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors ${
                         highContrast
                           ? isLight
@@ -374,7 +307,7 @@ export default function ClassroomPage() {
                     </button>
                     <button
                       type="button"
-                      onClick={handleToggleLargeType}
+                      onClick={toggleLargeTypography}
                       className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors ${
                         largeTypography
                           ? isLight
@@ -390,7 +323,7 @@ export default function ClassroomPage() {
                     </button>
                     <button
                       type="button"
-                      onClick={handleTogglePresentation}
+                      onClick={togglePresentationMode}
                       className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors ${
                         isLight
                           ? 'border-slate-300 text-slate-500 hover:text-slate-700 hover:bg-slate-100'
@@ -443,7 +376,7 @@ export default function ClassroomPage() {
       )}
 
       <div className="flex flex-1 overflow-hidden">
-        {phase === 'active' && !(isTeachActive && presentationMode) && (
+        {phase === 'active' && !(isSessionActive && presentationMode) && (
           <aside
             className={`flex-shrink-0 border-r flex flex-col transition-[width] duration-200 ${
               conceptPanelOpen ? 'w-80' : 'w-12'
@@ -668,8 +601,8 @@ export default function ClassroomPage() {
           {phase === 'active' && (
             <>
               <div
-                className={`flex-1 min-h-0 ${isTeachActive ? 'overflow-hidden' : 'overflow-y-auto'}`}
-                {...(isTeachActive ? { 'data-teach-main': '' } : {})}
+                className="flex-1 min-h-0 overflow-hidden"
+                data-teach-main=""
               >
                 <AiLessonEngine
                   subject={selectedSubjectName}
@@ -734,20 +667,24 @@ export default function ClassroomPage() {
                     <span className="text-emerald-500">Live</span>
                   )}
                 </span>
-              </div>
-              {isTeachActive && presentationMode && (
+                <div className={`w-px h-6 ${isLight ? 'bg-slate-200' : 'bg-white/10'}`} />
                 <button
                   type="button"
-                  onClick={handleTogglePresentation}
-                  className={`fixed bottom-6 right-6 z-50 px-5 py-3 rounded-xl text-sm font-semibold shadow-lg transition-colors ${
-                    isLight
-                      ? 'bg-white/90 border border-slate-300 text-slate-700 hover:bg-white'
-                      : 'bg-slate-800/90 border border-slate-600 text-slate-200 hover:bg-slate-700'
+                  onClick={() => setShowTimer((prev) => !prev)}
+                  className={`px-4 py-2.5 rounded-xl border text-sm font-medium transition-colors ${
+                    showTimer
+                      ? isLight
+                        ? 'bg-slate-200 border-slate-400 text-slate-800'
+                        : 'bg-slate-600/60 border-slate-500 text-white'
+                      : isLight
+                      ? 'border-slate-300 text-slate-500 hover:text-slate-700 hover:bg-slate-100'
+                      : 'border-slate-600/60 text-slate-400 hover:text-slate-300'
                   }`}
+                  title={showTimer ? 'Hide timer' : 'Show timer'}
                 >
-                  Exit Presentation
+                  Timer {showTimer ? formatTimer(elapsedSeconds) : 'Off'}
                 </button>
-              )}
+              </div>
             </>
           )}
 
