@@ -173,6 +173,13 @@ export default function VirtualAcademicKeyboard() {
     } catch {}
   }, []);
 
+  const handleBackdropClick = useCallback(
+    (e: React.MouseEvent) => {
+      if (e.target === e.currentTarget) close();
+    },
+    [close]
+  );
+
   if (!isOpen) return null;
 
   const panelClasses = [
@@ -188,13 +195,19 @@ export default function VirtualAcademicKeyboard() {
   ].join(' ');
 
   return (
-    <div
-      ref={panelRef}
-      role="dialog"
-      aria-label="Academic Symbols"
-      data-virtual-keyboard
-      className={panelClasses}
-      style={
+    <>
+      <div
+        className="fixed inset-0 z-[999]"
+        aria-hidden
+        onClick={handleBackdropClick}
+      />
+      <div
+        ref={panelRef}
+        role="dialog"
+        aria-label="Academic Symbols"
+        data-virtual-keyboard
+        className={panelClasses}
+        style={
         isDocked
           ? { position: 'fixed', left: 0, right: 0, bottom: 0, width: '100%', maxWidth: '100%' }
           : {
@@ -205,6 +218,7 @@ export default function VirtualAcademicKeyboard() {
       }
       onKeyDown={handlePanelKeyDown}
       tabIndex={0}
+      onClick={(e) => e.stopPropagation()}
     >
       <div className={headerClasses}>
         {!isDocked && (
@@ -311,6 +325,7 @@ export default function VirtualAcademicKeyboard() {
         })}
       </div>
     </div>
+    </>
   );
 }
 
