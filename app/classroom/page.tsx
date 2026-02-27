@@ -220,18 +220,19 @@ export default function ClassroomPage() {
     : 'border-white/10 text-slate-400 hover:text-white hover:border-white/20';
 
   const isTeachActive = phase === 'active' && selectedMode === 'teach';
+  const isSessionActive = phase === 'active';
 
   return (
     <div
       className={`flex flex-col transition-colors duration-200 ${
-        isTeachActive ? 'h-screen min-h-[768px] min-w-[1366px] overflow-hidden' : 'min-h-screen'
+        isSessionActive ? 'h-screen min-h-[768px] min-w-[1366px] overflow-hidden' : 'min-h-screen'
       } ${
         isLight ? 'bg-slate-50 text-slate-900' : 'bg-[#0B1220] text-white'
       }`}
       style={{ fontFamily: 'system-ui, sans-serif' }}
-      {...(isTeachActive ? { 'data-teach-mode': 'true' } : {})}
+      {...(isSessionActive ? { 'data-teach-mode': 'true' } : {})}
     >
-      {!(isTeachActive && presentationMode) && (
+      {!(isSessionActive && presentationMode) && (
         <header
           className={`flex items-center justify-between px-6 sm:px-8 py-4 border-b flex-shrink-0 ${headerBg} ${isLight ? '' : 'border-white/10'}`}
         >
@@ -286,7 +287,7 @@ export default function ClassroomPage() {
                 >
                   {selectedMode} mode
                 </span>
-                {isTeachActive && (
+                {isSessionActive && (
                   <>
                     <button
                       type="button"
@@ -375,7 +376,7 @@ export default function ClassroomPage() {
       )}
 
       <div className="flex flex-1 overflow-hidden">
-        {phase === 'active' && !(isTeachActive && presentationMode) && (
+        {phase === 'active' && !(isSessionActive && presentationMode) && (
           <aside
             className={`flex-shrink-0 border-r flex flex-col transition-[width] duration-200 ${
               conceptPanelOpen ? 'w-80' : 'w-12'
@@ -600,8 +601,8 @@ export default function ClassroomPage() {
           {phase === 'active' && (
             <>
               <div
-                className={`flex-1 min-h-0 ${isTeachActive ? 'overflow-hidden' : 'overflow-y-auto'}`}
-                {...(isTeachActive ? { 'data-teach-main': '' } : {})}
+                className="flex-1 min-h-0 overflow-hidden"
+                data-teach-main=""
               >
                 <AiLessonEngine
                   subject={selectedSubjectName}
