@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useApp } from '@/context/AppContext';
 import { generateFollowUpResponse } from '@/lib/api';
+import LearnSidebar from '@/components/LearnSidebar';
 
 type MessageRole = 'learner' | 'grio';
 
@@ -11,6 +12,13 @@ interface ChatMessage {
   role: MessageRole;
   content: string;
   title?: string;
+}
+
+interface ChatSession {
+  id: string;
+  messages: ChatMessage[];
+  title: string;
+  timestamp: number;
 }
 
 const SUGGESTED_PROMPTS = [
@@ -31,10 +39,101 @@ const WELCOME_MESSAGE: ChatMessage = {
 
 export default function LearnWithGrioPage() {
   const { subjects } = useApp();
+  const [currentChatId, setCurrentChatId] = useState<string>('default');
   const [messages, setMessages] = useState<ChatMessage[]>([WELCOME_MESSAGE]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [currentTopic, setCurrentTopic] = useState<string>('Algebra');
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Load chat from localStorage on mount or when chatId changes
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      if (currentChatId === 'new') {
+        setMessages([WELCOME_MESSAGE]);
+        const newChatId = `chat_${Date.now()}`;
+        setCurrentChatId(newChatId);
+        return;
+      }
+
+      if (currentChatId === 'default') {
+        setMessages([WELCOME_MESSAGE]);
+        return;
+      }
+
+      try {
+        const stored = localStorage.getItem(`grio_chat_${currentChatId}`);
+        if (stored) {
+          const session: ChatSession = JSON.parse(stored);
+          setMessages(session.messages);
+        } else {
+          setMessages([WELCOME_MESSAGE]);
+        }
+      } catch (error) {
+        console.error('Failed to load chat:', error);
+        setMessages([WELCOME_MESSAGE]);
+      }
+    }
+  }, [currentChatId]);
+
+  // Save chat to localStorage whenever messages change
+  useEffect(() => {
+    if (typeof window !== 'undefined' && messages.length > 1 && currentChatId !== 'new') {
+      try {
+        // Generate or update chat title from first user message
+        const firstUserMessage = messages.find((m) => m.role === 'learner');
+        const title = firstUserMessage
+          ? firstUserMessage.content.slice(0, 50) + (firstUserMessage.content.length > 50 ? '...' : '')
+          : 'New Chat';
+
+        const session: ChatSession = {
+          id: currentChatId,
+          messages,
+          title,
+          timestamp: Date.now(),
+        };
+
+        localStorage.setItem(`grio_chat_${currentChatId}`, JSON.stringify(session));
+
+        // Update chat history
+        const historyStr = localStorage.getItem('grio_chat_history');
+        let history: Array<{ id: string; title: string; timestamp: number; preview: string }> = [];
+        
+        if (historyStr) {
+          try {
+            history = JSON.parse(historyStr);
+          } catch (e) {
+            history = [];
+          }
+        }
+
+        const existingIndex = history.findIndex((h) => h.id === currentChatId);
+        const historyItem = {
+          id: currentChatId,
+          title,
+          timestamp: session.timestamp,
+          preview: messages[messages.length - 1]?.content.slice(0, 60) + '...' || '',
+        };
+
+        if (existingIndex >= 0) {
+          history[existingIndex] = historyItem;
+        } else {
+          history.unshift(historyItem);
+        }
+
+        // Keep only last 50 chats
+        history = history.slice(0, 50);
+        localStorage.setItem('grio_chat_history', JSON.stringify(history));
+        
+        // Dispatch custom event to notify sidebar
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new Event('grio_chat_updated'));
+        }
+      } catch (error) {
+        console.error('Failed to save chat:', error);
+      }
+    }
+  }, [messages, currentChatId]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -47,6 +146,12 @@ export default function LearnWithGrioPage() {
   const sendMessage = async (text: string) => {
     const trimmed = text.trim();
     if (!trimmed || isLoading) return;
+
+    // Generate new chat ID if starting a new chat
+    if (currentChatId === 'new' || currentChatId === 'default') {
+      const newChatId = `chat_${Date.now()}`;
+      setCurrentChatId(newChatId);
+    }
 
     const learnerMsg: ChatMessage = {
       id: `learner-${Date.now()}`,
@@ -66,6 +171,16 @@ export default function LearnWithGrioPage() {
         title: response.title ?? 'Grio',
       };
       setMessages((prev) => [...prev, grioMsg]);
+
+      // Try to extract topic from response for concept summary
+      // This is a simple heuristic - you might want to improve this
+      if (response.content.toLowerCase().includes('algebra')) {
+        setCurrentTopic('Algebra');
+      } else if (response.content.toLowerCase().includes('geometry')) {
+        setCurrentTopic('Geometry');
+      } else if (response.content.toLowerCase().includes('calculus')) {
+        setCurrentTopic('Calculus');
+      }
     } catch {
       setMessages((prev) => [
         ...prev,
@@ -87,15 +202,35 @@ export default function LearnWithGrioPage() {
   };
 
   const startNewChat = () => {
+    const newChatId = `chat_${Date.now()}`;
+    setCurrentChatId(newChatId);
     setMessages([WELCOME_MESSAGE]);
     setInput('');
+  };
+
+  const handleChatSelect = (chatId: string) => {
+    if (chatId === 'new') {
+      startNewChat();
+    } else if (chatId && chatId !== currentChatId) {
+      setCurrentChatId(chatId);
+    }
   };
 
   const currentSubject =
     subjects.length > 0 ? subjects[0].name : null;
 
   return (
-    <div className="flex flex-col h-[calc(100vh-0px)] max-h-[calc(100vh-0px)]">
+    <div className="flex h-[calc(100vh-0px)] max-h-[calc(100vh-0px)]">
+      {/* Sidebar */}
+      <LearnSidebar
+        currentTopic={currentTopic}
+        currentSubject={currentSubject || undefined}
+        onChatSelect={handleChatSelect}
+        currentChatId={currentChatId}
+      />
+
+      {/* Main chat area */}
+      <div className="flex flex-col flex-1 min-w-0">
       {/* Page header & identity */}
       <div className="flex-shrink-0 p-6 pb-4 bg-slate-50 border-b border-slate-200">
         <div className="max-w-3xl mx-auto">
@@ -226,6 +361,7 @@ export default function LearnWithGrioPage() {
         <p className="text-xs text-slate-400 mt-2 text-center max-w-3xl mx-auto">
           Tip: Ask for an explanation, a practice question, or a summary of a topic.
         </p>
+      </div>
       </div>
     </div>
   );
