@@ -8,6 +8,7 @@ import { useUI } from '@/context/UIContext';
 import AiLessonEngine from '@/components/AiLessonEngine';
 import ConceptSummaryPanel from '@/components/ConceptSummaryPanel';
 import VirtualAcademicKeyboard from '@/components/VirtualAcademicKeyboard';
+import ClassroomSidebar from '@/components/ClassroomSidebar';
 import type { SessionMode, LessonSession } from '@/lib/types';
 import { getClassroomsBySchool } from '@/lib/api';
 import type { Classroom } from '@/lib/types';
@@ -77,6 +78,7 @@ export default function ClassroomPage() {
   const [showTimer, setShowTimer] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [theme, setTheme] = useState<Theme>(getStoredTheme);
+  const [currentChatId, setCurrentChatId] = useState<string>('default');
 
   useEffect(() => {
     if (user) {
@@ -270,7 +272,9 @@ export default function ClassroomPage() {
                       ? 'AI-guided lesson'
                       : selectedMode === 'quiz'
                       ? 'Direct practice'
-                      : 'Key points + rapid-fire'
+                      : selectedMode === 'revision'
+                      ? 'Key points + rapid-fire'
+                      : 'Interactive conversation'
                   }
                   className={`px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide ${
                     selectedMode === 'teach'
@@ -281,9 +285,13 @@ export default function ClassroomPage() {
                       ? isLight
                         ? 'bg-blue-100 text-blue-800 border border-blue-200'
                         : 'bg-blue-900/50 text-blue-300 border border-blue-700/40'
+                      : selectedMode === 'revision'
+                      ? isLight
+                        ? 'bg-amber-100 text-amber-800 border border-amber-200'
+                        : 'bg-amber-900/50 text-amber-300 border border-amber-700/40'
                       : isLight
-                      ? 'bg-amber-100 text-amber-800 border border-amber-200'
-                      : 'bg-amber-900/50 text-amber-300 border border-amber-700/40'
+                      ? 'bg-purple-100 text-purple-800 border border-purple-200'
+                      : 'bg-purple-900/50 text-purple-300 border border-purple-700/40'
                   }`}
                 >
                   {selectedMode} mode
@@ -377,7 +385,24 @@ export default function ClassroomPage() {
       )}
 
       <div className="flex flex-1 overflow-hidden">
-        {phase === 'active' && !(isSessionActive && presentationMode) && (
+        {phase === 'active' && (selectedMode === 'teach' || selectedMode === 'chat') && !(isSessionActive && presentationMode) && (
+          <ClassroomSidebar
+            currentTopic={selectedTopic}
+            currentSubject={selectedSubjectName}
+            currentClassroomId={selectedClassroom}
+            theme={theme}
+            mode={selectedMode}
+            onChatSelect={(chatId) => {
+              if (chatId === 'new') {
+                setCurrentChatId(`chat_${Date.now()}`);
+              } else {
+                setCurrentChatId(chatId);
+              }
+            }}
+            currentChatId={currentChatId}
+          />
+        )}
+        {phase === 'active' && selectedMode !== 'teach' && selectedMode !== 'chat' && !(isSessionActive && presentationMode) && (
           <aside
             className={`flex-shrink-0 border-r flex flex-col transition-[width] duration-200 ${
               conceptPanelOpen ? 'w-80' : 'w-12'
@@ -526,7 +551,7 @@ export default function ClassroomPage() {
                 Mode
               </label>
               <div className="space-y-2">
-                {(['teach', 'quiz', 'revision'] as SessionMode[]).map((m) => (
+                {(['chat', 'teach', 'quiz', 'revision'] as SessionMode[]).map((m) => (
                   <button
                     key={m}
                     onClick={() => setSelectedMode(m)}
@@ -546,7 +571,9 @@ export default function ClassroomPage() {
                         ? 'AI-guided lesson with explanation and examples'
                         : m === 'quiz'
                         ? 'Jump straight into practice questions'
-                        : 'Summary bullets and rapid-fire questions'}
+                        : m === 'revision'
+                        ? 'Summary bullets and rapid-fire questions'
+                        : 'Interactive chat-based learning conversation'}
                     </div>
                   </button>
                 ))}
@@ -579,8 +606,9 @@ export default function ClassroomPage() {
               <p className={`text-lg max-w-md leading-relaxed ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
                 Select a subject, topic, and mode from the panel to begin an AI-powered classroom session.
               </p>
-              <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-lg">
+              <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl">
                 {[
+                  { label: 'Chat Mode', desc: 'Interactive conversation' },
                   { label: 'Teach Mode', desc: 'Full AI-guided lesson' },
                   { label: 'Quiz Mode', desc: 'Direct practice questions' },
                   { label: 'Revision', desc: 'Key points + rapid-fire' },

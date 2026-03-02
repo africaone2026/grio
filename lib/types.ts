@@ -171,7 +171,7 @@ export interface AdminAnalytics {
   averageCompletion: number;
 }
 
-export type SessionMode = 'teach' | 'quiz' | 'revision';
+export type SessionMode = 'teach' | 'quiz' | 'revision' | 'chat';
 
 export type AiEngineState =
   | 'idle'
