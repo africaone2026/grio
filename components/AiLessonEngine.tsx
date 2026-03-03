@@ -847,7 +847,7 @@ export default function AiLessonEngine({
               className={`px-4 py-2.5 rounded-xl border transition-colors text-sm font-medium disabled:opacity-50 ${
                 isLight
                   ? 'border-teal-400 text-teal-700 hover:bg-teal-50'
-                  : 'border-teal-600/60 text-teal-300 hover:bg-teal-600/20'
+                  : 'border-[lab(55.0223%_-41.0774_-3.90277)]/60 text-teal-300 hover:bg-teal-600/20'
               }`}
             >
               Get a hint
