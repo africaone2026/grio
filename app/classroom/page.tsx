@@ -241,7 +241,11 @@ export default function ClassroomPage() {
         >
           <div className="flex items-center gap-4 sm:gap-6 flex-wrap">
             <div className="flex items-center gap-2">
-              <span className={`font-bold text-xl sm:text-2xl tracking-tight ${headerText}`}>GRIO</span>
+              <img
+                src={isLight ? '/logo.svg' : '/logo-white.svg'}
+                alt="GRIO"
+                className="h-8 w-auto sm:h-9"
+              />
               <span
                 className={`text-xs font-medium px-2 py-0.5 rounded-full ${
                   isLight ? 'bg-teal-100 text-teal-700' : 'bg-teal-900/50 text-teal-300'

@@ -92,7 +92,7 @@ export default function Sidebar() {
     <aside data-sidebar className="w-64 bg-[#0b1f36] min-h-screen flex flex-col flex-shrink-0">
       <div className="px-6 py-6 border-b border-white/10">
         <Link href="/" className="flex items-center gap-2">
-          <span className="text-white font-bold text-xl tracking-tight">GRIO</span>
+          <img src="/logo-white.svg" alt="GRIO" className="h-8 w-auto" />
           <span className="text-blue-300 text-xs font-medium bg-blue-900/50 px-2 py-0.5 rounded-full">AI</span>
         </Link>
       </div>
