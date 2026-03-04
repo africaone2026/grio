@@ -4,6 +4,9 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { getStudentsByTeacher, getSubjects, getSchool, getClassroomsBySchool } from '@/lib/api';
 import StatCard from '@/components/StatCard';
+import DashboardCard from '@/components/DashboardCard';
+import SkeletonLoader from '@/components/SkeletonLoader';
+import EmptyState from '@/components/EmptyState';
 import Link from 'next/link';
 import type { User, Subject, School, Classroom } from '@/lib/types';
 
@@ -34,11 +37,9 @@ export default function TeacherOverviewPage() {
 
   if (loading) {
     return (
-      <div className="p-8 animate-pulse space-y-6">
-        <div className="h-8 w-48 bg-slate-200 rounded" />
-        <div className="grid grid-cols-4 gap-6">
-          {[...Array(4)].map((_, i) => <div key={i} className="h-28 bg-slate-200 rounded-xl" />)}
-        </div>
+      <div className="p-8 space-y-6">
+        <div className="h-8 w-48 bg-slate-200 rounded animate-pulse" />
+        <SkeletonLoader variant="stat" count={4} className="grid grid-cols-4 gap-6" />
       </div>
     );
   }
@@ -48,7 +49,7 @@ export default function TeacherOverviewPage() {
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900">
+        <h1 className="text-3xl font-bold text-slate-900">
           Welcome, {user.name.split(' ')[0]}
         </h1>
         {school && (
@@ -65,13 +66,16 @@ export default function TeacherOverviewPage() {
 
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white rounded-xl border border-slate-200 p-6">
-            <div className="flex items-center justify-between mb-5">
-              <h2 className="font-bold text-slate-900">Students</h2>
-              <Link href="/teacher/students" className="text-sm text-blue-600 hover:text-blue-700">
-                View all →
-              </Link>
-            </div>
+          <DashboardCard
+            header={
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-semibold text-slate-900">Students</h2>
+                <Link href="/teacher/students" className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                  View all →
+                </Link>
+              </div>
+            }
+          >
             <div className="space-y-1">
               {previewStudents.map((student) => (
                 <div
@@ -99,15 +103,20 @@ export default function TeacherOverviewPage() {
                 </div>
               ))}
               {students.length === 0 && (
-                <p className="text-sm text-slate-400 py-4 text-center">No students found.</p>
+                <EmptyState
+                  icon="👥"
+                  title="No students found"
+                  description="Students will appear here once they are added to your classes."
+                />
               )}
             </div>
-          </div>
+          </DashboardCard>
         </div>
 
         <div className="space-y-6">
-          <div className="bg-white rounded-xl border border-slate-200 p-6">
-            <h2 className="font-bold text-slate-900 mb-4">My Subjects</h2>
+          <DashboardCard
+            header={<h2 className="text-xl font-semibold text-slate-900">My Subjects</h2>}
+          >
             <div className="space-y-3">
               {subjects.slice(0, 4).map((subject) => (
                 <Link
@@ -120,10 +129,11 @@ export default function TeacherOverviewPage() {
                 </Link>
               ))}
             </div>
-          </div>
+          </DashboardCard>
 
-          <div className="bg-white rounded-xl border border-slate-200 p-6">
-            <h2 className="font-bold text-slate-900 mb-4">Quick Actions</h2>
+          <DashboardCard
+            header={<h2 className="text-xl font-semibold text-slate-900">Quick Actions</h2>}
+          >
             <div className="space-y-2">
               {[
                 { label: 'Classrooms', href: '/teacher/classrooms', icon: '🏫' },
@@ -140,7 +150,7 @@ export default function TeacherOverviewPage() {
                 </Link>
               ))}
             </div>
-          </div>
+          </DashboardCard>
         </div>
       </div>
     </div>

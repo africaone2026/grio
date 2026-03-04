@@ -7,6 +7,8 @@ import { useApp } from '@/context/AppContext';
 import SubjectCard from '@/components/SubjectCard';
 import StatCard from '@/components/StatCard';
 import ProgressBar from '@/components/ProgressBar';
+import SkeletonLoader from '@/components/SkeletonLoader';
+import EmptyState from '@/components/EmptyState';
 import { topics as allTopics } from '@/lib/mockData';
 
 export default function DashboardPage() {
@@ -39,7 +41,7 @@ export default function DashboardPage() {
     <div className="p-8">
       <div className="flex items-start justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">
+          <h1 className="text-3xl font-bold text-slate-900">
             Welcome back, {user.name.split(' ')[0]}
           </h1>
           <p className="text-slate-500 mt-1 text-sm">
@@ -71,7 +73,7 @@ export default function DashboardPage() {
       {lastLesson && (
         <div className="mb-8 bg-[#0f2a4a] rounded-xl p-6 text-white flex items-center justify-between">
           <div>
-            <p className="text-blue-300 text-xs font-semibold uppercase tracking-wide mb-1">
+            <p className="text-blue-300 text-xs font-semibold tracking-wide mb-1">
               Resume where you left off
             </p>
             <p className="font-semibold text-lg">{lastLesson.lessonTitle}</p>
@@ -81,7 +83,7 @@ export default function DashboardPage() {
           </div>
           <Link
             href={`/dashboard/lesson/${lastLesson.lessonId}`}
-            className="flex-shrink-0 ml-6 px-5 py-2.5 bg-white text-[#0f2a4a] font-semibold rounded-lg text-sm hover:bg-slate-100 transition-colors"
+            className="flex-shrink-0 ml-6 px-5 py-2.5 bg-white text-[#0f2a4a] font-semibold rounded-lg text-sm hover:bg-slate-100 transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#0f2a4a] active:scale-[0.98]"
           >
             Continue →
           </Link>
@@ -116,20 +118,22 @@ export default function DashboardPage() {
 
       <div>
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-lg font-bold text-slate-900">Your Subjects</h2>
+          <h2 className="text-xl font-semibold text-slate-900">Your Subjects</h2>
           <Link
             href="/dashboard/subjects"
-            className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+            className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded"
           >
             View all →
           </Link>
         </div>
         {isLoadingSubjects ? (
-          <div className="grid lg:grid-cols-3 gap-6">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="h-40 bg-slate-200 rounded-xl animate-pulse" />
-            ))}
-          </div>
+          <SkeletonLoader variant="card" count={6} className="grid lg:grid-cols-3 gap-6" />
+        ) : subjects.length === 0 ? (
+          <EmptyState
+            icon="📚"
+            title="No subjects available"
+            description="Subjects will appear here once they are added to your curriculum."
+          />
         ) : (
           <div className="grid lg:grid-cols-3 gap-6">
             {subjects.slice(0, 6).map((subject) => {

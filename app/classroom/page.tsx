@@ -9,6 +9,7 @@ import AiLessonEngine from '@/components/AiLessonEngine';
 import ConceptSummaryPanel from '@/components/ConceptSummaryPanel';
 import VirtualAcademicKeyboard from '@/components/VirtualAcademicKeyboard';
 import ClassroomSidebar from '@/components/ClassroomSidebar';
+import Logo from '@/components/Logo';
 import type { SessionMode, LessonSession } from '@/lib/types';
 import { getClassroomsBySchool } from '@/lib/api';
 import type { Classroom } from '@/lib/types';
@@ -240,21 +241,28 @@ export default function ClassroomPage() {
           className={`flex items-center justify-between px-6 sm:px-8 py-4 border-b flex-shrink-0 ${headerBg} ${isLight ? '' : 'border-white/10'}`}
         >
           <div className="flex items-center gap-4 sm:gap-6 flex-wrap">
-            <div className="flex items-center gap-2">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={isLight ? '/logo.svg' : '/logo-white.svg'}
-                alt="GRIO"
-                className="h-8 w-auto"
-              />
-              <span
-                className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                  isLight ? 'bg-teal-100 text-teal-700' : 'bg-teal-900/50 text-teal-300'
-                }`}
-              >
-                AI
-              </span>
-            </div>
+            {(() => {
+              // Determine dashboard home based on user role
+              const getDashboardHome = () => {
+                if (!user) return '/dashboard';
+                switch (user.role) {
+                  case 'teacher':
+                    return '/teacher';
+                  case 'school_admin':
+                    return '/school-admin';
+                  case 'super_admin':
+                    return '/admin';
+                  default:
+                    return '/dashboard';
+                }
+              };
+              return (
+                <Logo 
+                  logoSrc={isLight ? '/logo.svg' : '/logo-white.svg'}
+                  href={getDashboardHome()}
+                />
+              );
+            })()}
             {phase === 'active' && (
               <div className="flex items-center gap-3 sm:gap-5 text-sm flex-wrap">
                 {classroom && (

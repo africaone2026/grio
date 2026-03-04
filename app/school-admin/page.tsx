@@ -3,6 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { getSchoolAnalytics, getSchool } from '@/lib/api';
+import StatCard from '@/components/StatCard';
+import DashboardCard from '@/components/DashboardCard';
+import SkeletonLoader from '@/components/SkeletonLoader';
 import type { SchoolAnalytics, School } from '@/lib/types';
 
 export default function SchoolAdminOverviewPage() {
@@ -25,13 +28,9 @@ export default function SchoolAdminOverviewPage() {
 
   if (loading) {
     return (
-      <div className="p-8 animate-pulse space-y-6">
-        <div className="h-8 w-64 bg-slate-200 rounded" />
-        <div className="grid grid-cols-4 gap-6">
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-28 bg-slate-200 rounded-xl" />
-          ))}
-        </div>
+      <div className="p-8 space-y-6">
+        <div className="h-8 w-64 bg-slate-200 rounded animate-pulse" />
+        <SkeletonLoader variant="stat" count={4} className="grid grid-cols-4 gap-6" />
       </div>
     );
   }
@@ -48,7 +47,7 @@ export default function SchoolAdminOverviewPage() {
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900">{school?.name ?? 'School'}</h1>
+        <h1 className="text-3xl font-bold text-slate-900">{school?.name ?? 'School'}</h1>
         <p className="text-slate-500 text-sm mt-1">
           School overview and performance summary.
         </p>
@@ -56,21 +55,14 @@ export default function SchoolAdminOverviewPage() {
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
         {stats.map((s) => (
-          <div
-            key={s.label}
-            className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm"
-          >
-            <p className="text-3xl font-bold text-slate-900">{s.value}</p>
-            <p className="text-sm text-slate-500 mt-1">{s.label}</p>
-          </div>
+          <StatCard key={s.label} label={s.label} value={s.value} />
         ))}
       </div>
 
       <div className="grid lg:grid-cols-2 gap-8">
-        <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100">
-            <h2 className="text-sm font-semibold text-slate-700">Classroom Performance</h2>
-          </div>
+        <DashboardCard
+          header={<h2 className="text-xl font-semibold text-slate-900">Classroom Performance</h2>}
+        >
           <div className="divide-y divide-slate-100">
             {analytics.classroomBreakdown.map((cls) => (
               <div key={cls.classroomId} className="px-6 py-4 flex items-center justify-between">
@@ -92,12 +84,11 @@ export default function SchoolAdminOverviewPage() {
               </div>
             ))}
           </div>
-        </div>
+        </DashboardCard>
 
-        <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100">
-            <h2 className="text-sm font-semibold text-slate-700">Subject Completion</h2>
-          </div>
+        <DashboardCard
+          header={<h2 className="text-xl font-semibold text-slate-900">Subject Completion</h2>}
+        >
           <div className="divide-y divide-slate-100">
             {analytics.subjectBreakdown.map((sub) => (
               <div key={sub.subjectId} className="px-6 py-4 flex items-center justify-between">
@@ -118,7 +109,7 @@ export default function SchoolAdminOverviewPage() {
               </div>
             ))}
           </div>
-        </div>
+        </DashboardCard>
       </div>
     </div>
   );

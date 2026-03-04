@@ -290,7 +290,7 @@ export default function LearnWithGrioPage() {
                     : 'bg-white border border-slate-200 text-slate-800'
                 }`}
               >
-                <p className="text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wide">
+                <p className="text-xs font-semibold text-slate-500 mb-1 tracking-wide">
                   {msg.role === 'learner' ? 'You' : (msg.title ?? 'Grio')}
                 </p>
                 <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
@@ -306,7 +306,7 @@ export default function LearnWithGrioPage() {
                 ✦
               </div>
               <div className="bg-white border border-slate-200 rounded-2xl px-4 py-3">
-                <p className="text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wide">
+                <p className="text-xs font-semibold text-slate-500 mb-1 tracking-wide">
                   Grio
                 </p>
                 <p className="text-slate-400 text-sm animate-pulse">Grio is thinking...</p>

@@ -88,7 +88,7 @@ export default function SubjectPage() {
 
       <div className="grid lg:grid-cols-5 gap-8">
         <div className="lg:col-span-2">
-          <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">
+          <h2 className="text-sm font-semibold text-slate-500 tracking-wide mb-3">
             Topics
           </h2>
           <TopicList
@@ -106,11 +106,11 @@ export default function SubjectPage() {
                   {selectedTopic.name}
                 </h2>
                 <p className="text-slate-500 text-sm mb-4">{selectedTopic.description}</p>
-                <p className="text-xs text-slate-400 font-medium uppercase tracking-wide">
+                <p className="text-xs text-slate-400 font-medium tracking-wide">
                   {selectedTopic.completedCount} of {selectedTopic.lessons.length} lessons complete
                 </p>
               </div>
-              <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">
+              <h3 className="text-sm font-semibold text-slate-500 tracking-wide mb-3">
                 Lessons
               </h3>
               <div className="space-y-2">

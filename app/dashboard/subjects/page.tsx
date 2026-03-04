@@ -5,6 +5,8 @@ import { useAuth } from '@/context/AuthContext';
 import { useApp } from '@/context/AppContext';
 import SubjectCard from '@/components/SubjectCard';
 import ProgressBar from '@/components/ProgressBar';
+import SkeletonLoader from '@/components/SkeletonLoader';
+import EmptyState from '@/components/EmptyState';
 
 export default function SubjectsPage() {
   const { user } = useAuth();
@@ -29,16 +31,16 @@ export default function SubjectsPage() {
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900">Subjects</h1>
+        <h1 className="text-3xl font-bold text-slate-900">Subjects</h1>
         <p className="text-slate-500 mt-1 text-sm">
           Your curriculum: <span className="font-medium text-slate-700">Uganda Secondary</span>
         </p>
       </div>
 
       {userProgress && (
-        <div className="bg-white border border-slate-200 rounded-xl p-6 mb-8">
+        <div className="bg-white rounded-xl p-6 mb-8 shadow-sm">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-slate-900">Overall Progress</h2>
+            <h2 className="text-xl font-semibold text-slate-900">Overall Progress</h2>
             <span className="text-sm font-bold text-slate-700">
               {userProgress.overallPercentage}%
             </span>
@@ -51,11 +53,13 @@ export default function SubjectsPage() {
       )}
 
       {isLoadingSubjects ? (
-        <div className="grid lg:grid-cols-3 gap-6">
-          {[...Array(7)].map((_, i) => (
-            <div key={i} className="h-44 bg-slate-200 rounded-xl animate-pulse" />
-          ))}
-        </div>
+        <SkeletonLoader variant="card" count={6} className="grid lg:grid-cols-3 gap-6" />
+      ) : subjects.length === 0 ? (
+        <EmptyState
+          icon="📚"
+          title="No subjects available"
+          description="Subjects will appear here once they are added to your curriculum."
+        />
       ) : (
         <div className="grid lg:grid-cols-3 gap-6">
           {subjects.map((subject) => {

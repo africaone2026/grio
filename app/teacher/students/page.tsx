@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { getStudentsByTeacher, getClassroomsBySchool } from '@/lib/api';
+import SkeletonLoader from '@/components/SkeletonLoader';
+import EmptyState from '@/components/EmptyState';
 import type { User, Classroom } from '@/lib/types';
 
 export default function TeacherStudentsPage() {
@@ -37,9 +39,9 @@ export default function TeacherStudentsPage() {
 
   if (loading) {
     return (
-      <div className="p-8 animate-pulse space-y-4">
-        <div className="h-8 w-40 bg-slate-200 rounded" />
-        <div className="h-64 bg-slate-200 rounded-xl" />
+      <div className="p-8 space-y-4">
+        <div className="h-8 w-40 bg-slate-200 rounded animate-pulse" />
+        <SkeletonLoader variant="list" count={5} />
       </div>
     );
   }
@@ -47,7 +49,7 @@ export default function TeacherStudentsPage() {
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900">Student Overview</h1>
+        <h1 className="text-3xl font-bold text-slate-900">Student Overview</h1>
         <p className="text-slate-500 text-sm mt-1">
           {students.length} students in your school
         </p>
@@ -78,7 +80,7 @@ export default function TeacherStudentsPage() {
       </div>
 
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-100 grid grid-cols-12 gap-4 text-xs font-semibold text-slate-400 uppercase tracking-wide">
+        <div className="px-6 py-4 border-b border-slate-100 grid grid-cols-12 gap-4 text-xs font-semibold text-slate-400 tracking-wide" role="rowheader">
           <span className="col-span-4">Student</span>
           <span className="col-span-4">Email</span>
           <span className="col-span-2">Classroom</span>
@@ -114,9 +116,11 @@ export default function TeacherStudentsPage() {
             </div>
           ))}
           {filtered.length === 0 && (
-            <div className="px-6 py-10 text-center">
-              <p className="text-sm text-slate-400">No students found.</p>
-            </div>
+            <EmptyState
+              icon="👥"
+              title="No students found"
+              description={search || classroomFilter ? "Try adjusting your search or filter criteria." : "Students will appear here once they are added to your classes."}
+            />
           )}
         </div>
         <div className="px-6 py-3 border-t border-slate-100 bg-slate-50">
