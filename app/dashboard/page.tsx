@@ -39,10 +39,10 @@ export default function DashboardPage() {
     <div className="p-8">
       <div className="flex items-start justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">
+          <h1 className="text-2xl font-bold text-gray-900">
             Welcome back, {user.name.split(' ')[0]}
           </h1>
-          <p className="text-slate-500 mt-1 text-sm">
+          <p className="text-gray-500 mt-1 text-sm">
             {new Date().toLocaleDateString('en-GB', {
               weekday: 'long',
               day: 'numeric',
@@ -75,13 +75,13 @@ export default function DashboardPage() {
               Resume where you left off
             </p>
             <p className="font-semibold text-lg">{lastLesson.lessonTitle}</p>
-            <p className="text-slate-400 text-sm mt-0.5">
+            <p className="text-gray-400 text-sm mt-0.5">
               {lastLesson.subjectName} — {lastLesson.topicName}
             </p>
           </div>
           <Link
             href={`/dashboard/lesson/${lastLesson.lessonId}`}
-            className="flex-shrink-0 ml-6 px-5 py-2.5 bg-white text-[#0f2a4a] font-semibold rounded-lg text-sm hover:bg-slate-100 transition-colors"
+            className="flex-shrink-0 ml-6 px-5 py-2.5 bg-white text-[#0f2a4a] font-semibold rounded-lg text-sm hover:bg-gray-100 transition-colors"
           >
             Continue →
           </Link>
@@ -108,15 +108,15 @@ export default function DashboardPage() {
 
       <div className="mb-8">
         <div className="flex items-center justify-between mb-2">
-          <p className="text-sm font-medium text-slate-600">Overall Progress</p>
-          <span className="text-sm font-bold text-slate-700">{overallPct}%</span>
+          <p className="text-sm font-medium text-gray-600">Overall Progress</p>
+          <span className="text-sm font-bold text-gray-700">{overallPct}%</span>
         </div>
         <ProgressBar percentage={overallPct} showPercentage={false} height="lg" />
       </div>
 
       <div>
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-lg font-bold text-slate-900">Your Subjects</h2>
+          <h2 className="text-lg font-bold text-gray-900">Your Subjects</h2>
           <Link
             href="/dashboard/subjects"
             className="text-sm text-blue-600 hover:text-blue-700 font-medium"
@@ -127,7 +127,7 @@ export default function DashboardPage() {
         {isLoadingSubjects ? (
           <div className="grid lg:grid-cols-3 gap-6">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="h-40 bg-slate-200 rounded-xl animate-pulse" />
+              <div key={i} className="h-40 bg-gray-200 rounded-xl animate-pulse" />
             ))}
           </div>
         ) : (

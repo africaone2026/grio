@@ -40,8 +40,8 @@ export default function SchoolAdminStudentsPage() {
   if (loading) {
     return (
       <div className="p-8 animate-pulse space-y-4">
-        <div className="h-8 w-40 bg-slate-200 rounded" />
-        <div className="h-64 bg-slate-200 rounded-xl" />
+        <div className="h-8 w-40 bg-gray-200 rounded" />
+        <div className="h-64 bg-gray-200 rounded-xl" />
       </div>
     );
   }
@@ -49,8 +49,8 @@ export default function SchoolAdminStudentsPage() {
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900">Students</h1>
-        <p className="text-slate-500 text-sm mt-1">{students.length} students enrolled</p>
+        <h1 className="text-2xl font-bold text-gray-900">Students</h1>
+        <p className="text-gray-500 text-sm mt-1">{students.length} students enrolled</p>
       </div>
 
       <div className="flex gap-4 mb-6">
@@ -59,12 +59,12 @@ export default function SchoolAdminStudentsPage() {
           placeholder="Search students..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white w-56"
+          className="px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white w-56"
         />
         <select
           value={classroomFilter}
           onChange={(e) => setClassroomFilter(e.target.value)}
-          className="px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-slate-700"
+          className="px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-700"
         >
           <option value="">All Classrooms</option>
           {classrooms.map((c) => (
@@ -75,27 +75,27 @@ export default function SchoolAdminStudentsPage() {
         </select>
       </div>
 
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-100 grid grid-cols-12 text-xs font-semibold text-slate-400 uppercase tracking-wide">
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-100 grid grid-cols-12 text-xs font-semibold text-gray-400 uppercase tracking-wide">
           <span className="col-span-5">Student</span>
           <span className="col-span-4">Email</span>
           <span className="col-span-2">Classroom</span>
           <span className="col-span-1 text-center">Status</span>
         </div>
-        <div className="divide-y divide-slate-100 max-h-[600px] overflow-y-auto">
+        <div className="divide-y divide-gray-100 max-h-[600px] overflow-y-auto">
           {filtered.map((student) => (
             <div
               key={student.id}
-              className="px-6 py-4 grid grid-cols-12 gap-4 items-center hover:bg-slate-50"
+              className="px-6 py-4 grid grid-cols-12 gap-4 items-center hover:bg-gray-50"
             >
               <div className="col-span-5 flex items-center gap-3">
                 <div className="w-7 h-7 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-semibold flex-shrink-0">
                   {student.name.charAt(0)}
                 </div>
-                <p className="text-sm font-medium text-slate-800 truncate">{student.name}</p>
+                <p className="text-sm font-medium text-gray-800 truncate">{student.name}</p>
               </div>
-              <p className="col-span-4 text-sm text-slate-500 truncate">{student.email}</p>
-              <p className="col-span-2 text-sm text-slate-500">{getClassroomName(student.classroomId)}</p>
+              <p className="col-span-4 text-sm text-gray-500 truncate">{student.email}</p>
+              <p className="col-span-2 text-sm text-gray-500">{getClassroomName(student.classroomId)}</p>
               <div className="col-span-1 flex justify-center">
                 <span
                   className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
@@ -112,8 +112,8 @@ export default function SchoolAdminStudentsPage() {
             </div>
           ))}
         </div>
-        <div className="px-6 py-3 border-t border-slate-100 bg-slate-50">
-          <p className="text-xs text-slate-400">
+        <div className="px-6 py-3 border-t border-gray-100 bg-gray-50">
+          <p className="text-xs text-gray-400">
             Showing {filtered.length} of {students.length} students
           </p>
         </div>

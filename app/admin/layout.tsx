@@ -7,7 +7,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     <RouteGuard allowedRoles={['super_admin', 'school_admin']}>
       <div className="flex min-h-screen min-w-[1366px]">
         <Sidebar />
-        <main data-main className="flex-1 min-h-screen bg-slate-50 overflow-y-auto">
+        <main data-main className="flex-1 min-h-screen gray-50 overflow-y-auto">
           {children}
         </main>
       </div>

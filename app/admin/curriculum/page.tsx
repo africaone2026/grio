@@ -68,15 +68,15 @@ export default function AdminCurriculumPage() {
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900">Curriculum</h1>
-        <p className="text-slate-500 text-sm mt-1">
+        <h1 className="text-2xl font-bold text-gray-900">Curriculum</h1>
+        <p className="text-gray-500 text-sm mt-1">
           Manage subjects and topics across curricula.
         </p>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-8">
         <div>
-          <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">
+          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
             Curriculum
           </h2>
           <div className="space-y-2">
@@ -84,7 +84,7 @@ export default function AdminCurriculumPage() {
               const countryCurricula = curricula.filter((c) => c.countryId === country.id);
               return (
                 <div key={country.id}>
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-wide px-3 py-1">
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wide px-3 py-1">
                     {country.name}
                   </p>
                   {countryCurricula.map((cur) => (
@@ -94,7 +94,7 @@ export default function AdminCurriculumPage() {
                       className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors ${
                         selectedCurriculumId === cur.id
                           ? 'bg-[#0f2a4a] text-white font-medium'
-                          : 'text-slate-600 hover:bg-slate-100'
+                          : 'text-gray-600 hover:bg-gray-100'
                       }`}
                     >
                       {cur.name}
@@ -108,7 +108,7 @@ export default function AdminCurriculumPage() {
 
         <div>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wide">
+            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
               Subjects ({subjects.length})
             </h2>
             <button
@@ -126,14 +126,14 @@ export default function AdminCurriculumPage() {
                 placeholder="Subject name"
                 value={newSubjectName}
                 onChange={(e) => setNewSubjectName(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <input
                 type="text"
                 placeholder="Description (optional)"
                 value={newSubjectDesc}
                 onChange={(e) => setNewSubjectDesc(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <div className="flex gap-2">
                 <button
@@ -145,7 +145,7 @@ export default function AdminCurriculumPage() {
                 </button>
                 <button
                   onClick={() => setShowAddSubject(false)}
-                  className="px-3 py-2 border border-slate-200 text-slate-600 text-sm rounded-lg hover:bg-slate-50"
+                  className="px-3 py-2 border border-gray-200 text-gray-600 text-sm rounded-lg hover:bg-gray-50"
                 >
                   Cancel
                 </button>
@@ -161,7 +161,7 @@ export default function AdminCurriculumPage() {
                 className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors ${
                   selectedSubjectId === subject.id
                     ? 'bg-blue-50 border border-blue-200 text-blue-800 font-medium'
-                    : 'text-slate-600 hover:bg-slate-100'
+                    : 'text-gray-600 hover:bg-gray-100'
                 }`}
               >
                 {subject.name}
@@ -172,7 +172,7 @@ export default function AdminCurriculumPage() {
 
         <div>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wide">
+            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
               Topics {selectedSubjectId ? `(${topics.length})` : ''}
             </h2>
             {selectedSubjectId && (
@@ -186,7 +186,7 @@ export default function AdminCurriculumPage() {
           </div>
 
           {!selectedSubjectId && (
-            <p className="text-sm text-slate-400">Select a subject to view topics.</p>
+            <p className="text-sm text-gray-400">Select a subject to view topics.</p>
           )}
 
           {selectedSubjectId && showAddTopic && (
@@ -196,7 +196,7 @@ export default function AdminCurriculumPage() {
                 placeholder="Topic name"
                 value={newTopicName}
                 onChange={(e) => setNewTopicName(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <div className="flex gap-2">
                 <button
@@ -208,7 +208,7 @@ export default function AdminCurriculumPage() {
                 </button>
                 <button
                   onClick={() => setShowAddTopic(false)}
-                  className="px-3 py-2 border border-slate-200 text-slate-600 text-sm rounded-lg hover:bg-slate-50"
+                  className="px-3 py-2 border border-gray-200 text-gray-600 text-sm rounded-lg hover:bg-gray-50"
                 >
                   Cancel
                 </button>
@@ -221,9 +221,9 @@ export default function AdminCurriculumPage() {
               {topics.map((topic) => (
                 <div
                   key={topic.id}
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-600 bg-white border border-slate-200"
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-600 bg-white border border-gray-200"
                 >
-                  <span className="w-5 h-5 rounded-full bg-slate-200 flex items-center justify-center text-xs font-semibold text-slate-500 flex-shrink-0">
+                  <span className="w-5 h-5 rounded-full bg-gray-200 flex items-center justify-center text-xs font-semibold text-gray-500 flex-shrink-0">
                     {topic.order}
                   </span>
                   {topic.name}

@@ -26,10 +26,10 @@ export default function SchoolAdminOverviewPage() {
   if (loading) {
     return (
       <div className="p-8 animate-pulse space-y-6">
-        <div className="h-8 w-64 bg-slate-200 rounded" />
+        <div className="h-8 w-64 bg-gray-200 rounded" />
         <div className="grid grid-cols-4 gap-6">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-28 bg-slate-200 rounded-xl" />
+            <div key={i} className="h-28 bg-gray-200 rounded-xl" />
           ))}
         </div>
       </div>
@@ -48,8 +48,8 @@ export default function SchoolAdminOverviewPage() {
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900">{school?.name ?? 'School'}</h1>
-        <p className="text-slate-500 text-sm mt-1">
+        <h1 className="text-2xl font-bold text-gray-900">{school?.name ?? 'School'}</h1>
+        <p className="text-gray-500 text-sm mt-1">
           School overview and performance summary.
         </p>
       </div>
@@ -58,34 +58,34 @@ export default function SchoolAdminOverviewPage() {
         {stats.map((s) => (
           <div
             key={s.label}
-            className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm"
+            className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm"
           >
-            <p className="text-3xl font-bold text-slate-900">{s.value}</p>
-            <p className="text-sm text-slate-500 mt-1">{s.label}</p>
+            <p className="text-3xl font-bold text-gray-900">{s.value}</p>
+            <p className="text-sm text-gray-500 mt-1">{s.label}</p>
           </div>
         ))}
       </div>
 
       <div className="grid lg:grid-cols-2 gap-8">
-        <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100">
-            <h2 className="text-sm font-semibold text-slate-700">Classroom Performance</h2>
+        <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-100">
+            <h2 className="text-sm font-semibold text-gray-700">Classroom Performance</h2>
           </div>
-          <div className="divide-y divide-slate-100">
+          <div className="divide-y divide-gray-100">
             {analytics.classroomBreakdown.map((cls) => (
               <div key={cls.classroomId} className="px-6 py-4 flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-slate-800">{cls.classroomName}</p>
-                  <p className="text-xs text-slate-400 mt-0.5">{cls.studentCount} students</p>
+                  <p className="text-sm font-medium text-gray-800">{cls.classroomName}</p>
+                  <p className="text-xs text-gray-400 mt-0.5">{cls.studentCount} students</p>
                 </div>
                 <div className="flex items-center gap-4">
-                  <div className="w-32 h-2 bg-slate-100 rounded-full overflow-hidden">
+                  <div className="w-32 h-2 bg-gray-100 rounded-full overflow-hidden">
                     <div
                       className="h-full bg-blue-500 rounded-full"
                       style={{ width: `${cls.averageCompletion}%` }}
                     />
                   </div>
-                  <span className="text-sm font-semibold text-slate-700 w-10 text-right">
+                  <span className="text-sm font-semibold text-gray-700 w-10 text-right">
                     {cls.averageCompletion}%
                   </span>
                 </div>
@@ -94,24 +94,24 @@ export default function SchoolAdminOverviewPage() {
           </div>
         </div>
 
-        <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100">
-            <h2 className="text-sm font-semibold text-slate-700">Subject Completion</h2>
+        <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-100">
+            <h2 className="text-sm font-semibold text-gray-700">Subject Completion</h2>
           </div>
-          <div className="divide-y divide-slate-100">
+          <div className="divide-y divide-gray-100">
             {analytics.subjectBreakdown.map((sub) => (
               <div key={sub.subjectId} className="px-6 py-4 flex items-center justify-between">
-                <p className="text-sm font-medium text-slate-800 truncate max-w-[180px]">
+                <p className="text-sm font-medium text-gray-800 truncate max-w-[180px]">
                   {sub.subjectName}
                 </p>
                 <div className="flex items-center gap-4">
-                  <div className="w-32 h-2 bg-slate-100 rounded-full overflow-hidden">
+                  <div className="w-32 h-2 bg-gray-100 rounded-full overflow-hidden">
                     <div
                       className="h-full bg-emerald-500 rounded-full"
                       style={{ width: `${sub.percentage}%` }}
                     />
                   </div>
-                  <span className="text-sm font-semibold text-slate-700 w-10 text-right">
+                  <span className="text-sm font-semibold text-gray-700 w-10 text-right">
                     {sub.percentage}%
                   </span>
                 </div>

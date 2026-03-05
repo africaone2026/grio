@@ -104,14 +104,14 @@ export default function HomePage() {
               <span className="text-blue-300">for Classrooms and</span><br />
               Independent Learners
             </h1>
-            <p className="text-lg text-slate-300 max-w-2xl leading-relaxed mb-10">
+            <p className="text-lg text-gray-300 max-w-2xl leading-relaxed mb-10">
               GRIO delivers structured, curriculum-aligned learning for students across Africa.
               Built for schools, teachers, and independent learners who demand more than a textbook.
             </p>
             <div className="flex flex-wrap gap-4">
               <Link
                 href="/auth/signup"
-                className="px-8 py-3.5 bg-white text-[#0f2a4a] font-semibold rounded-lg hover:bg-slate-100 transition-colors"
+                className="px-8 py-3.5 bg-white text-[#0f2a4a] font-semibold rounded-lg hover:bg-gray-100 transition-colors"
               >
                 Start Learning
               </Link>
@@ -128,7 +128,7 @@ export default function HomePage() {
             {stats.map((stat) => (
               <div key={stat.label}>
                 <p className="text-3xl font-bold text-white">{stat.value}</p>
-                <p className="text-slate-400 text-sm mt-1">{stat.label}</p>
+                <p className="text-gray-400 text-sm mt-1">{stat.label}</p>
               </div>
             ))}
           </div>
@@ -136,11 +136,11 @@ export default function HomePage() {
       </section>
 
       {/* How it Works */}
-      <section id="how-it-works" className="py-24 bg-slate-50">
+      <section id="how-it-works" className="py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <h2 className="text-3xl font-bold text-slate-900 mb-4">One Platform, Three Modes</h2>
-            <p className="text-slate-500 text-lg leading-relaxed">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">One Platform, Three Modes</h2>
+            <p className="text-gray-500 text-lg leading-relaxed">
               GRIO adapts to how you learn — whether you&apos;re a student studying independently,
               a teacher managing a class, or a school scaling its curriculum.
             </p>
@@ -149,11 +149,11 @@ export default function HomePage() {
             {modes.map((mode) => (
               <div
                 key={mode.title}
-                className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm hover:shadow-md transition-shadow"
+                className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm hover:shadow-md transition-shadow"
               >
                 <div className="text-4xl mb-5">{mode.icon}</div>
-                <h3 className="text-xl font-bold text-slate-900 mb-3">{mode.title}</h3>
-                <p className="text-slate-500 leading-relaxed mb-6">{mode.description}</p>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">{mode.title}</h3>
+                <p className="text-gray-500 leading-relaxed mb-6">{mode.description}</p>
                 <Link
                   href={mode.href}
                   className="inline-flex items-center text-sm font-semibold text-[#0f2a4a] hover:text-blue-700 transition-colors"
@@ -170,8 +170,8 @@ export default function HomePage() {
       <section id="curriculum" className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <h2 className="text-3xl font-bold text-slate-900 mb-4">Curriculum Coverage</h2>
-            <p className="text-slate-500 text-lg leading-relaxed">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Curriculum Coverage</h2>
+            <p className="text-gray-500 text-lg leading-relaxed">
               Content is mapped precisely to national curricula — not generic lessons, but
               exactly what students need for their specific examinations.
             </p>
@@ -180,20 +180,20 @@ export default function HomePage() {
             {curricula.map((c) => (
               <div
                 key={c.country}
-                className="bg-slate-50 rounded-2xl border border-slate-200 p-8"
+                className="bg-gray-50 rounded-2xl border border-gray-200 p-8"
               >
                 <div className="flex items-center gap-3 mb-6">
                   <span className="text-3xl">{c.flag}</span>
                   <div>
-                    <h3 className="text-lg font-bold text-slate-900">{c.country}</h3>
-                    <p className="text-sm text-slate-400">{c.levels.join(' · ')}</p>
+                    <h3 className="text-lg font-bold text-gray-900">{c.country}</h3>
+                    <p className="text-sm text-gray-400">{c.levels.join(' · ')}</p>
                   </div>
                 </div>
                 <ul className="space-y-2">
                   {c.subjects.map((subject) => (
                     <li
                       key={subject}
-                      className="flex items-center gap-2 text-sm text-slate-600"
+                      className="flex items-center gap-2 text-sm text-gray-600"
                     >
                       <span className="w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0" />
                       {subject}
@@ -212,7 +212,7 @@ export default function HomePage() {
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
               <h2 className="text-3xl font-bold mb-6">Built for Schools at Scale</h2>
-              <p className="text-slate-300 leading-relaxed text-lg mb-8">
+              <p className="text-gray-300 leading-relaxed text-lg mb-8">
                 GRIO&apos;s institutional tier gives school administrators full control over
                 student accounts, content access, and curriculum deployment. Designed for
                 secondary schools that want a structured digital learning environment without
@@ -228,20 +228,20 @@ export default function HomePage() {
                 ].map((feature) => (
                   <li key={feature} className="flex items-start gap-3">
                     <span className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs flex-shrink-0 mt-0.5">✓</span>
-                    <span className="text-slate-300 text-sm">{feature}</span>
+                    <span className="text-gray-300 text-sm">{feature}</span>
                   </li>
                 ))}
               </ul>
               <Link
                 href="/auth/signup"
-                className="inline-flex px-8 py-3.5 bg-white text-[#0f2a4a] font-semibold rounded-lg hover:bg-slate-100 transition-colors"
+                className="inline-flex px-8 py-3.5 bg-white text-[#0f2a4a] font-semibold rounded-lg hover:bg-gray-100 transition-colors"
               >
                 Register Your School
               </Link>
             </div>
             <div className="bg-[#0f2a4a] rounded-2xl border border-white/10 p-8">
               <h3 className="text-white font-semibold mb-6 text-lg">For Teachers</h3>
-              <p className="text-slate-400 leading-relaxed mb-8">
+              <p className="text-gray-400 leading-relaxed mb-8">
                 GRIO gives teachers a dedicated workspace to prepare lessons,
                 monitor individual student progress, and access AI-assisted planning tools —
                 all integrated with the same content students use.
@@ -255,7 +255,7 @@ export default function HomePage() {
                 ].map((item) => (
                   <div key={item.label} className="flex items-center gap-3">
                     <span className="text-lg">{item.icon}</span>
-                    <span className="text-slate-300 text-sm">{item.label}</span>
+                    <span className="text-gray-300 text-sm">{item.label}</span>
                   </div>
                 ))}
               </div>
@@ -271,11 +271,11 @@ export default function HomePage() {
       </section>
 
       {/* Pricing Preview */}
-      <section id="pricing" className="py-24 bg-slate-50">
+      <section id="pricing" className="py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <h2 className="text-3xl font-bold text-slate-900 mb-4">Simple, Transparent Pricing</h2>
-            <p className="text-slate-500 text-lg leading-relaxed">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Simple, Transparent Pricing</h2>
+            <p className="text-gray-500 text-lg leading-relaxed">
               Designed to be accessible for independent learners and scalable for institutions.
             </p>
           </div>
@@ -286,7 +286,7 @@ export default function HomePage() {
                 className={`rounded-2xl border p-8 ${
                   tier.highlighted
                     ? 'bg-[#0f2a4a] border-[#0f2a4a] text-white shadow-xl'
-                    : 'bg-white border-slate-200'
+                    : 'bg-white border-gray-200'
                 }`}
               >
                 {tier.highlighted && (
@@ -296,7 +296,7 @@ export default function HomePage() {
                 )}
                 <h3
                   className={`text-lg font-bold mb-1 ${
-                    tier.highlighted ? 'text-white' : 'text-slate-900'
+                    tier.highlighted ? 'text-white' : 'text-gray-900'
                   }`}
                 >
                   {tier.name}
@@ -304,14 +304,14 @@ export default function HomePage() {
                 <div className="flex items-baseline gap-1 mb-6">
                   <span
                     className={`text-3xl font-bold ${
-                      tier.highlighted ? 'text-white' : 'text-slate-900'
+                      tier.highlighted ? 'text-white' : 'text-gray-900'
                     }`}
                   >
                     {tier.price}
                   </span>
                   <span
                     className={`text-sm ${
-                      tier.highlighted ? 'text-slate-300' : 'text-slate-400'
+                      tier.highlighted ? 'text-gray-300' : 'text-gray-400'
                     }`}
                   >
                     {tier.period}
@@ -329,7 +329,7 @@ export default function HomePage() {
                       </span>
                       <span
                         className={`text-sm ${
-                          tier.highlighted ? 'text-slate-300' : 'text-slate-600'
+                          tier.highlighted ? 'text-gray-300' : 'text-gray-600'
                         }`}
                       >
                         {feature}
@@ -341,7 +341,7 @@ export default function HomePage() {
                   href={tier.href}
                   className={`block text-center px-6 py-3 rounded-lg font-semibold text-sm transition-colors ${
                     tier.highlighted
-                      ? 'bg-white text-[#0f2a4a] hover:bg-slate-100'
+                      ? 'bg-white text-[#0f2a4a] hover:bg-gray-100'
                       : 'bg-[#0f2a4a] text-white hover:bg-[#1a3d6b]'
                   }`}
                 >
@@ -351,7 +351,7 @@ export default function HomePage() {
             ))}
           </div>
           <div className="text-center mt-8">
-            <Link href="/pricing" className="text-sm text-slate-500 hover:text-slate-700 underline">
+            <Link href="/pricing" className="text-sm text-gray-500 hover:text-gray-700 underline">
               View full pricing details →
             </Link>
           </div>
@@ -359,7 +359,7 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-[#071728] text-slate-400 py-12">
+      <footer className="bg-[#071728] text-gray-400 py-12">
         <div className="max-w-7xl mx-auto px-6 flex flex-col lg:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-2">
             <span className="text-white font-bold text-lg">GRIO</span>

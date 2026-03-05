@@ -44,8 +44,8 @@ export default function AdminSchoolsPage() {
   if (loading) {
     return (
       <div className="p-8 animate-pulse space-y-4">
-        <div className="h-8 w-40 bg-slate-200 rounded" />
-        <div className="h-64 bg-slate-200 rounded-xl" />
+        <div className="h-8 w-40 bg-gray-200 rounded" />
+        <div className="h-64 bg-gray-200 rounded-xl" />
       </div>
     );
   }
@@ -56,8 +56,8 @@ export default function AdminSchoolsPage() {
     <div className="p-8">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Schools</h1>
-          <p className="text-slate-500 text-sm mt-1">
+          <h1 className="text-2xl font-bold text-gray-900">Schools</h1>
+          <p className="text-gray-500 text-sm mt-1">
             {schools.length} schools &middot; {active} active subscriptions
           </p>
         </div>
@@ -72,14 +72,14 @@ export default function AdminSchoolsPage() {
           <p className="text-3xl font-bold text-red-700">{schools.length - active}</p>
           <p className="text-sm text-red-600 mt-1">Inactive</p>
         </div>
-        <div className="bg-slate-50 border border-slate-200 rounded-xl p-5">
-          <p className="text-3xl font-bold text-slate-700">{schools.reduce((sum, s) => sum + s.userCount, 0)}</p>
-          <p className="text-sm text-slate-500 mt-1">Total Users Across Schools</p>
+        <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
+          <p className="text-3xl font-bold text-gray-700">{schools.reduce((sum, s) => sum + s.userCount, 0)}</p>
+          <p className="text-sm text-gray-500 mt-1">Total Users Across Schools</p>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-100 grid grid-cols-12 text-xs font-semibold text-slate-400 uppercase tracking-wide">
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-100 grid grid-cols-12 text-xs font-semibold text-gray-400 uppercase tracking-wide">
           <span className="col-span-3">School</span>
           <span className="col-span-3">Country</span>
           <span className="col-span-3">Curriculum</span>
@@ -87,21 +87,21 @@ export default function AdminSchoolsPage() {
           <span className="col-span-1 text-center">Status</span>
           <span className="col-span-1 text-center">Action</span>
         </div>
-        <div className="divide-y divide-slate-100">
+        <div className="divide-y divide-gray-100">
           {schools.map((school) => (
             <div
               key={school.id}
-              className="px-6 py-4 grid grid-cols-12 gap-4 items-center hover:bg-slate-50"
+              className="px-6 py-4 grid grid-cols-12 gap-4 items-center hover:bg-gray-50"
             >
               <div className="col-span-3 flex items-center gap-3">
                 <div className="w-8 h-8 rounded-lg bg-[#0f2a4a]/10 flex items-center justify-center text-sm flex-shrink-0">
                   🏫
                 </div>
-                <p className="text-sm font-medium text-slate-800 truncate">{school.name}</p>
+                <p className="text-sm font-medium text-gray-800 truncate">{school.name}</p>
               </div>
-              <p className="col-span-3 text-sm text-slate-500 truncate">{getCountryName(school.countryId)}</p>
-              <p className="col-span-3 text-sm text-slate-400 truncate">{getCurriculumName(school.curriculumId)}</p>
-              <p className="col-span-1 text-sm text-slate-600 text-center">{school.userCount}</p>
+              <p className="col-span-3 text-sm text-gray-500 truncate">{getCountryName(school.countryId)}</p>
+              <p className="col-span-3 text-sm text-gray-400 truncate">{getCurriculumName(school.curriculumId)}</p>
+              <p className="col-span-1 text-sm text-gray-600 text-center">{school.userCount}</p>
               <div className="col-span-1 flex justify-center">
                 <span
                   className={`text-xs font-semibold px-2.5 py-1 rounded-full ${

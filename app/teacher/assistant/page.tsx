@@ -91,10 +91,10 @@ export default function AIAssistantPage() {
   return (
     <div className="flex flex-col h-[calc(100vh-0px)] max-h-[calc(100vh-0px)]">
       {/* Page header & identity */}
-      <div className="flex-shrink-0 p-6 pb-4 bg-slate-50 border-b border-slate-200">
+      <div className="flex-shrink-0 p-6 pb-4 bg-gray-50 border-b border-gray-200">
         <div className="max-w-3xl mx-auto">
-          <h1 className="text-2xl font-bold text-slate-900">AI Assistant</h1>
-          <p className="text-slate-500 text-sm mt-1">
+          <h1 className="text-2xl font-bold text-gray-900">AI Assistant</h1>
+          <p className="text-gray-500 text-sm mt-1">
             Your intelligent teaching companion. Chat with Grio to get lesson ideas, quizzes, and curriculum support.
           </p>
           <div className="mt-4 flex flex-wrap items-center gap-3">
@@ -113,7 +113,7 @@ export default function AIAssistantPage() {
             <button
               type="button"
               onClick={startNewChat}
-              className="text-sm text-slate-500 hover:text-slate-700 font-medium"
+              className="text-sm text-gray-500 hover:text-gray-700 font-medium"
             >
               New chat
             </button>
@@ -141,10 +141,10 @@ export default function AIAssistantPage() {
                 className={`max-w-[85%] rounded-2xl px-4 py-3 ${
                   msg.role === 'user'
                     ? 'bg-[#0f2a4a] text-white ml-auto'
-                    : 'bg-white border border-slate-200 text-slate-800'
+                    : 'bg-white border border-gray-200 text-gray-800'
                 }`}
               >
-                <p className="text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wide">
+                <p className="text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wide">
                   {msg.role === 'user' ? 'You' : (msg.title ?? 'Grio')}
                 </p>
                 <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
@@ -159,11 +159,11 @@ export default function AIAssistantPage() {
               >
                 ✦
               </div>
-              <div className="bg-white border border-slate-200 rounded-2xl px-4 py-3">
-                <p className="text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wide">
+              <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3">
+                <p className="text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wide">
                   Grio
                 </p>
-                <p className="text-slate-400 text-sm animate-pulse">Grio is thinking...</p>
+                <p className="text-gray-400 text-sm animate-pulse">Grio is thinking...</p>
               </div>
             </div>
           )}
@@ -175,14 +175,14 @@ export default function AIAssistantPage() {
       {messages.length === 1 && (
         <div className="flex-shrink-0 px-6 pb-2">
           <div className="max-w-3xl mx-auto">
-            <p className="text-xs font-medium text-slate-500 mb-2">Try asking:</p>
+            <p className="text-xs font-medium text-gray-500 mb-2">Try asking:</p>
             <div className="flex flex-wrap gap-2">
               {SUGGESTED_PROMPTS.map((prompt) => (
                 <button
                   key={prompt}
                   type="button"
                   onClick={() => sendMessage(prompt)}
-                  className="text-sm text-slate-600 bg-white border border-slate-200 rounded-full px-3 py-1.5 hover:bg-slate-50 hover:border-slate-300 transition-colors"
+                  className="text-sm text-gray-600 bg-white border border-gray-200 rounded-full px-3 py-1.5 hover:bg-gray-50 hover:border-gray-300 transition-colors"
                 >
                   {prompt}
                 </button>
@@ -193,14 +193,14 @@ export default function AIAssistantPage() {
       )}
 
       {/* Input */}
-      <div className="flex-shrink-0 p-4 bg-white border-t border-slate-200">
+      <div className="flex-shrink-0 p-4 bg-white border-t border-gray-200">
         <form onSubmit={handleSubmit} className="max-w-3xl mx-auto flex gap-2">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Ask the AI assistant anything about your curriculum..."
-            className="flex-1 rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0f2a4a]/20 focus:border-[#0f2a4a]"
+            className="flex-1 rounded-xl border border-gray-200 px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0f2a4a]/20 focus:border-[#0f2a4a]"
             disabled={isLoading}
             aria-label="Message to Grio"
           />
@@ -212,7 +212,7 @@ export default function AIAssistantPage() {
             Send
           </button>
         </form>
-        <p className="text-xs text-slate-400 mt-2 text-center max-w-3xl mx-auto">
+        <p className="text-xs text-gray-400 mt-2 text-center max-w-3xl mx-auto">
           Tip: Ask for quiz ideas, lesson plans, or concept summaries.
         </p>
       </div>

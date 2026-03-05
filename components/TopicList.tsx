@@ -34,7 +34,7 @@ export default function TopicList({
             className={`w-full text-left rounded-lg border transition-all p-4 ${
               isSelected
                 ? 'border-blue-500 bg-blue-50'
-                : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'
+                : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
             }`}
           >
             <div className="flex items-center gap-3">
@@ -44,7 +44,7 @@ export default function TopicList({
                     ? 'bg-emerald-500 text-white'
                     : isSelected
                     ? 'bg-blue-600 text-white'
-                    : 'bg-slate-200 text-slate-600'
+                    : 'bg-gray-200 text-gray-600'
                 }`}
               >
                 {isComplete ? '✓' : index + 1}
@@ -52,17 +52,17 @@ export default function TopicList({
               <div className="flex-1 min-w-0">
                 <p
                   className={`font-medium text-sm truncate ${
-                    isSelected ? 'text-blue-700' : 'text-slate-800'
+                    isSelected ? 'text-blue-700' : 'text-gray-800'
                   }`}
                 >
                   {topic.name}
                 </p>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <p className="text-xs text-gray-400 mt-0.5">
                   {completed}/{total} lessons &middot; {pct}%
                 </p>
               </div>
               <div className="flex-shrink-0">
-                <div className="w-16 h-1.5 bg-slate-200 rounded-full">
+                <div className="w-16 h-1.5 bg-gray-200 rounded-full">
                   <div
                     className={`h-1.5 rounded-full transition-all ${
                       isComplete ? 'bg-emerald-500' : 'bg-blue-500'

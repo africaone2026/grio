@@ -30,8 +30,8 @@ export default function SchoolAdminSubscriptionPage() {
   if (loading) {
     return (
       <div className="p-8 animate-pulse space-y-4">
-        <div className="h-8 w-48 bg-slate-200 rounded" />
-        <div className="h-48 bg-slate-200 rounded-xl" />
+        <div className="h-8 w-48 bg-gray-200 rounded" />
+        <div className="h-48 bg-gray-200 rounded-xl" />
       </div>
     );
   }
@@ -43,13 +43,13 @@ export default function SchoolAdminSubscriptionPage() {
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900">Subscription</h1>
-        <p className="text-slate-500 text-sm mt-1">Manage your school subscription status.</p>
+        <h1 className="text-2xl font-bold text-gray-900">Subscription</h1>
+        <p className="text-gray-500 text-sm mt-1">Manage your school subscription status.</p>
       </div>
 
-      <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-8 max-w-lg">
+      <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-8 max-w-lg">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-semibold text-slate-900">{school.name}</h2>
+          <h2 className="text-lg font-semibold text-gray-900">{school.name}</h2>
           <span
             className={`text-sm font-semibold px-3 py-1 rounded-full ${
               isActive
@@ -63,12 +63,12 @@ export default function SchoolAdminSubscriptionPage() {
 
         <div className="space-y-3 mb-8">
           <div className="flex justify-between text-sm">
-            <span className="text-slate-500">Country</span>
-            <span className="font-medium text-slate-700 uppercase">{school.countryId}</span>
+            <span className="text-gray-500">Country</span>
+            <span className="font-medium text-gray-700 uppercase">{school.countryId}</span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-slate-500">Joined</span>
-            <span className="font-medium text-slate-700">
+            <span className="text-gray-500">Joined</span>
+            <span className="font-medium text-gray-700">
               {new Date(school.joinedAt).toLocaleDateString('en-GB', {
                 day: 'numeric',
                 month: 'long',

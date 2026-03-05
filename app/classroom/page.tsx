@@ -8,7 +8,6 @@ import { useUI } from '@/context/UIContext';
 import AiLessonEngine from '@/components/AiLessonEngine';
 import ConceptSummaryPanel from '@/components/ConceptSummaryPanel';
 import VirtualAcademicKeyboard from '@/components/VirtualAcademicKeyboard';
-import ClassroomSidebar from '@/components/ClassroomSidebar';
 import type { SessionMode, LessonSession } from '@/lib/types';
 import { getClassroomsBySchool } from '@/lib/api';
 import type { Classroom } from '@/lib/types';
@@ -78,7 +77,7 @@ export default function ClassroomPage() {
   const [showTimer, setShowTimer] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [theme, setTheme] = useState<Theme>(getStoredTheme);
-  const [currentChatId, setCurrentChatId] = useState<string>('default');
+  const [showExitConfirm, setShowExitConfirm] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -214,13 +213,13 @@ export default function ClassroomPage() {
   const classroom = classrooms.find((c) => c.id === selectedClassroom);
   const isLight = theme === 'light';
 
-  const headerBg = isLight ? 'bg-white border-slate-200' : 'bg-[#0B1220] border-white/10';
-  const headerText = isLight ? 'text-slate-900' : 'text-white';
-  const headerMuted = isLight ? 'text-slate-500' : 'text-slate-400';
-  const headerLabel = isLight ? 'text-slate-600' : 'text-slate-500';
+  const headerBg = isLight ? 'bg-white border-gray-200' : 'bg-[#0B1220] border-white/10';
+  const headerText = isLight ? 'text-gray-900' : 'text-white';
+  const headerMuted = isLight ? 'text-gray-500' : 'text-gray-400';
+  const headerLabel = isLight ? 'text-gray-600' : 'text-gray-500';
   const exitBtn = isLight
-    ? 'border-slate-300 text-slate-600 hover:text-slate-900 hover:border-slate-400 hover:bg-slate-50'
-    : 'border-white/10 text-slate-400 hover:text-white hover:border-white/20';
+    ? 'border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700 active:text-red-700 transition-colors duration-200'
+    : 'border-red-500/50 text-red-400 hover:bg-red-900/20 hover:text-white hover:border-red-400 transition-colors duration-200';
 
   const isTeachActive = phase === 'active' && selectedMode === 'teach';
   const isSessionActive = phase === 'active';
@@ -230,7 +229,7 @@ export default function ClassroomPage() {
       className={`flex flex-col transition-colors duration-200 ${
         isSessionActive ? 'h-screen min-h-[768px] min-w-[1366px] overflow-hidden' : 'min-h-screen'
       } ${
-        isLight ? 'bg-slate-50 text-slate-900' : 'bg-[#0B1220] text-white'
+        isLight ? 'bg-gray-50 text-gray-900' : 'bg-[#0B1220] text-white'
       }`}
       style={{ fontFamily: 'system-ui, sans-serif' }}
       {...(isSessionActive ? { 'data-teach-mode': 'true' } : {})}
@@ -241,15 +240,10 @@ export default function ClassroomPage() {
         >
           <div className="flex items-center gap-4 sm:gap-6 flex-wrap">
             <div className="flex items-center gap-2">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={isLight ? '/logo.svg' : '/logo-white.svg'}
-                alt="GRIO"
-                className="h-8 w-auto"
-              />
+              <span className={`font-bold text-xl sm:text-2xl tracking-tight ${headerText}`}>GRIO</span>
               <span
                 className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                  isLight ? 'bg-teal-100 text-teal-700' : 'bg-teal-900/50 text-teal-300'
+                  isLight ? 'bg-red-100 text-red-700' : 'bg-red-900/50 text-red-300'
                 }`}
               >
                 AI
@@ -277,26 +271,20 @@ export default function ClassroomPage() {
                       ? 'AI-guided lesson'
                       : selectedMode === 'quiz'
                       ? 'Direct practice'
-                      : selectedMode === 'revision'
-                      ? 'Key points + rapid-fire'
-                      : 'Interactive conversation'
+                      : 'Key points + rapid-fire'
                   }
                   className={`px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide ${
                     selectedMode === 'teach'
                       ? isLight
-                        ? 'bg-teal-100 text-teal-800 border border-teal-200'
-                        : 'bg-teal-900/50 text-teal-300 border border-teal-700/40'
+                        ? 'bg-red-100 text-red-800 border border-red-200'
+                        : 'bg-red-900/50 text-red-300 border border-red-700/40'
                       : selectedMode === 'quiz'
                       ? isLight
                         ? 'bg-blue-100 text-blue-800 border border-blue-200'
                         : 'bg-blue-900/50 text-blue-300 border border-blue-700/40'
-                      : selectedMode === 'revision'
-                      ? isLight
-                        ? 'bg-amber-100 text-amber-800 border border-amber-200'
-                        : 'bg-amber-900/50 text-amber-300 border border-amber-700/40'
                       : isLight
-                      ? 'bg-purple-100 text-purple-800 border border-purple-200'
-                      : 'bg-purple-900/50 text-purple-300 border border-purple-700/40'
+                      ? 'bg-amber-100 text-amber-800 border border-amber-200'
+                      : 'bg-amber-900/50 text-amber-300 border border-amber-700/40'
                   }`}
                 >
                   {selectedMode} mode
@@ -306,14 +294,14 @@ export default function ClassroomPage() {
                     <button
                       type="button"
                       onClick={toggleHighContrast}
-                      className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors ${
+                      className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-all duration-200 ease-in-out ${
                         highContrast
                           ? isLight
-                            ? 'bg-slate-200 border-slate-400 text-slate-800'
-                            : 'bg-slate-600/60 border-slate-500 text-white'
+                            ? 'bg-red-100 border-red-300 text-red-700 ring-2 ring-red-300'
+                            : 'bg-red-900/30 border-red-500/50 text-red-200 ring-2 ring-red-400/50'
                           : isLight
-                          ? 'border-slate-300 text-slate-500 hover:text-slate-700 hover:bg-slate-100'
-                          : 'border-slate-600/60 text-slate-400 hover:text-slate-300'
+                          ? 'border-gray-300 text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                          : 'border-gray-600/60 text-gray-400 hover:text-gray-300'
                       }`}
                       title={highContrast ? 'Disable high contrast' : 'Enable high contrast'}
                     >
@@ -322,14 +310,14 @@ export default function ClassroomPage() {
                     <button
                       type="button"
                       onClick={toggleLargeTypography}
-                      className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors ${
+                      className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-all duration-200 ease-in-out ${
                         largeTypography
                           ? isLight
-                            ? 'bg-slate-200 border-slate-400 text-slate-800'
-                            : 'bg-slate-600/60 border-slate-500 text-white'
+                            ? 'bg-red-50 border-red-200 text-red-600 ring-2 ring-red-300'
+                            : 'bg-red-900/30 border-red-500/50 text-red-200 ring-2 ring-red-400/50'
                           : isLight
-                          ? 'border-slate-300 text-slate-500 hover:text-slate-700 hover:bg-slate-100'
-                          : 'border-slate-600/60 text-slate-400 hover:text-slate-300'
+                          ? 'border-gray-300 text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                          : 'border-gray-600/60 text-gray-400 hover:text-gray-300'
                       }`}
                       title={largeTypography ? 'Disable large text' : 'Enable large text'}
                     >
@@ -338,10 +326,10 @@ export default function ClassroomPage() {
                     <button
                       type="button"
                       onClick={togglePresentationMode}
-                      className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors ${
+                      className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-all duration-200 ease-in-out ${
                         isLight
-                          ? 'border-slate-300 text-slate-500 hover:text-slate-700 hover:bg-slate-100'
-                          : 'border-slate-600/60 text-slate-400 hover:text-slate-300'
+                          ? 'border-gray-300 text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                          : 'border-gray-600/60 text-gray-400 hover:text-gray-300'
                       }`}
                       title="Enter presentation mode"
                     >
@@ -379,7 +367,7 @@ export default function ClassroomPage() {
               )}
             </button>
             <button
-              onClick={handleExit}
+              onClick={() => setShowExitConfirm(true)}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-colors ${exitBtn}`}
             >
               <span>Exit</span>
@@ -390,43 +378,26 @@ export default function ClassroomPage() {
       )}
 
       <div className="flex flex-1 overflow-hidden">
-        {phase === 'active' && (selectedMode === 'teach' || selectedMode === 'chat') && !(isSessionActive && presentationMode) && (
-          <ClassroomSidebar
-            currentTopic={selectedTopic}
-            currentSubject={selectedSubjectName}
-            currentClassroomId={selectedClassroom}
-            theme={theme}
-            mode={selectedMode}
-            onChatSelect={(chatId) => {
-              if (chatId === 'new') {
-                setCurrentChatId(`chat_${Date.now()}`);
-              } else {
-                setCurrentChatId(chatId);
-              }
-            }}
-            currentChatId={currentChatId}
-          />
-        )}
-        {phase === 'active' && selectedMode !== 'teach' && selectedMode !== 'chat' && !(isSessionActive && presentationMode) && (
+        {phase === 'active' && !(isSessionActive && presentationMode) && (
           <aside
             className={`flex-shrink-0 border-r flex flex-col transition-[width] duration-200 ${
               conceptPanelOpen ? 'w-80' : 'w-12'
             } ${
               isLight
-                ? 'bg-white border-slate-200'
-                : 'bg-slate-900/40 border-white/10'
+                ? 'bg-white border-gray-200'
+                : 'bg-gray-900/40 border-white/10'
             }`}
           >
             {conceptPanelOpen ? (
               <>
                 <div
                   className={`flex items-center justify-between px-4 py-3 border-b flex-shrink-0 ${
-                    isLight ? 'border-slate-200' : 'border-white/10'
+                    isLight ? 'border-gray-200' : 'border-white/10'
                   }`}
                 >
                   <span
                     className={`text-xs font-semibold uppercase tracking-widest ${
-                      isLight ? 'text-slate-500' : 'text-slate-400'
+                      isLight ? 'text-gray-500' : 'text-gray-400'
                     }`}
                   >
                     Concept summary
@@ -436,8 +407,8 @@ export default function ClassroomPage() {
                     onClick={() => setConceptPanelOpen(false)}
                     className={`p-1.5 rounded-lg transition-colors ${
                       isLight
-                        ? 'text-slate-500 hover:text-slate-800 hover:bg-slate-100'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-700/60'
+                        ? 'text-gray-500 hover:text-gray-800 hover:bg-gray-100'
+                        : 'text-gray-400 hover:text-white hover:bg-gray-700/60'
                     }`}
                     title="Collapse panel"
                     aria-label="Collapse concept summary panel"
@@ -457,8 +428,8 @@ export default function ClassroomPage() {
                 onClick={() => setConceptPanelOpen(true)}
                 className={`flex items-center justify-center w-full h-24 transition-colors ${
                   isLight
-                    ? 'text-slate-500 hover:text-teal-600 hover:bg-slate-100'
-                    : 'text-slate-400 hover:text-teal-400 hover:bg-slate-700/40'
+                    ? 'text-gray-500 hover:text-red-600 hover:bg-gray-100'
+                    : 'text-gray-400 hover:text-red-400 hover:bg-gray-700/40'
                 }`}
                 title="Expand concept summary"
                 aria-label="Expand concept summary panel"
@@ -473,13 +444,13 @@ export default function ClassroomPage() {
         {phase === 'setup' && (
           <aside
             className={`w-72 border-r p-6 flex flex-col gap-6 flex-shrink-0 ${
-              isLight ? 'bg-white border-slate-200' : 'border-white/10'
+              isLight ? 'bg-white border-gray-200' : 'border-white/10'
             }`}
           >
             <div>
               <h2
                 className={`text-xs uppercase tracking-widest font-semibold mb-4 ${
-                  isLight ? 'text-slate-500' : 'text-slate-500'
+                  isLight ? 'text-gray-500' : 'text-gray-500'
                 }`}
               >
                 Lesson Setup
@@ -487,16 +458,16 @@ export default function ClassroomPage() {
 
               {classrooms.length > 0 && (
                 <div className="mb-5">
-                  <label className={`block text-xs mb-2 font-medium ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
+                  <label className={`block text-xs mb-2 font-medium ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>
                     Classroom
                   </label>
                   <select
                     value={selectedClassroom}
                     onChange={(e) => setSelectedClassroom(e.target.value)}
-                    className={`w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/50 ${
+                    className={`w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 ${
                       isLight
-                        ? 'bg-slate-50 border border-slate-300 text-slate-900'
-                        : 'bg-slate-800/60 border border-slate-700/60 text-white'
+                        ? 'bg-gray-50 border border-gray-300 text-gray-900'
+                        : 'bg-gray-800/60 border border-gray-700/60 text-white'
                     }`}
                   >
                     {classrooms.map((cls) => (
@@ -509,16 +480,16 @@ export default function ClassroomPage() {
               )}
 
               <div className="mb-5">
-                <label className={`block text-xs mb-2 font-medium ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
+                <label className={`block text-xs mb-2 font-medium ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>
                   Subject
                 </label>
                 <select
                   value={selectedSubjectId}
                   onChange={(e) => handleSubjectChange(e.target.value)}
-                  className={`w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/50 ${
+                  className={`w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 ${
                     isLight
-                      ? 'bg-slate-50 border border-slate-300 text-slate-900'
-                      : 'bg-slate-800/60 border border-slate-700/60 text-white'
+                      ? 'bg-gray-50 border border-gray-300 text-gray-900'
+                      : 'bg-gray-800/60 border border-gray-700/60 text-white'
                   }`}
                 >
                   {contextSubjects.map((s) => (
@@ -530,16 +501,16 @@ export default function ClassroomPage() {
               </div>
 
               <div className="mb-5">
-                <label className={`block text-xs mb-2 font-medium ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
+                <label className={`block text-xs mb-2 font-medium ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>
                   Topic
                 </label>
                 <select
                   value={selectedTopic}
                   onChange={(e) => setSelectedTopic(e.target.value)}
-                  className={`w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/50 ${
+                  className={`w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 ${
                     isLight
-                      ? 'bg-slate-50 border border-slate-300 text-slate-900'
-                      : 'bg-slate-800/60 border border-slate-700/60 text-white'
+                      ? 'bg-gray-50 border border-gray-300 text-gray-900'
+                      : 'bg-gray-800/60 border border-gray-700/60 text-white'
                   }`}
                 >
                   {topicNames.map((t) => (
@@ -552,33 +523,31 @@ export default function ClassroomPage() {
             </div>
 
             <div>
-              <label className={`block text-xs mb-3 font-medium uppercase tracking-widest ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
+              <label className={`block text-xs mb-3 font-medium uppercase tracking-widest ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>
                 Mode
               </label>
               <div className="space-y-2">
-                {(['chat', 'teach', 'quiz', 'revision'] as SessionMode[]).map((m) => (
+                {(['teach', 'quiz', 'revision'] as SessionMode[]).map((m) => (
                   <button
                     key={m}
                     onClick={() => setSelectedMode(m)}
                     className={`w-full px-4 py-3.5 rounded-xl border text-left transition-all text-sm font-medium ${
                       selectedMode === m
                         ? isLight
-                          ? 'bg-teal-50 border-teal-400 text-teal-800'
-                          : 'bg-teal-600/20 border-teal-500/60 text-teal-300'
+                          ? 'bg-red-50 border-red-400 text-red-800'
+                          : 'bg-red-600/20 border-red-500/60 text-red-300'
                         : isLight
-                        ? 'bg-slate-50 border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-100'
-                        : 'bg-slate-800/40 border-slate-700/40 text-slate-400 hover:text-white hover:border-slate-600'
+                        ? 'bg-gray-50 border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-100'
+                        : 'bg-gray-800/40 border-gray-700/40 text-gray-400 hover:text-white hover:border-gray-600'
                     }`}
                   >
                     <div className="font-semibold capitalize">{m} Mode</div>
-                    <div className={`text-xs mt-0.5 ${isLight ? 'text-slate-500' : 'opacity-70'}`}>
+                    <div className={`text-xs mt-0.5 ${isLight ? 'text-gray-500' : 'opacity-70'}`}>
                       {m === 'teach'
                         ? 'AI-guided lesson with explanation and examples'
                         : m === 'quiz'
                         ? 'Jump straight into practice questions'
-                        : m === 'revision'
-                        ? 'Summary bullets and rapid-fire questions'
-                        : 'Interactive chat-based learning conversation'}
+                        : 'Summary bullets and rapid-fire questions'}
                     </div>
                   </button>
                 ))}
@@ -588,7 +557,7 @@ export default function ClassroomPage() {
             <button
               onClick={handleStartLesson}
               disabled={!selectedTopic}
-              className="mt-auto w-full py-4 bg-teal-600 hover:bg-teal-500 disabled:bg-slate-300 disabled:text-slate-500 text-white font-bold rounded-xl transition-colors text-base shadow-sm disabled:shadow-none"
+              className="mt-auto w-full py-4 bg-red-600 hover:bg-red-700 disabled:bg-gray-300 disabled:text-gray-500 text-white font-bold rounded-xl transition-all duration-200 shadow-md hover:shadow-lg active:scale-95 disabled:shadow-none disabled:scale-100"
             >
               Start Lesson
             </button>
@@ -600,20 +569,19 @@ export default function ClassroomPage() {
             <div className="flex-1 flex flex-col items-center justify-center p-8 sm:p-12 text-center">
               <div
                 className={`w-20 h-20 sm:w-24 sm:h-24 rounded-2xl flex items-center justify-center mb-6 ${
-                  isLight ? 'bg-teal-100 border border-teal-200' : 'border border-teal-500/30 bg-teal-500/5'
+                  isLight ? 'bg-red-100 border border-red-200' : 'border border-red-500/30 bg-red-500/5'
                 }`}
               >
-                <div className={isLight ? 'text-teal-600 text-3xl sm:text-4xl font-bold' : 'text-teal-400 text-3xl sm:text-4xl font-bold'}>G</div>
+                <div className={isLight ? 'text-red-600 text-3xl sm:text-4xl font-bold' : 'text-red-400 text-3xl sm:text-4xl font-bold'}>G</div>
               </div>
-              <h1 className={`text-2xl sm:text-3xl font-bold mb-3 ${isLight ? 'text-slate-900' : 'text-white'}`}>
+              <h1 className={`text-2xl sm:text-3xl font-bold mb-3 ${isLight ? 'text-gray-900' : 'text-white'}`}>
                 GRIO Classroom Mode
               </h1>
-              <p className={`text-lg max-w-md leading-relaxed ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
+              <p className={`text-lg max-w-md leading-relaxed ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>
                 Select a subject, topic, and mode from the panel to begin an AI-powered classroom session.
               </p>
-              <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl">
+              <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-lg">
                 {[
-                  { label: 'Chat Mode', desc: 'Interactive conversation' },
                   { label: 'Teach Mode', desc: 'Full AI-guided lesson' },
                   { label: 'Quiz Mode', desc: 'Direct practice questions' },
                   { label: 'Revision', desc: 'Key points + rapid-fire' },
@@ -621,11 +589,11 @@ export default function ClassroomPage() {
                   <div
                     key={item.label}
                     className={`rounded-xl p-4 text-center border ${
-                      isLight ? 'bg-white border-slate-200 shadow-sm' : 'bg-slate-800/40 border-slate-700/40'
+                      isLight ? 'bg-white border-gray-200 shadow-sm' : 'bg-gray-800/40 border-gray-700/40'
                     }`}
                   >
-                    <p className={`font-semibold text-sm mb-1 ${isLight ? 'text-slate-900' : 'text-white'}`}>{item.label}</p>
-                    <p className={isLight ? 'text-slate-500 text-xs' : 'text-slate-500 text-xs'}>{item.desc}</p>
+                    <p className={`font-semibold text-sm mb-1 ${isLight ? 'text-gray-900' : 'text-white'}`}>{item.label}</p>
+                    <p className={isLight ? 'text-gray-500 text-xs' : 'text-gray-500 text-xs'}>{item.desc}</p>
                   </div>
                 ))}
               </div>
@@ -651,16 +619,16 @@ export default function ClassroomPage() {
               </div>
               <div
                 className={`flex items-center justify-center gap-3 sm:gap-4 px-6 sm:px-8 py-4 border-t flex-shrink-0 ${
-                  isLight ? 'bg-white border-slate-200' : 'border-white/10'
+                  isLight ? 'bg-white border-gray-200' : 'border-white/10'
                 }`}
               >
                 <button
                   onClick={() => setIsPaused(true)}
                   disabled={isPaused}
-                  className={`px-4 py-2.5 rounded-xl border text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
+                  className={`px-4 py-2.5 rounded-xl border text-sm font-medium transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed ${
                     isLight
-                      ? 'border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-400'
-                      : 'border-slate-700/60 text-slate-300 hover:text-white hover:border-slate-500'
+                      ? 'bg-red-500 hover:bg-red-600 text-white border-red-600'
+                      : 'bg-red-500 hover:bg-red-600 text-white border-red-600'
                   }`}
                 >
                   Pause
@@ -670,13 +638,13 @@ export default function ClassroomPage() {
                   disabled={!isPaused}
                   className={`px-4 py-2.5 rounded-xl border text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
                     isLight
-                      ? 'border-teal-400 text-teal-700 hover:bg-teal-50'
-                      : 'border-teal-700/60 text-teal-300 hover:text-white hover:border-teal-500'
+                      ? 'border-emerald-400 text-emerald-700 hover:bg-emerald-50'
+                      : 'border-emerald-700/60 text-emerald-300 hover:text-white hover:border-emerald-500'
                   }`}
                 >
                   Resume
                 </button>
-                <div className={`w-px h-6 ${isLight ? 'bg-slate-200' : 'bg-white/10'}`} />
+                <div className={`w-px h-6 ${isLight ? 'bg-gray-200' : 'bg-white/10'}`} />
                 <button
                   onClick={handleToggleMute}
                   className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border transition-colors text-sm font-medium ${
@@ -685,34 +653,34 @@ export default function ClassroomPage() {
                         ? 'border-red-200 text-red-600 hover:bg-red-50'
                         : 'border-red-700/40 text-red-400 hover:text-red-300 hover:border-red-600/60'
                       : isLight
-                      ? 'border-slate-300 text-slate-700 hover:bg-slate-50'
-                      : 'border-slate-700/60 text-slate-300 hover:text-white hover:border-slate-500'
+                      ? 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                      : 'border-gray-700/60 text-gray-300 hover:text-white hover:border-gray-500'
                   }`}
                   title={isMuted ? 'Unmute audio' : 'Mute audio'}
                 >
                   <SpeakerIcon muted={isMuted} />
                   <span>{isMuted ? 'Unmute' : 'Mute'}</span>
                 </button>
-                <div className={`w-px h-6 ${isLight ? 'bg-slate-200' : 'bg-white/10'}`} />
-                <span className={isLight ? 'text-slate-500 text-sm' : 'text-slate-500 text-sm'}>
+                <div className={`w-px h-6 ${isLight ? 'bg-gray-200' : 'bg-white/10'}`} />
+                <span className={isLight ? 'text-gray-500 text-sm' : 'text-gray-500 text-sm'}>
                   {isPaused ? (
                     <span className="text-amber-500">Paused</span>
                   ) : (
                     <span className="text-emerald-500">Live</span>
                   )}
                 </span>
-                <div className={`w-px h-6 ${isLight ? 'bg-slate-200' : 'bg-white/10'}`} />
+                <div className={`w-px h-6 ${isLight ? 'bg-gray-200' : 'bg-white/10'}`} />
                 <button
                   type="button"
                   onClick={() => setShowTimer((prev) => !prev)}
-                  className={`px-4 py-2.5 rounded-xl border text-sm font-medium transition-colors ${
+                  className={`px-4 py-2.5 rounded-xl border text-sm font-medium transition-all duration-200 ${
                     showTimer
                       ? isLight
-                        ? 'bg-slate-200 border-slate-400 text-slate-800'
-                        : 'bg-slate-600/60 border-slate-500 text-white'
+                        ? 'bg-red-100 border-red-200 text-red-700'
+                        : 'bg-red-900/30 border-red-500/50 text-red-200'
                       : isLight
-                      ? 'border-slate-300 text-slate-500 hover:text-slate-700 hover:bg-slate-100'
-                      : 'border-slate-600/60 text-slate-400 hover:text-slate-300'
+                      ? 'border-gray-300 text-gray-500 hover:text-gray-700 hover:bg-gray-100 bg-gray-100'
+                      : 'border-gray-600/60 text-gray-400 hover:text-gray-300 bg-gray-800/40'
                   }`}
                   title={showTimer ? 'Hide timer' : 'Show timer'}
                 >
@@ -732,25 +700,25 @@ export default function ClassroomPage() {
               >
                 <span className="text-emerald-500 text-4xl">✓</span>
               </div>
-              <h1 className={`text-2xl sm:text-3xl font-bold mb-3 ${isLight ? 'text-slate-900' : 'text-white'}`}>
+              <h1 className={`text-2xl sm:text-3xl font-bold mb-3 ${isLight ? 'text-gray-900' : 'text-white'}`}>
                 Session Complete
               </h1>
-              <p className={`text-lg mb-2 ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
+              <p className={`text-lg mb-2 ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>
                 {selectedSubjectName} — {selectedTopic}
               </p>
-              <p className={`text-sm mb-6 capitalize ${isLight ? 'text-slate-500' : 'text-slate-500'}`}>{selectedMode} Mode</p>
+              <p className={`text-sm mb-6 capitalize ${isLight ? 'text-gray-500' : 'text-gray-500'}`}>{selectedMode} Mode</p>
 
               {completedScore && (
                 <div
                   className={`rounded-2xl px-8 sm:px-10 py-6 mb-8 border ${
-                    isLight ? 'bg-white border-slate-200 shadow-sm' : 'bg-slate-800/60 border-slate-600/40'
+                    isLight ? 'bg-white border-gray-200 shadow-sm' : 'bg-gray-800/60 border-gray-600/40'
                   }`}
                 >
-                  <p className={`text-sm mb-2 ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>Score</p>
-                  <p className="text-4xl sm:text-5xl font-bold text-teal-500 mb-1">
+                  <p className={`text-sm mb-2 ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>Score</p>
+                  <p className="text-4xl sm:text-5xl font-bold text-red-500 mb-1">
                     {completedScore.score}/{completedScore.total}
                   </p>
-                  <p className={isLight ? 'text-slate-500 text-sm' : 'text-slate-400 text-sm'}>
+                  <p className={isLight ? 'text-gray-500 text-sm' : 'text-gray-400 text-sm'}>
                     {Math.round((completedScore.score / completedScore.total) * 100)}% correct
                   </p>
                 </div>
@@ -759,7 +727,7 @@ export default function ClassroomPage() {
               <div className="flex flex-wrap gap-3 justify-center">
                 <button
                   onClick={handleNewSession}
-                  className="px-6 sm:px-8 py-3.5 bg-teal-600 hover:bg-teal-500 text-white font-bold rounded-xl transition-colors shadow-sm"
+                  className="px-6 sm:px-8 py-3.5 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl transition-colors shadow-sm"
                 >
                   New Session
                 </button>
@@ -767,8 +735,8 @@ export default function ClassroomPage() {
                   onClick={handleExit}
                   className={`px-6 sm:px-8 py-3.5 border font-medium rounded-xl transition-colors ${
                     isLight
-                      ? 'border-slate-300 text-slate-700 hover:bg-slate-50'
-                      : 'border-slate-700/60 text-slate-300 hover:text-white hover:border-slate-500'
+                      ? 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                      : 'border-gray-700/60 text-gray-300 hover:text-white hover:border-gray-500'
                   }`}
                 >
                   Exit
@@ -778,6 +746,51 @@ export default function ClassroomPage() {
           )}
         </main>
       </div>
+
+      {showExitConfirm && (
+        <div
+          className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-gray-900/40"
+          onClick={() => setShowExitConfirm(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="exit-modal-title"
+        >
+          <div
+            className={`rounded-2xl shadow-xl p-6 max-w-sm w-full ${
+              isLight ? 'bg-white border border-gray-200' : 'bg-gray-800 border border-gray-700'
+            }`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 id="exit-modal-title" className={`text-lg font-semibold mb-2 ${isLight ? 'text-gray-900' : 'text-white'}`}>
+              Leave classroom?
+            </h2>
+            <p className={`text-sm mb-6 ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>
+              You will leave this session and return to the teacher dashboard.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                type="button"
+                onClick={() => setShowExitConfirm(false)}
+                className={`px-4 py-2.5 rounded-xl border font-medium transition-colors ${
+                  isLight ? 'bg-gray-200 border-gray-300 text-gray-800' : 'bg-gray-700 border-gray-600 text-gray-200'
+                }`}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowExitConfirm(false);
+                  handleExit();
+                }}
+                className="px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-medium transition-colors shadow-md hover:shadow-lg active:scale-95"
+              >
+                Leave
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

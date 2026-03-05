@@ -12,7 +12,7 @@ interface AnimatedAvatarProps {
 }
 
 const GLOW_COLORS: Record<string, string> = {
-  teal: 'rgba(20, 184, 166, 0.4)',
+  red: 'rgba(220, 38, 38, 0.4)',
   blue: 'rgba(59, 130, 246, 0.4)',
   amber: 'rgba(245, 158, 11, 0.4)',
   emerald: 'rgba(16, 185, 129, 0.4)',
@@ -35,7 +35,7 @@ function AvatarEyes({ state, isSpeaking }: { state: AvatarState; isSpeaking: boo
       <>
         <motion.path
           d="M 56 68 Q 62 60 68 68"
-          stroke="#2dd4bf"
+          stroke="#dc2626"
           strokeWidth="2.5"
           strokeLinecap="round"
           fill="none"
@@ -45,7 +45,7 @@ function AvatarEyes({ state, isSpeaking }: { state: AvatarState; isSpeaking: boo
         />
         <motion.path
           d="M 92 68 Q 98 60 104 68"
-          stroke="#2dd4bf"
+          stroke="#dc2626"
           strokeWidth="2.5"
           strokeLinecap="round"
           fill="none"
@@ -68,7 +68,7 @@ function AvatarEyes({ state, isSpeaking }: { state: AvatarState; isSpeaking: boo
         cy={66}
         rx={5}
         ry={6}
-        fill="#2dd4bf"
+        fill="#dc2626"
         animate={{
           scaleY: eyeScaleY,
           x: eyeOffsetX,
@@ -82,7 +82,7 @@ function AvatarEyes({ state, isSpeaking }: { state: AvatarState; isSpeaking: boo
         cy={66}
         rx={5}
         ry={6}
-        fill="#2dd4bf"
+        fill="#dc2626"
         animate={{
           scaleY: eyeScaleY,
           x: eyeOffsetX,
@@ -102,7 +102,7 @@ function AvatarMouth({ state, isSpeaking }: { state: AvatarState; isSpeaking: bo
     return (
       <motion.path
         d="M 68 90 Q 80 105 92 90"
-        stroke="#2dd4bf"
+        stroke="#dc2626"
         strokeWidth="2.5"
         strokeLinecap="round"
         fill="none"
@@ -119,7 +119,7 @@ function AvatarMouth({ state, isSpeaking }: { state: AvatarState; isSpeaking: bo
         cy={92}
         rx={4}
         ry={3}
-        fill="#2dd4bf"
+        fill="#dc2626"
         opacity={0.6}
         animate={{ rx: [4, 5, 4], ry: [3, 2, 3] }}
         transition={{ duration: 1.5, repeat: Infinity }}
@@ -134,7 +134,7 @@ function AvatarMouth({ state, isSpeaking }: { state: AvatarState; isSpeaking: bo
         cy={92}
         rx={7}
         ry={2}
-        fill="#2dd4bf"
+        fill="#dc2626"
         animate={{
           ry: [2, 6, 3, 7, 2, 5, 2],
           rx: [7, 8, 6, 9, 7, 8, 7],
@@ -147,7 +147,7 @@ function AvatarMouth({ state, isSpeaking }: { state: AvatarState; isSpeaking: bo
   return (
     <motion.path
       d="M 72 90 Q 80 97 88 90"
-      stroke="#2dd4bf"
+      stroke="#dc2626"
       strokeWidth="2"
       strokeLinecap="round"
       fill="none"
@@ -166,7 +166,7 @@ function ThinkingDots() {
           cx={120 + i * 12}
           cy={55}
           r={3}
-          fill="#2dd4bf"
+          fill="#dc2626"
           initial={{ opacity: 0.2, scale: 0.8 }}
           animate={{ opacity: [0.2, 1, 0.2], scale: [0.8, 1.2, 0.8] }}
           transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
@@ -178,10 +178,10 @@ function ThinkingDots() {
 
 function CelebrationParticles() {
   const particles = [
-    { x: 40, y: 25, color: '#2dd4bf' },
+    { x: 40, y: 25, color: '#dc2626' },
     { x: 120, y: 25, color: '#34d399' },
     { x: 30, y: 50, color: '#fbbf24' },
-    { x: 130, y: 50, color: '#2dd4bf' },
+    { x: 130, y: 50, color: '#dc2626' },
     { x: 45, y: 110, color: '#34d399' },
     { x: 115, y: 110, color: '#fbbf24' },
   ];
@@ -209,8 +209,8 @@ function CelebrationParticles() {
   );
 }
 
-export default function AnimatedAvatar({ state, isSpeaking, glowColor = 'teal' }: AnimatedAvatarProps) {
-  const resolvedGlow = GLOW_COLORS[glowColor] || GLOW_COLORS.teal;
+export default function AnimatedAvatar({ state, isSpeaking, glowColor = 'red' }: AnimatedAvatarProps) {
+  const resolvedGlow = GLOW_COLORS[glowColor] || GLOW_COLORS.red;
 
   const containerVariants = {
     idle: {
@@ -294,7 +294,7 @@ export default function AnimatedAvatar({ state, isSpeaking, glowColor = 'teal' }
       />
 
       <motion.div
-        className="absolute rounded-full border border-teal-500/20"
+        className="absolute rounded-full border border-red-500/20"
         style={{ width: 170, height: 170 }}
         animate={
           state === 'speaking' || state === 'listening'
@@ -328,7 +328,7 @@ export default function AnimatedAvatar({ state, isSpeaking, glowColor = 'teal' }
           cy={80}
           r={52}
           fill="url(#headGrad)"
-          stroke="#2dd4bf"
+          stroke="#dc2626"
           strokeWidth={1.5}
           strokeOpacity={0.3}
         />
@@ -342,7 +342,7 @@ export default function AnimatedAvatar({ state, isSpeaking, glowColor = 'teal' }
           x={80}
           y={47}
           textAnchor="middle"
-          fill="#2dd4bf"
+          fill="#dc2626"
           fontSize="11"
           fontWeight="700"
           letterSpacing="2"

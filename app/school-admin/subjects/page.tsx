@@ -24,10 +24,10 @@ export default function SchoolAdminSubjectsPage() {
   if (loading) {
     return (
       <div className="p-8 animate-pulse space-y-4">
-        <div className="h-8 w-40 bg-slate-200 rounded" />
+        <div className="h-8 w-40 bg-gray-200 rounded" />
         <div className="grid grid-cols-2 gap-6">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-28 bg-slate-200 rounded-xl" />
+            <div key={i} className="h-28 bg-gray-200 rounded-xl" />
           ))}
         </div>
       </div>
@@ -37,8 +37,8 @@ export default function SchoolAdminSubjectsPage() {
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900">Subjects</h1>
-        <p className="text-slate-500 text-sm mt-1">
+        <h1 className="text-2xl font-bold text-gray-900">Subjects</h1>
+        <p className="text-gray-500 text-sm mt-1">
           {subjects.length} subjects in your curriculum
         </p>
       </div>
@@ -49,7 +49,7 @@ export default function SchoolAdminSubjectsPage() {
           return (
             <div
               key={subject.id}
-              className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow"
+              className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow"
             >
               <div className="flex items-center gap-3 mb-3">
                 <div
@@ -58,10 +58,10 @@ export default function SchoolAdminSubjectsPage() {
                 >
                   {subject.icon}
                 </div>
-                <h3 className="text-sm font-semibold text-slate-800">{subject.name}</h3>
+                <h3 className="text-sm font-semibold text-gray-800">{subject.name}</h3>
               </div>
-              <p className="text-xs text-slate-500 mb-3 line-clamp-2">{subject.description}</p>
-              <p className="text-xs text-slate-400 font-medium">
+              <p className="text-xs text-gray-500 mb-3 line-clamp-2">{subject.description}</p>
+              <p className="text-xs text-gray-400 font-medium">
                 {subjectTopics.length} {subjectTopics.length === 1 ? 'topic' : 'topics'}
               </p>
             </div>

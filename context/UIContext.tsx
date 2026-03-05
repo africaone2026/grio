@@ -94,7 +94,7 @@ export function UIProvider({ children }: { children: ReactNode }) {
         <button
           type="button"
           onClick={() => setPresentationMode(false)}
-          className="fixed bottom-6 right-6 z-[9999] px-5 py-3 rounded-xl text-sm font-semibold shadow-lg transition-all bg-slate-800/90 border border-slate-600 text-slate-200 hover:bg-slate-700 backdrop-blur-sm opacity-60 hover:opacity-100"
+          className="fixed bottom-6 right-6 z-[9999] px-5 py-3 rounded-xl text-sm font-semibold shadow-lg transition-all bg-gray-800/90 border border-gray-600 text-gray-200 hover:bg-gray-700 backdrop-blur-sm opacity-60 hover:opacity-100"
           aria-label="Exit presentation mode"
         >
           Exit Presentation

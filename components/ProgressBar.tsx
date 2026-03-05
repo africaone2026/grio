@@ -28,16 +28,16 @@ export default function ProgressBar({
       {(label || showPercentage) && (
         <div className="flex justify-between items-center mb-1.5">
           {label && (
-            <span className="text-sm text-slate-600 font-medium">{label}</span>
+            <span className="text-sm text-gray-600 font-medium">{label}</span>
           )}
           {showPercentage && (
-            <span className="text-sm font-semibold text-slate-700 ml-auto">
+            <span className="text-sm font-semibold text-gray-700 ml-auto">
               {clampedPct}%
             </span>
           )}
         </div>
       )}
-      <div className={`w-full bg-slate-200 rounded-full ${heightClass}`}>
+      <div className={`w-full bg-gray-200 rounded-full ${heightClass}`}>
         <div
           className={`${color} ${heightClass} rounded-full transition-all duration-500`}
           style={{ width: `${clampedPct}%` }}

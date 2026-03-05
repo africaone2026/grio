@@ -144,17 +144,17 @@ export default function PricingPage() {
       <section className="bg-gradient-to-b from-[#071728] to-[#0f2a4a] text-white py-20">
         <div className="max-w-4xl mx-auto px-6 text-center">
           <h1 className="text-4xl font-bold mb-4">Pricing</h1>
-          <p className="text-slate-300 text-lg leading-relaxed">
+          <p className="text-gray-300 text-lg leading-relaxed">
             Accessible for individual learners. Scalable for institutions.
             No hidden fees. Cancel anytime.
           </p>
         </div>
       </section>
 
-      <section className="py-24 bg-slate-50">
+      <section className="py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-xl font-bold text-slate-900 mb-2">For Independent Learners</h2>
-          <p className="text-slate-500 mb-10">Study at your own pace with full curriculum access.</p>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">For Independent Learners</h2>
+          <p className="text-gray-500 mb-10">Study at your own pace with full curriculum access.</p>
           <div className="grid lg:grid-cols-3 gap-8 mb-20">
             {tiers.slice(0, 3).map((tier) => (
               <div
@@ -162,7 +162,7 @@ export default function PricingPage() {
                 className={`rounded-2xl border p-8 ${
                   tier.highlighted
                     ? 'bg-[#0f2a4a] border-[#0f2a4a] shadow-xl'
-                    : 'bg-white border-slate-200'
+                    : 'bg-white border-gray-200'
                 }`}
               >
                 {tier.highlighted && (
@@ -172,19 +172,19 @@ export default function PricingPage() {
                 )}
                 <h3
                   className={`text-lg font-bold mb-1 ${
-                    tier.highlighted ? 'text-white' : 'text-slate-900'
+                    tier.highlighted ? 'text-white' : 'text-gray-900'
                   }`}
                 >
                   {tier.name}
                 </h3>
-                <p className={`text-sm mb-4 ${tier.highlighted ? 'text-slate-400' : 'text-slate-500'}`}>
+                <p className={`text-sm mb-4 ${tier.highlighted ? 'text-gray-400' : 'text-gray-500'}`}>
                   {tier.description}
                 </p>
                 <div className="flex items-baseline gap-1 mb-6">
-                  <span className={`text-3xl font-bold ${tier.highlighted ? 'text-white' : 'text-slate-900'}`}>
+                  <span className={`text-3xl font-bold ${tier.highlighted ? 'text-white' : 'text-gray-900'}`}>
                     {tier.price}
                   </span>
-                  <span className={`text-sm ${tier.highlighted ? 'text-slate-300' : 'text-slate-400'}`}>
+                  <span className={`text-sm ${tier.highlighted ? 'text-gray-300' : 'text-gray-400'}`}>
                     {tier.period}
                   </span>
                 </div>
@@ -192,13 +192,13 @@ export default function PricingPage() {
                   {tier.features.map((f) => (
                     <li key={f} className="flex items-start gap-2">
                       <span className={`text-xs mt-1 flex-shrink-0 ${tier.highlighted ? 'text-blue-300' : 'text-emerald-600'}`}>✓</span>
-                      <span className={`text-sm ${tier.highlighted ? 'text-slate-300' : 'text-slate-600'}`}>{f}</span>
+                      <span className={`text-sm ${tier.highlighted ? 'text-gray-300' : 'text-gray-600'}`}>{f}</span>
                     </li>
                   ))}
                   {tier.notIncluded.map((f) => (
                     <li key={f} className="flex items-start gap-2">
-                      <span className="text-xs mt-1 flex-shrink-0 text-slate-300">✗</span>
-                      <span className="text-sm text-slate-400 line-through">{f}</span>
+                      <span className="text-xs mt-1 flex-shrink-0 text-gray-300">✗</span>
+                      <span className="text-sm text-gray-400 line-through">{f}</span>
                     </li>
                   ))}
                 </ul>
@@ -206,7 +206,7 @@ export default function PricingPage() {
                   href={tier.href}
                   className={`block text-center px-6 py-3 rounded-lg font-semibold text-sm transition-colors ${
                     tier.highlighted
-                      ? 'bg-white text-[#0f2a4a] hover:bg-slate-100'
+                      ? 'bg-white text-[#0f2a4a] hover:bg-gray-100'
                       : 'bg-[#0f2a4a] text-white hover:bg-[#1a3d6b]'
                   }`}
                 >
@@ -216,25 +216,25 @@ export default function PricingPage() {
             ))}
           </div>
 
-          <h2 className="text-xl font-bold text-slate-900 mb-2">For Schools and Institutions</h2>
-          <p className="text-slate-500 mb-10">Full administrative control for structured classroom environments.</p>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">For Schools and Institutions</h2>
+          <p className="text-gray-500 mb-10">Full administrative control for structured classroom environments.</p>
           <div className="grid lg:grid-cols-3 gap-8">
             {tiers.slice(3).map((tier) => (
               <div
                 key={tier.name}
-                className="bg-white rounded-2xl border border-slate-200 p-8 hover:shadow-md transition-shadow"
+                className="bg-white rounded-2xl border border-gray-200 p-8 hover:shadow-md transition-shadow"
               >
-                <h3 className="text-lg font-bold text-slate-900 mb-1">{tier.name}</h3>
-                <p className="text-sm text-slate-500 mb-4">{tier.description}</p>
+                <h3 className="text-lg font-bold text-gray-900 mb-1">{tier.name}</h3>
+                <p className="text-sm text-gray-500 mb-4">{tier.description}</p>
                 <div className="flex items-baseline gap-1 mb-6">
-                  <span className="text-3xl font-bold text-slate-900">{tier.price}</span>
-                  <span className="text-sm text-slate-400">{tier.period}</span>
+                  <span className="text-3xl font-bold text-gray-900">{tier.price}</span>
+                  <span className="text-sm text-gray-400">{tier.period}</span>
                 </div>
                 <ul className="space-y-2.5 mb-8">
                   {tier.features.map((f) => (
                     <li key={f} className="flex items-start gap-2">
                       <span className="text-xs mt-1 flex-shrink-0 text-emerald-600">✓</span>
-                      <span className="text-sm text-slate-600">{f}</span>
+                      <span className="text-sm text-gray-600">{f}</span>
                     </li>
                   ))}
                 </ul>
@@ -252,12 +252,12 @@ export default function PricingPage() {
 
       <section className="py-20 bg-white">
         <div className="max-w-3xl mx-auto px-6">
-          <h2 className="text-2xl font-bold text-slate-900 mb-10 text-center">Frequently Asked Questions</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-10 text-center">Frequently Asked Questions</h2>
           <div className="space-y-6">
             {faqs.map((faq) => (
-              <div key={faq.q} className="border-b border-slate-100 pb-6">
-                <h3 className="font-semibold text-slate-900 mb-2">{faq.q}</h3>
-                <p className="text-slate-500 text-sm leading-relaxed">{faq.a}</p>
+              <div key={faq.q} className="border-b border-gray-100 pb-6">
+                <h3 className="font-semibold text-gray-900 mb-2">{faq.q}</h3>
+                <p className="text-gray-500 text-sm leading-relaxed">{faq.a}</p>
               </div>
             ))}
           </div>

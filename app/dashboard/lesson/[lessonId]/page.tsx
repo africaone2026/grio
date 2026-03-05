@@ -48,11 +48,11 @@ export default function LessonPage() {
     return (
       <div className="p-8">
         <div className="max-w-3xl space-y-4 animate-pulse">
-          <div className="h-4 w-48 bg-slate-200 rounded" />
-          <div className="h-8 w-96 bg-slate-200 rounded" />
-          <div className="h-4 w-full bg-slate-200 rounded" />
-          <div className="h-4 w-3/4 bg-slate-200 rounded" />
-          <div className="h-32 bg-slate-200 rounded-xl" />
+          <div className="h-4 w-48 bg-gray-200 rounded" />
+          <div className="h-8 w-96 bg-gray-200 rounded" />
+          <div className="h-4 w-full bg-gray-200 rounded" />
+          <div className="h-4 w-3/4 bg-gray-200 rounded" />
+          <div className="h-32 bg-gray-200 rounded-xl" />
         </div>
       </div>
     );
@@ -74,7 +74,7 @@ export default function LessonPage() {
   if (!lesson) {
     return (
       <div className="p-8">
-        <p className="text-slate-500">Lesson not found.</p>
+        <p className="text-gray-500">Lesson not found.</p>
         <Link href="/dashboard/subjects" className="text-blue-600 text-sm mt-2 inline-block">
           ← Back to Subjects
         </Link>
@@ -85,8 +85,8 @@ export default function LessonPage() {
   return (
     <div className="p-8">
       <div className="mb-6">
-        <nav className="flex items-center gap-2 text-sm text-slate-400 flex-wrap">
-          <Link href="/dashboard/subjects" className="hover:text-slate-600 transition-colors">
+        <nav className="flex items-center gap-2 text-sm text-gray-400 flex-wrap">
+          <Link href="/dashboard/subjects" className="hover:text-gray-600 transition-colors">
             Subjects
           </Link>
           {subject && (
@@ -94,7 +94,7 @@ export default function LessonPage() {
               <span>/</span>
               <Link
                 href={`/dashboard/subjects/${subject.id}`}
-                className="hover:text-slate-600 transition-colors"
+                className="hover:text-gray-600 transition-colors"
               >
                 {subject.name}
               </Link>
@@ -103,7 +103,7 @@ export default function LessonPage() {
           {topic && (
             <>
               <span>/</span>
-              <span className="text-slate-600">{topic.name}</span>
+              <span className="text-gray-600">{topic.name}</span>
             </>
           )}
         </nav>

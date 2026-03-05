@@ -153,7 +153,7 @@ export default function LearnSidebar({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search chats..."
-              className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-white/20"
+              className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/20"
               autoFocus
             />
           </div>
@@ -222,7 +222,7 @@ export default function LearnSidebar({
           {isChatHistoryOpen && (
             <div className="px-2 pb-3">
               {filteredChatHistory.length === 0 ? (
-                <p className="text-xs text-slate-400 px-2 py-4 text-center">
+                <p className="text-xs text-gray-400 px-2 py-4 text-center">
                   {searchQuery ? 'No chats found' : 'No chat history yet'}
                 </p>
               ) : (
@@ -233,7 +233,7 @@ export default function LearnSidebar({
                       className={`group relative flex items-center gap-2 px-3 py-2.5 rounded-lg cursor-pointer transition-colors ${
                         currentChatId === chat.id
                           ? 'bg-blue-600/30 text-white'
-                          : 'text-slate-300 hover:bg-white/5'
+                          : 'text-gray-300 hover:bg-white/5'
                       }`}
                       onClick={() => onChatSelect?.(chat.id)}
                     >

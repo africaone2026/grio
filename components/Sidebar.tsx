@@ -107,7 +107,7 @@ export default function Sidebar() {
           </div>
           <div className="min-w-0">
             <p className="text-white text-sm font-medium truncate" title={user.name}>{user.name}</p>
-            <p className="text-slate-400 text-xs">{ROLE_LABELS[user.role]}</p>
+            <p className="text-gray-400 text-xs">{ROLE_LABELS[user.role]}</p>
           </div>
         </div>
       </div>
@@ -126,7 +126,7 @@ export default function Sidebar() {
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
                 isActive
                   ? 'bg-blue-600 text-white font-medium'
-                  : 'text-slate-400 hover:text-white hover:bg-white/5'
+                  : 'text-gray-400 hover:text-white hover:bg-white/5'
               }`}
             >
               <span className="text-base w-5 text-center" aria-hidden="true">{item.icon}</span>
@@ -137,7 +137,7 @@ export default function Sidebar() {
       </nav>
 
       <div className="px-3 py-3 border-t border-white/10">
-        <p className="text-[10px] uppercase tracking-widest text-slate-500 font-semibold px-3 mb-2">Display</p>
+        <p className="text-[10px] uppercase tracking-widest text-gray-500 font-semibold px-3 mb-2">Display</p>
         <div className="space-y-1">
           <button
             type="button"
@@ -145,14 +145,14 @@ export default function Sidebar() {
             className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
               highContrast
                 ? 'bg-blue-600/20 text-blue-300'
-                : 'text-slate-400 hover:text-white hover:bg-white/5'
+                : 'text-gray-400 hover:text-white hover:bg-white/5'
             }`}
           >
             <span className="flex items-center gap-2">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20z"/></svg>
               High Contrast
             </span>
-            <span className={`text-[10px] px-1.5 py-0.5 rounded ${highContrast ? 'bg-blue-600/40 text-blue-200' : 'bg-white/5 text-slate-500'}`}>
+            <span className={`text-[10px] px-1.5 py-0.5 rounded ${highContrast ? 'bg-blue-600/40 text-blue-200' : 'bg-white/5 text-gray-500'}`}>
               {highContrast ? 'ON' : 'OFF'}
             </span>
           </button>
@@ -162,14 +162,14 @@ export default function Sidebar() {
             className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
               largeTypography
                 ? 'bg-blue-600/20 text-blue-300'
-                : 'text-slate-400 hover:text-white hover:bg-white/5'
+                : 'text-gray-400 hover:text-white hover:bg-white/5'
             }`}
           >
             <span className="flex items-center gap-2">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
               Large Text
             </span>
-            <span className={`text-[10px] px-1.5 py-0.5 rounded ${largeTypography ? 'bg-blue-600/40 text-blue-200' : 'bg-white/5 text-slate-500'}`}>
+            <span className={`text-[10px] px-1.5 py-0.5 rounded ${largeTypography ? 'bg-blue-600/40 text-blue-200' : 'bg-white/5 text-gray-500'}`}>
               {largeTypography ? 'ON' : 'OFF'}
             </span>
           </button>
@@ -179,14 +179,14 @@ export default function Sidebar() {
             className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
               presentationMode
                 ? 'bg-blue-600/20 text-blue-300'
-                : 'text-slate-400 hover:text-white hover:bg-white/5'
+                : 'text-gray-400 hover:text-white hover:bg-white/5'
             }`}
           >
             <span className="flex items-center gap-2">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>
               Presentation
             </span>
-            <span className={`text-[10px] px-1.5 py-0.5 rounded ${presentationMode ? 'bg-blue-600/40 text-blue-200' : 'bg-white/5 text-slate-500'}`}>
+            <span className={`text-[10px] px-1.5 py-0.5 rounded ${presentationMode ? 'bg-blue-600/40 text-blue-200' : 'bg-white/5 text-gray-500'}`}>
               {presentationMode ? 'ON' : 'OFF'}
             </span>
           </button>
@@ -217,7 +217,7 @@ export default function Sidebar() {
           className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
             confirmingLogout
               ? 'bg-red-900/40 text-red-300 border border-red-700/40'
-              : 'text-slate-400 hover:text-white hover:bg-white/5'
+              : 'text-gray-400 hover:text-white hover:bg-white/5'
           }`}
           aria-label={confirmingLogout ? 'Click again to confirm logout' : 'Logout'}
         >

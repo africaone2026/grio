@@ -141,14 +141,14 @@ export default function ClassroomSidebar({
   );
 
   const isLight = theme === 'light';
-  const bgColor = isLight ? 'bg-white' : 'bg-slate-900/40';
-  const borderColor = isLight ? 'border-slate-200' : 'border-white/10';
-  const textColor = isLight ? 'text-slate-900' : 'text-white';
-  const textMuted = isLight ? 'text-slate-500' : 'text-slate-400';
-  const hoverBg = isLight ? 'hover:bg-slate-50' : 'hover:bg-white/5';
-  const inputBg = isLight ? 'bg-slate-50 border-slate-300' : 'bg-white/5 border-white/10';
-  const inputText = isLight ? 'text-slate-900' : 'text-white';
-  const inputPlaceholder = isLight ? 'placeholder-slate-400' : 'placeholder-slate-500';
+  const bgColor = isLight ? 'bg-white' : 'bg-gray-900/40';
+  const borderColor = isLight ? 'border-gray-200' : 'border-white/10';
+  const textColor = isLight ? 'text-gray-900' : 'text-white';
+  const textMuted = isLight ? 'text-gray-500' : 'text-gray-400';
+  const hoverBg = isLight ? 'hover:bg-gray-50' : 'hover:bg-white/5';
+  const inputBg = isLight ? 'bg-gray-50 border-gray-300' : 'bg-white/5 border-white/10';
+  const inputText = isLight ? 'text-gray-900' : 'text-white';
+  const inputPlaceholder = isLight ? 'placeholder-gray-400' : 'placeholder-gray-500';
 
   const defaultSubject = currentSubject || 'Mathematics';
   const displayTopic = currentTopic || 'Algebra';
@@ -195,7 +195,7 @@ export default function ClassroomSidebar({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search chats..."
-              className={`w-full px-3 py-2 ${inputBg} border ${borderColor} rounded-lg ${inputText} text-sm ${inputPlaceholder} focus:outline-none focus:ring-2 ${isLight ? 'focus:ring-slate-300' : 'focus:ring-white/20'}`}
+              className={`w-full px-3 py-2 ${inputBg} border ${borderColor} rounded-lg ${inputText} text-sm ${inputPlaceholder} focus:outline-none focus:ring-2 ${isLight ? 'focus:ring-gray-300' : 'focus:ring-white/20'}`}
               autoFocus
             />
           </div>
@@ -277,8 +277,8 @@ export default function ClassroomSidebar({
                       className={`group relative flex items-center gap-2 px-3 py-2.5 rounded-lg cursor-pointer transition-colors ${
                         currentChatId === chat.id
                           ? isLight
-                            ? 'bg-teal-50 text-teal-900 border border-teal-200'
-                            : 'bg-teal-600/30 text-teal-200'
+                            ? 'bg-red-50 text-red-900 border border-red-200'
+                            : 'bg-red-600/30 text-red-200'
                           : `${textColor} ${hoverBg}`
                       }`}
                       onClick={() => onChatSelect?.(chat.id)}
@@ -291,7 +291,7 @@ export default function ClassroomSidebar({
                           e.stopPropagation();
                           handleDeleteChat(chat.id, e);
                         }}
-                        className={`opacity-0 group-hover:opacity-100 p-1 ${isLight ? 'hover:bg-slate-200' : 'hover:bg-white/10'} rounded transition-opacity`}
+                        className={`opacity-0 group-hover:opacity-100 p-1 ${isLight ? 'hover:bg-gray-200' : 'hover:bg-white/10'} rounded transition-opacity`}
                         aria-label="Chat options"
                       >
                         <svg

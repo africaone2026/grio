@@ -58,14 +58,14 @@ export default function SubjectPage() {
   if (loading) {
     return (
       <div className="p-8">
-        <div className="h-8 w-48 bg-slate-200 rounded animate-pulse mb-4" />
+        <div className="h-8 w-48 bg-gray-200 rounded animate-pulse mb-4" />
         <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-1 space-y-3">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-16 bg-slate-200 rounded-lg animate-pulse" />
+              <div key={i} className="h-16 bg-gray-200 rounded-lg animate-pulse" />
             ))}
           </div>
-          <div className="lg:col-span-2 h-64 bg-slate-200 rounded-xl animate-pulse" />
+          <div className="lg:col-span-2 h-64 bg-gray-200 rounded-xl animate-pulse" />
         </div>
       </div>
     );
@@ -76,19 +76,19 @@ export default function SubjectPage() {
       <div className="mb-6">
         <Link
           href="/dashboard/subjects"
-          className="text-sm text-slate-500 hover:text-slate-700 transition-colors mb-4 inline-flex items-center gap-1"
+          className="text-sm text-gray-500 hover:text-gray-700 transition-colors mb-4 inline-flex items-center gap-1"
         >
           ← Subjects
         </Link>
-        <h1 className="text-2xl font-bold text-slate-900 mt-2">
+        <h1 className="text-2xl font-bold text-gray-900 mt-2">
           {subject?.name ?? 'Subject'}
         </h1>
-        <p className="text-slate-500 text-sm mt-1">{subject?.description}</p>
+        <p className="text-gray-500 text-sm mt-1">{subject?.description}</p>
       </div>
 
       <div className="grid lg:grid-cols-5 gap-8">
         <div className="lg:col-span-2">
-          <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">
+          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
             Topics
           </h2>
           <TopicList
@@ -101,16 +101,16 @@ export default function SubjectPage() {
         <div className="lg:col-span-3">
           {selectedTopic ? (
             <div>
-              <div className="bg-white border border-slate-200 rounded-xl p-6 mb-4">
-                <h2 className="text-lg font-bold text-slate-900 mb-1">
+              <div className="bg-white border border-gray-200 rounded-xl p-6 mb-4">
+                <h2 className="text-lg font-bold text-gray-900 mb-1">
                   {selectedTopic.name}
                 </h2>
-                <p className="text-slate-500 text-sm mb-4">{selectedTopic.description}</p>
-                <p className="text-xs text-slate-400 font-medium uppercase tracking-wide">
+                <p className="text-gray-500 text-sm mb-4">{selectedTopic.description}</p>
+                <p className="text-xs text-gray-400 font-medium uppercase tracking-wide">
                   {selectedTopic.completedCount} of {selectedTopic.lessons.length} lessons complete
                 </p>
               </div>
-              <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">
+              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
                 Lessons
               </h3>
               <div className="space-y-2">
@@ -120,26 +120,26 @@ export default function SubjectPage() {
                     <Link
                       key={lesson.id}
                       href={`/dashboard/lesson/${lesson.id}`}
-                      className="flex items-center gap-4 bg-white border border-slate-200 rounded-lg p-4 hover:border-slate-300 hover:shadow-sm transition-all group"
+                      className="flex items-center gap-4 bg-white border border-gray-200 rounded-lg p-4 hover:border-gray-300 hover:shadow-sm transition-all group"
                     >
                       <div
                         className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
                           isDone
                             ? 'bg-emerald-500 text-white'
-                            : 'bg-slate-100 text-slate-500 group-hover:bg-slate-200'
+                            : 'bg-gray-100 text-gray-500 group-hover:bg-gray-200'
                         }`}
                       >
                         {isDone ? '✓' : index + 1}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium text-sm text-slate-800 truncate group-hover:text-blue-700 transition-colors">
+                        <p className="font-medium text-sm text-gray-800 truncate group-hover:text-blue-700 transition-colors">
                           {lesson.title}
                         </p>
-                        <p className="text-xs text-slate-400 mt-0.5">
+                        <p className="text-xs text-gray-400 mt-0.5">
                           {lesson.content[0].slice(0, 80)}...
                         </p>
                       </div>
-                      <span className="text-slate-300 group-hover:text-slate-400 transition-colors text-sm">
+                      <span className="text-gray-300 group-hover:text-gray-400 transition-colors text-sm">
                         →
                       </span>
                     </Link>
@@ -148,8 +148,8 @@ export default function SubjectPage() {
               </div>
             </div>
           ) : (
-            <div className="bg-white border border-slate-200 rounded-xl p-12 text-center">
-              <p className="text-slate-400">Select a topic to view its lessons.</p>
+            <div className="bg-white border border-gray-200 rounded-xl p-12 text-center">
+              <p className="text-gray-400">Select a topic to view its lessons.</p>
             </div>
           )}
         </div>
