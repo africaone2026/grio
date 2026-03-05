@@ -27,10 +27,10 @@ export default function AdminSubscriptionsPage() {
   if (loading) {
     return (
       <div className="p-8 animate-pulse space-y-6">
-        <div className="h-8 w-48 bg-slate-200 rounded" />
+        <div className="h-8 w-48 bg-gray-200 rounded" />
         <div className="grid grid-cols-3 gap-6">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-28 bg-slate-200 rounded-xl" />
+            <div key={i} className="h-28 bg-gray-200 rounded-xl" />
           ))}
         </div>
       </div>
@@ -40,8 +40,8 @@ export default function AdminSubscriptionsPage() {
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900">Subscriptions</h1>
-        <p className="text-slate-500 text-sm mt-1">Manage user subscription status across the platform.</p>
+        <h1 className="text-2xl font-bold text-gray-900">Subscriptions</h1>
+        <p className="text-gray-500 text-sm mt-1">Manage user subscription status across the platform.</p>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6 mb-8">
@@ -59,28 +59,28 @@ export default function AdminSubscriptionsPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-100 grid grid-cols-12 text-xs font-semibold text-slate-400 uppercase tracking-wide">
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-100 grid grid-cols-12 text-xs font-semibold text-gray-400 uppercase tracking-wide">
           <span className="col-span-4">User</span>
           <span className="col-span-3">Email</span>
           <span className="col-span-2">Role</span>
           <span className="col-span-2 text-center">Status</span>
           <span className="col-span-1 text-center">Action</span>
         </div>
-        <div className="divide-y divide-slate-100">
+        <div className="divide-y divide-gray-100">
           {users.map((user) => (
             <div
               key={user.id}
-              className="px-6 py-4 grid grid-cols-12 gap-4 items-center hover:bg-slate-50"
+              className="px-6 py-4 grid grid-cols-12 gap-4 items-center hover:bg-gray-50"
             >
               <div className="col-span-4 flex items-center gap-3">
                 <div className="w-7 h-7 rounded-full bg-[#0f2a4a] text-white flex items-center justify-center text-xs font-semibold flex-shrink-0">
                   {user.name.charAt(0)}
                 </div>
-                <p className="text-sm font-medium text-slate-800 truncate">{user.name}</p>
+                <p className="text-sm font-medium text-gray-800 truncate">{user.name}</p>
               </div>
-              <p className="col-span-3 text-sm text-slate-500 truncate">{user.email}</p>
-              <p className="col-span-2 text-sm text-slate-500 capitalize">{user.role.replace('_', ' ')}</p>
+              <p className="col-span-3 text-sm text-gray-500 truncate">{user.email}</p>
+              <p className="col-span-2 text-sm text-gray-500 capitalize">{user.role.replace('_', ' ')}</p>
               <div className="col-span-2 flex justify-center">
                 <span
                   className={`text-xs font-semibold px-2.5 py-1 rounded-full ${

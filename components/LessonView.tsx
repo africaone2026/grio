@@ -18,7 +18,7 @@ export default function LessonView({
   return (
     <article className="max-w-3xl">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900 mb-2">
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">
           {lesson.title}
         </h1>
         {isCompleted && (
@@ -30,7 +30,7 @@ export default function LessonView({
 
       <div className="space-y-4 mb-8">
         {lesson.content.map((paragraph, i) => (
-          <p key={i} className="text-slate-700 leading-relaxed text-base">
+          <p key={i} className="text-gray-700 leading-relaxed text-base">
             {paragraph}
           </p>
         ))}
@@ -40,10 +40,10 @@ export default function LessonView({
         <h2 className="text-sm font-semibold text-blue-700 uppercase tracking-wide mb-3">
           Worked Example
         </h2>
-        <p className="text-sm font-semibold text-slate-800 mb-2">
+        <p className="text-sm font-semibold text-gray-800 mb-2">
           {lesson.example.title}
         </p>
-        <pre className="text-sm text-slate-700 font-mono whitespace-pre-wrap leading-relaxed bg-white rounded-lg border border-blue-100 p-4">
+        <pre className="text-sm text-gray-700 font-mono whitespace-pre-wrap leading-relaxed bg-white rounded-lg border border-blue-100 p-4">
           {lesson.example.body}
         </pre>
       </div>
@@ -52,7 +52,7 @@ export default function LessonView({
         <h2 className="text-sm font-semibold text-amber-700 uppercase tracking-wide mb-3">
           Practice Question
         </h2>
-        <p className="text-slate-800 font-medium mb-3">
+        <p className="text-gray-800 font-medium mb-3">
           {lesson.practiceQuestion.question}
         </p>
         <details className="group">
@@ -60,7 +60,7 @@ export default function LessonView({
             <span className="group-open:rotate-90 transition-transform inline-block">▶</span>
             Show Hint
           </summary>
-          <p className="mt-3 text-sm text-slate-600 bg-white rounded-lg border border-amber-100 p-3">
+          <p className="mt-3 text-sm text-gray-600 bg-white rounded-lg border border-amber-100 p-3">
             {lesson.practiceQuestion.hint}
           </p>
         </details>

@@ -106,8 +106,8 @@ export default function LessonPlannerPage() {
     <div className="p-8">
       <div className="mb-8 flex items-start justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Lesson Planner</h1>
-          <p className="text-slate-500 text-sm mt-1">
+          <h1 className="text-2xl font-bold text-gray-900">Lesson Planner</h1>
+          <p className="text-gray-500 text-sm mt-1">
             Plan and schedule your lessons by week and subject. Changes are saved automatically.
           </p>
         </div>
@@ -135,7 +135,7 @@ export default function LessonPlannerPage() {
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               selectedSubject === subject
                 ? 'bg-[#0f2a4a] text-white'
-                : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+                : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
             }`}
           >
             {subject}
@@ -150,10 +150,10 @@ export default function LessonPlannerPage() {
           const content = plans[key] ?? DEFAULT_PLANS[selectedSubject]?.[week] ?? '';
 
           return (
-            <div key={week} className="bg-white rounded-xl border border-slate-200 p-5">
+            <div key={week} className="bg-white rounded-xl border border-gray-200 p-5">
               <div className="flex items-start gap-6">
                 <div className="w-20 flex-shrink-0 pt-0.5">
-                  <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
+                  <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide">
                     {week}
                   </span>
                 </div>
@@ -166,7 +166,7 @@ export default function LessonPlannerPage() {
                         value={editValue}
                         onChange={(e) => setEditValue(e.target.value)}
                         placeholder="e.g. Algebra — Solving Quadratic Equations"
-                        className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         aria-label={`Lesson plan for ${week}`}
                         autoFocus
                         onKeyDown={(e) => {
@@ -184,15 +184,15 @@ export default function LessonPlannerPage() {
                         </button>
                         <button
                           onClick={cancelEdit}
-                          className="px-4 py-1.5 bg-white border border-slate-200 text-slate-600 text-xs font-medium rounded-lg hover:bg-slate-50 transition-colors"
+                          className="px-4 py-1.5 bg-white border border-gray-200 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-50 transition-colors"
                         >
                           Cancel
                         </button>
-                        <span className="text-xs text-slate-400 ml-1">Enter to save, Esc to cancel</span>
+                        <span className="text-xs text-gray-400 ml-1">Enter to save, Esc to cancel</span>
                       </div>
                     </div>
                   ) : (
-                    <p className={`text-sm ${content ? 'font-medium text-slate-800' : 'text-slate-400 italic'}`}>
+                    <p className={`text-sm ${content ? 'font-medium text-gray-800' : 'text-gray-400 italic'}`}>
                       {content || 'Not planned — click Edit to add'}
                     </p>
                   )}

@@ -184,14 +184,14 @@ export default function VirtualAcademicKeyboard() {
 
   const panelClasses = [
     'flex flex-col rounded-xl border shadow-xl overflow-hidden z-[1000]',
-    'bg-slate-800/95 backdrop-blur border-slate-600/60',
+    'bg-gray-800/95 backdrop-blur border-gray-600/60',
     'min-w-[280px] max-w-[90vw] w-[360px] max-h-[70vh]',
-    highContrast ? 'ring-2 ring-slate-400 border-slate-500' : '',
+    highContrast ? 'ring-2 ring-gray-400 border-gray-500' : '',
   ].join(' ');
 
   const headerClasses = [
-    'flex items-center gap-2 px-3 py-2 border-b border-slate-600/60 bg-slate-900/60 flex-shrink-0',
-    highContrast ? 'border-slate-500' : '',
+    'flex items-center gap-2 px-3 py-2 border-b border-gray-600/60 bg-gray-900/60 flex-shrink-0',
+    highContrast ? 'border-gray-500' : '',
   ].join(' ');
 
   return (
@@ -226,7 +226,7 @@ export default function VirtualAcademicKeyboard() {
             role="button"
             tabIndex={-1}
             onMouseDown={handleDragStart}
-            className="cursor-grab active:cursor-grabbing touch-none p-1 rounded text-slate-400 hover:text-slate-300"
+            className="cursor-grab active:cursor-grabbing touch-none p-1 rounded text-gray-400 hover:text-gray-300"
             aria-label="Drag to reposition"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -239,12 +239,12 @@ export default function VirtualAcademicKeyboard() {
             </svg>
           </div>
         )}
-        <span className="text-sm font-semibold text-slate-200 flex-1">Academic Symbols</span>
+        <span className="text-sm font-semibold text-gray-200 flex-1">Academic Symbols</span>
         <button
           type="button"
           onClick={() => setDockMode((m) => (m === 'floating' ? 'docked' : 'floating'))}
           disabled={presentationMode}
-          className="p-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-700/60 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="p-2 rounded-lg text-gray-400 hover:text-gray-200 hover:bg-gray-700/60 disabled:opacity-50 disabled:cursor-not-allowed"
           title={presentationMode ? 'Dock disabled in presentation mode' : dockMode === 'docked' ? 'Switch to floating' : 'Dock to bottom'}
           aria-label={dockMode === 'docked' ? 'Switch to floating' : 'Dock to bottom'}
         >
@@ -262,7 +262,7 @@ export default function VirtualAcademicKeyboard() {
         <button
           type="button"
           onClick={close}
-          className="p-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-700/60"
+          className="p-2 rounded-lg text-gray-400 hover:text-gray-200 hover:bg-gray-700/60"
           aria-label="Close keyboard"
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -275,14 +275,14 @@ export default function VirtualAcademicKeyboard() {
           const symbols = symbolsByCategory[cat];
           const expanded = expandedCategories.has(cat);
           return (
-            <div key={cat} className="border border-slate-600/40 rounded-lg overflow-hidden">
+            <div key={cat} className="border border-gray-600/40 rounded-lg overflow-hidden">
               <button
                 type="button"
                 onClick={() => toggleCategory(cat)}
                 className={`w-full flex items-center justify-between px-3 py-2 text-left text-sm font-medium transition-colors ${
                   expanded
-                    ? 'bg-teal-900/40 text-teal-200 border-b border-slate-600/40'
-                    : 'bg-slate-800/60 text-slate-300 hover:bg-slate-700/60'
+                    ? 'bg-red-900/40 text-red-200 border-b border-gray-600/40'
+                    : 'bg-gray-800/60 text-gray-300 hover:bg-gray-700/60'
                 }`}
               >
                 {CATEGORY_LABELS[cat]}
@@ -299,7 +299,7 @@ export default function VirtualAcademicKeyboard() {
                 </svg>
               </button>
               {expanded && (
-                <div className="p-2 grid grid-cols-6 sm:grid-cols-8 gap-1 bg-slate-800/40">
+                <div className="p-2 grid grid-cols-6 sm:grid-cols-8 gap-1 bg-gray-800/40">
                   {symbols.map((s, i) => {
                     const globalIndex = allSymbols.indexOf(s);
                     const isFocused = focusedIndex === globalIndex;
@@ -362,10 +362,10 @@ function SymbolButton({
         }
       }}
       title={symbol.label ?? symbol.symbol}
-      className={`min-w-[48px] min-h-[48px] flex items-center justify-center rounded-lg border text-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-teal-400 focus:ring-offset-2 focus:ring-offset-slate-800 ${
+      className={`min-w-[48px] min-h-[48px] flex items-center justify-center rounded-lg border text-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 focus:ring-offset-gray-800 ${
         isFocused
-          ? 'bg-teal-600/60 border-teal-500 text-white'
-          : 'bg-slate-700/60 border-slate-600/60 text-slate-200 hover:bg-slate-600/60 hover:border-slate-500'
+          ? 'bg-red-600/60 border-red-500 text-white'
+          : 'bg-gray-700/60 border-gray-600/60 text-gray-200 hover:bg-gray-600/60 hover:border-gray-500'
       }`}
     >
       {symbol.symbol}

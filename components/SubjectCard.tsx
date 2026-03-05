@@ -34,7 +34,7 @@ export default function SubjectCard({
   const icon = subjectIcons[subject.icon] ?? '📚';
 
   const card = (
-    <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5 cursor-pointer group">
+    <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-all hover:-trangray-y-0.5 cursor-pointer group">
       <div className="flex items-start gap-4">
         <div
           className="w-12 h-12 rounded-lg flex items-center justify-center text-xl flex-shrink-0"
@@ -43,17 +43,17 @@ export default function SubjectCard({
           <span>{icon}</span>
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-slate-900 group-hover:text-blue-700 transition-colors truncate">
+          <h3 className="font-semibold text-gray-900 group-hover:text-blue-700 transition-colors truncate">
             {subject.name}
           </h3>
-          <p className="text-sm text-slate-500 mt-0.5 line-clamp-2">
+          <p className="text-sm text-gray-500 mt-0.5 line-clamp-2">
             {subject.description}
           </p>
         </div>
       </div>
 
       {topicCount !== undefined && (
-        <p className="mt-4 text-xs text-slate-400 font-medium uppercase tracking-wide">
+        <p className="mt-4 text-xs text-gray-400 font-medium uppercase tracking-wide">
           {topicCount} Topics &middot; {totalLessons} Lessons
         </p>
       )}
@@ -61,10 +61,10 @@ export default function SubjectCard({
       <div className="mt-4">
         <ProgressBar percentage={progressPercent} height="sm" showPercentage={false} />
         <div className="flex justify-between mt-1.5">
-          <span className="text-xs text-slate-400">
+          <span className="text-xs text-gray-400">
             {completedLessons} of {totalLessons} lessons complete
           </span>
-          <span className="text-xs font-semibold text-slate-600">
+          <span className="text-xs font-semibold text-gray-600">
             {progressPercent}%
           </span>
         </div>

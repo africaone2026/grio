@@ -82,22 +82,22 @@ html[data-high-contrast="true"] .rounded-lg {
   border-width: var(--hc-border);
 }
 
-html[data-high-contrast="true"] .text-slate-400 {
+html[data-high-contrast="true"] .text-gray-400 {
   color: #94a3b8;
   filter: contrast(1.3);
 }
 
-html[data-high-contrast="true"] .text-slate-500 {
+html[data-high-contrast="true"] .text-gray-500 {
   color: #64748b;
   filter: contrast(1.3);
 }
 
-html[data-high-contrast="true"] .text-slate-600 {
+html[data-high-contrast="true"] .text-gray-600 {
   color: #334155;
   filter: contrast(1.2);
 }
 
-html[data-high-contrast="true"] .border-slate-200 {
+html[data-high-contrast="true"] .border-gray-200 {
   border-color: #94a3b8;
 }
 

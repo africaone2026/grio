@@ -16,6 +16,8 @@ import {
 import { useSpeech } from '@/hooks/useSpeech';
 import { useSpeechRecognition } from '@/hooks/useSpeechRecognition';
 import { useAcademicKeyboard } from '@/context/AcademicKeyboardContext';
+import AnimatedAvatar from '@/components/AnimatedAvatar';
+import type { AvatarState } from '@/components/AnimatedAvatar';
 
 type Theme = 'light' | 'dark';
 
@@ -42,6 +44,21 @@ interface QuizState {
 const QUIZ_TOTAL = 3;
 const REVISION_TOTAL = 3;
 
+function getGlowColor(type: string | undefined): string {
+  switch (type) {
+    case 'example':
+      return 'blue';
+    case 'question':
+      return 'amber';
+    case 'feedback':
+    case 'completed':
+    case 'score':
+      return 'emerald';
+    default:
+      return 'teal';
+  }
+}
+
 function getResponseLabel(type: string): string {
   switch (type) {
     case 'intro': return 'Lesson Introduction';
@@ -61,25 +78,25 @@ function getCardStyle(type: string, isLight: boolean): string {
     switch (type) {
       case 'feedback':
       case 'score':
-        return 'bg-teal-50 border-teal-200';
+        return 'bg-red-50 border-red-200';
       case 'example':
         return 'bg-blue-50 border-blue-200';
       case 'completed':
         return 'bg-emerald-50 border-emerald-200';
       default:
-        return 'bg-white border-slate-200';
+        return 'bg-white border-gray-200';
     }
   }
   switch (type) {
     case 'feedback':
     case 'score':
-      return 'bg-teal-900/20 border-teal-500/30';
+      return 'bg-red-900/20 border-red-500/30';
     case 'example':
       return 'bg-blue-900/20 border-blue-500/30';
     case 'completed':
       return 'bg-emerald-900/20 border-emerald-500/30';
     default:
-      return 'bg-slate-800/60 border-slate-600/40';
+      return 'bg-gray-800/60 border-gray-600/40';
   }
 }
 
@@ -181,10 +198,6 @@ export default function AiLessonEngine({
       runQuizMode(0);
     } else if (mode === 'revision') {
       runRevisionMode();
-    } else if (mode === 'chat') {
-      // Chat mode - can be implemented with interactive conversation flow
-      // For now, use teach mode as a placeholder
-      runTeachMode();
     }
   }, []);
 
@@ -197,6 +210,14 @@ export default function AiLessonEngine({
       check();
     });
 
+  const avatarState: AvatarState = (() => {
+    if (isLoading) return 'thinking';
+    if (engineState === 'completed') return 'celebrating';
+    if (lastCorrect === true && engineState === 'feedback') return 'celebrating';
+    if (engineState === 'asking_question' && !speech.isSpeaking) return 'listening';
+    if (speech.isSpeaking) return 'speaking';
+    return 'idle';
+  })();
 
   async function runTeachMode() {
     setEngineState('explaining');
@@ -522,7 +543,7 @@ export default function AiLessonEngine({
 
   const currentQ = quizState.responses[quizState.currentQuestion];
   const questionIndex =
-    mode === 'teach' || mode === 'chat' ? 0 : mode === 'quiz' ? quizState.currentQuestion : revisionQuestionIndex;
+    mode === 'teach' ? 0 : mode === 'quiz' ? quizState.currentQuestion : revisionQuestionIndex;
   const answered =
     currentResponse?.type === 'question' &&
     (revisionPhase === 'questions' ? revisionAnswer !== null : quizState.selectedAnswer !== null);
@@ -540,7 +561,7 @@ export default function AiLessonEngine({
       else if (e.key === 'd' || e.key === 'D') index = 3;
       if (index < 0 || index >= currentQ.options.length) return;
       e.preventDefault();
-      if (mode === 'teach' || mode === 'chat') handleTeachAnswer(index);
+      if (mode === 'teach') handleTeachAnswer(index);
       else if (mode === 'quiz') handleQuizAnswer(index);
       else handleRevisionAnswer(index);
     };
@@ -550,10 +571,18 @@ export default function AiLessonEngine({
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex-1 min-h-0 flex flex-col items-center justify-center px-8 pb-4 overflow-y-auto">
+      <div className="flex-1 min-h-0 flex flex-col items-center px-8 pb-4 overflow-y-auto">
+        <div className="flex-shrink-0 pt-4">
+          <AnimatedAvatar
+            state={avatarState}
+            isSpeaking={speech.isSpeaking}
+            glowColor={getGlowColor(currentResponse?.type)}
+          />
+        </div>
+
         {isLoading && !currentResponse && (
           <motion.div
-            className={`text-lg ${isLight ? 'text-slate-500' : 'text-slate-400'}`}
+            className={`text-lg ${isLight ? 'text-gray-500' : 'text-gray-400'}`}
             animate={{ opacity: [0.4, 1, 0.4] }}
             transition={{ duration: 1.5, repeat: Infinity }}
           >
@@ -562,7 +591,7 @@ export default function AiLessonEngine({
         )}
 
         <AnimatePresence mode="wait">
-          {currentResponse && !(mode === 'chat' && (currentResponse.type === 'question' || currentResponse.type === 'intro' || currentResponse.type === 'explanation')) && (
+          {currentResponse && (
             <motion.div
               key={responseKey}
               className="w-full max-w-3xl flex-shrink-0"
@@ -572,13 +601,13 @@ export default function AiLessonEngine({
               transition={{ duration: 0.4, ease: 'easeOut' }}
             >
               <div className={`rounded-2xl p-6 sm:p-8 border shadow-sm ${getCardStyle(currentResponse.type, isLight)}`}>
-                <p className={`text-xs font-semibold uppercase tracking-widest mb-3 ${isLight ? 'text-teal-600' : 'text-teal-400'}`}>
+                <p className={`text-xs font-semibold uppercase tracking-widest mb-3 ${isLight ? 'text-red-600' : 'text-red-400'}`}>
                   {getResponseLabel(currentResponse.type)}
                 </p>
-                <h2 className={`text-xl sm:text-2xl font-bold mb-4 ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                <h2 className={`text-xl sm:text-2xl font-bold mb-4 ${isLight ? 'text-gray-900' : 'text-white'}`}>
                   {currentResponse.title}
                 </h2>
-                <p className={`text-base sm:text-lg leading-relaxed whitespace-pre-line ${isLight ? 'text-slate-700' : 'text-slate-300'}`}>
+                <p className={`text-base sm:text-lg leading-relaxed whitespace-pre-line ${isLight ? 'text-gray-700' : 'text-gray-300'}`}>
                   {currentResponse.content}
                 </p>
 
@@ -588,17 +617,17 @@ export default function AiLessonEngine({
                       <div key={i} className="flex items-start gap-3">
                         <span
                           className={`w-6 h-6 rounded-full border text-xs flex items-center justify-center flex-shrink-0 mt-0.5 ${
-                            isLight ? 'bg-teal-100 border-teal-300 text-teal-700' : 'bg-teal-500/20 border-teal-500/40 text-teal-400'
+                            isLight ? 'bg-red-100 border-red-300 text-red-700' : 'bg-red-500/20 border-red-500/40 text-red-400'
                           }`}
                         >
                           {i + 1}
                         </span>
-                        <span className={`text-base ${isLight ? 'text-slate-700' : 'text-slate-200'}`}>{point}</span>
+                        <span className={`text-base ${isLight ? 'text-gray-700' : 'text-gray-200'}`}>{point}</span>
                       </div>
                     ))}
                     <button
                       onClick={startRevisionQuestions}
-                      className="mt-6 px-6 py-3 bg-teal-600 hover:bg-teal-500 text-white font-semibold rounded-xl transition-colors text-base shadow-sm"
+                      className="mt-6 px-6 py-3 bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-semibold rounded-xl transition-all duration-200 text-base shadow-md hover:shadow-lg active:scale-95"
                     >
                       Start Rapid-Fire Questions
                     </button>
@@ -621,7 +650,7 @@ export default function AiLessonEngine({
                             key={i}
                             disabled={optionAnswered}
                             onClick={() => {
-                              if (mode === 'teach' || mode === 'chat') handleTeachAnswer(i);
+                              if (mode === 'teach') handleTeachAnswer(i);
                               else if (mode === 'quiz') handleQuizAnswer(i);
                               else handleRevisionAnswer(i);
                             }}
@@ -636,14 +665,14 @@ export default function AiLessonEngine({
                                     ? 'bg-red-100 border-red-400 text-red-700'
                                     : 'bg-red-600/20 border-red-500 text-red-300'
                                   : isLight
-                                  ? 'bg-slate-100 border-slate-200 text-slate-400'
-                                  : 'bg-slate-700/40 border-slate-600 text-slate-500'
+                                  ? 'bg-gray-100 border-gray-200 text-gray-400'
+                                  : 'bg-gray-700/40 border-gray-600 text-gray-500'
                                 : isLight
-                                ? 'bg-slate-50 border-slate-200 text-slate-800 hover:bg-teal-50 hover:border-teal-300 cursor-pointer'
-                                : 'bg-slate-700/40 border-slate-600 text-slate-200 hover:bg-slate-600/50 hover:border-teal-500 cursor-pointer'
+                                ? 'bg-gray-50 border-gray-200 text-gray-800 hover:bg-red-50 hover:border-red-300 cursor-pointer'
+                                : 'bg-gray-700/40 border-gray-600 text-gray-200 hover:bg-gray-600/50 hover:border-red-500 cursor-pointer'
                             }`}
                           >
-                            <span className={`mr-2 font-bold ${isLight ? 'text-teal-600' : 'text-teal-400'}`}>
+                            <span className={`mr-2 font-bold ${isLight ? 'text-red-600' : 'text-red-400'}`}>
                               {String.fromCharCode(65 + i)}.
                             </span>
                             {option}
@@ -652,7 +681,7 @@ export default function AiLessonEngine({
                       })}
                     </div>
                     {!answered && (
-                      <p className={`mt-2 text-sm ${isLight ? 'text-slate-500' : 'text-slate-500'}`}>
+                      <p className={`mt-2 text-sm ${isLight ? 'text-gray-500' : 'text-gray-500'}`}>
                         Press A–D to answer
                       </p>
                     )}
@@ -663,8 +692,8 @@ export default function AiLessonEngine({
                           onClick={handleSkipQuestion}
                           className={`px-3 py-2 rounded-lg border text-sm font-medium transition-colors ${
                             isLight
-                              ? 'border-slate-300 text-slate-600 hover:bg-slate-100 hover:border-slate-400'
-                              : 'border-slate-600/60 text-slate-400 hover:text-white hover:border-slate-500'
+                              ? 'border-gray-300 text-gray-600 hover:bg-gray-100 hover:border-gray-400'
+                              : 'border-gray-600/60 text-gray-400 hover:text-white hover:border-gray-500'
                           }`}
                         >
                           Skip question
@@ -686,8 +715,8 @@ export default function AiLessonEngine({
                               ? 'border-amber-400 text-amber-700 bg-amber-50'
                               : 'border-amber-500/60 text-amber-400 bg-amber-500/10'
                             : isLight
-                            ? 'border-slate-300 text-slate-600 hover:bg-slate-100 hover:border-slate-400'
-                            : 'border-slate-600/60 text-slate-400 hover:text-white hover:border-slate-500'
+                            ? 'border-gray-300 text-gray-600 hover:bg-gray-100 hover:border-gray-400'
+                            : 'border-gray-600/60 text-gray-400 hover:text-white hover:border-gray-500'
                         }`}
                       >
                         {bookmarkedIndices.has(questionIndex) ? 'Bookmarked' : 'Bookmark question'}
@@ -698,14 +727,14 @@ export default function AiLessonEngine({
                           onClick={() => setConfusionReported(true)}
                           className={`px-3 py-2 rounded-lg border text-sm font-medium transition-colors ${
                             isLight
-                              ? 'border-slate-300 text-slate-600 hover:bg-slate-100 hover:border-slate-400'
-                              : 'border-slate-600/60 text-slate-400 hover:text-white hover:border-slate-500'
+                              ? 'border-gray-300 text-gray-600 hover:bg-gray-100 hover:border-gray-400'
+                              : 'border-gray-600/60 text-gray-400 hover:text-white hover:border-gray-500'
                           }`}
                         >
                           Report confusion
                         </button>
                       ) : (
-                        <span className={`px-3 py-2 text-sm ${isLight ? 'text-slate-500' : 'text-slate-500'}`}>
+                        <span className={`px-3 py-2 text-sm ${isLight ? 'text-gray-500' : 'text-gray-500'}`}>
                           Thanks, your feedback was recorded.
                         </span>
                       )}
@@ -725,21 +754,21 @@ export default function AiLessonEngine({
                         : 'bg-red-900/20 border-red-500/30'
                     }`}
                   >
-                    <p className={`text-sm font-semibold mb-1 ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                    <p className={`text-sm font-semibold mb-1 ${isLight ? 'text-gray-900' : 'text-white'}`}>
                       {revisionFeedback.title}
                     </p>
-                    <p className={`text-sm ${isLight ? 'text-slate-600' : 'text-slate-300'}`}>{revisionFeedback.content}</p>
+                    <p className={`text-sm ${isLight ? 'text-gray-600' : 'text-gray-300'}`}>{revisionFeedback.content}</p>
                   </div>
                 )}
 
-                {(mode === 'teach' || mode === 'chat') && engineState === 'feedback' && currentResponse?.type === 'feedback' && quizState.score === 0 && !teachFeedbackAcknowledged && (
+                {mode === 'teach' && engineState === 'feedback' && currentResponse?.type === 'feedback' && quizState.score === 0 && !teachFeedbackAcknowledged && (
                   <div className="mt-6">
-                    <p className={`text-sm mb-2 ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
+                    <p className={`text-sm mb-2 ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>
                       Read the solution above, then continue when ready.
                     </p>
                     <button
                       onClick={handleTeachContinue}
-                      className="px-6 py-3 bg-teal-600 hover:bg-teal-500 text-white font-semibold rounded-xl transition-colors text-base shadow-sm"
+                      className="px-6 py-3 bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-semibold rounded-xl transition-all duration-200 text-base shadow-md hover:shadow-lg active:scale-95"
                     >
                       Continue
                     </button>
@@ -756,7 +785,7 @@ export default function AiLessonEngine({
 
               {mode === 'quiz' && engineState === 'asking_question' && (
                 <div className="mt-3 flex items-center justify-between px-1">
-                  <span className={`text-sm ${isLight ? 'text-slate-600' : 'text-slate-500'}`}>
+                  <span className={`text-sm ${isLight ? 'text-gray-600' : 'text-gray-500'}`}>
                     Question {quizState.currentQuestion + 1} of {QUIZ_TOTAL}
                   </span>
                   <div className="flex gap-1">
@@ -765,12 +794,12 @@ export default function AiLessonEngine({
                         key={i}
                         className={`w-2 h-2 rounded-full ${
                           i < quizState.currentQuestion
-                            ? 'bg-teal-500'
+                            ? 'bg-red-500'
                             : i === quizState.currentQuestion
-                            ? 'bg-teal-400'
+                            ? 'bg-red-400'
                             : isLight
-                            ? 'bg-slate-300'
-                            : 'bg-slate-600'
+                            ? 'bg-gray-300'
+                            : 'bg-gray-600'
                         }`}
                       />
                     ))}
@@ -778,9 +807,9 @@ export default function AiLessonEngine({
                 </div>
               )}
 
-              {(mode === 'teach' || mode === 'chat') && engineState === 'asking_question' && currentResponse?.type === 'question' && (
+              {mode === 'teach' && engineState === 'asking_question' && currentResponse?.type === 'question' && (
                 <div className="mt-3 px-1">
-                  <span className={`text-sm ${isLight ? 'text-slate-600' : 'text-slate-500'}`}>
+                  <span className={`text-sm ${isLight ? 'text-gray-600' : 'text-gray-500'}`}>
                     Practice question (1 of 1)
                   </span>
                 </div>
@@ -792,43 +821,41 @@ export default function AiLessonEngine({
 
       <div
         className={`flex-shrink-0 px-6 sm:px-8 pb-4 pt-4 border-t ${
-          isLight ? 'border-slate-200' : 'border-white/5'
+          isLight ? 'border-gray-200' : 'border-white/5'
         }`}
       >
-        {mode !== 'teach' && mode !== 'chat' && (
-          <div
-            className={`mb-4 p-4 rounded-xl border ${
-              isLight ? 'bg-white border-slate-200 shadow-sm' : 'bg-slate-800/60 border-slate-600/40'
-            }`}
-          >
-            <p className={`text-xs uppercase tracking-widest font-semibold mb-1 ${isLight ? 'text-teal-600' : 'text-teal-400'}`}>
-              GRIO Response
+        <div
+          className={`mb-4 p-4 rounded-xl border ${
+            isLight ? 'bg-white border-gray-200 shadow-sm' : 'bg-gray-800/60 border-gray-600/40'
+          }`}
+        >
+          <p className={`text-xs uppercase tracking-widest font-semibold mb-1 ${isLight ? 'text-red-600' : 'text-red-400'}`}>
+            GRIO Response
+          </p>
+          {showFollowUp && followUpLoading ? (
+            <motion.p
+              className={`text-sm ${isLight ? 'text-gray-500' : 'text-gray-400'}`}
+              animate={{ opacity: [0.4, 1, 0.4] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+            >
+              GRIO is thinking...
+            </motion.p>
+          ) : showFollowUp && followUpResponse ? (
+            <p className={`text-sm leading-relaxed ${isLight ? 'text-gray-700' : 'text-gray-300'}`}>
+              {followUpResponse.content}
             </p>
-            {showFollowUp && followUpLoading ? (
-              <motion.p
-                className={`text-sm ${isLight ? 'text-slate-500' : 'text-slate-400'}`}
-                animate={{ opacity: [0.4, 1, 0.4] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-              >
-                GRIO is thinking...
-              </motion.p>
-            ) : showFollowUp && followUpResponse ? (
-              <p className={`text-sm leading-relaxed ${isLight ? 'text-slate-700' : 'text-slate-300'}`}>
-                {followUpResponse.content}
-              </p>
-            ) : currentResponse?.type === 'question' && currentQ ? (
-              <p className={`text-sm leading-relaxed ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
-                Select an answer above. Need help? Ask GRIO a question below or click &quot;Get a hint&quot;.
-              </p>
-            ) : (
-              <p className={`text-sm leading-relaxed ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
-                Ask GRIO a question below for more help with this lesson.
-              </p>
-            )}
-          </div>
-        )}
+          ) : currentResponse?.type === 'question' && currentQ ? (
+            <p className={`text-sm leading-relaxed ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>
+              Select an answer above. Need help? Ask GRIO a question below or click &quot;Get a hint&quot;.
+            </p>
+          ) : (
+            <p className={`text-sm leading-relaxed ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>
+              Ask GRIO a question below for more help with this lesson.
+            </p>
+          )}
+        </div>
         <div className="flex gap-3 flex-wrap items-center">
-          {mode !== 'teach' && currentResponse?.type === 'question' && !showFollowUp && (
+          {currentResponse?.type === 'question' && !showFollowUp && (
             <button
               type="button"
               onClick={async () => {
@@ -836,7 +863,7 @@ export default function AiLessonEngine({
                 setShowFollowUp(true);
                 speech.stop();
                 const questionIndex =
-                  mode === 'chat' ? 0 : mode === 'quiz' ? quizState.currentQuestion : revisionQuestionIndex;
+                  mode === 'teach' ? 0 : mode === 'quiz' ? quizState.currentQuestion : revisionQuestionIndex;
                 const response = await generateSocraticHint(subject, topic, questionIndex, socraticHintLevel);
                 setSocraticHintLevel((prev) => prev + 1);
                 setFollowUpLoading(false);
@@ -846,8 +873,8 @@ export default function AiLessonEngine({
               disabled={followUpLoading}
               className={`px-4 py-2.5 rounded-xl border transition-colors text-sm font-medium disabled:opacity-50 ${
                 isLight
-                  ? 'border-teal-400 text-teal-700 hover:bg-teal-50'
-                  : 'border-teal-600/60 text-teal-300 hover:bg-teal-600/20'
+                  ? 'border-red-400 text-red-700 hover:bg-red-50'
+                  : 'border-red-600/60 text-red-300 hover:bg-red-600/20'
               }`}
             >
               Get a hint
@@ -860,8 +887,8 @@ export default function AiLessonEngine({
             aria-label="Open academic symbols keyboard"
             className={`flex items-center justify-center w-12 h-12 rounded-xl border transition-colors flex-shrink-0 ${
               isLight
-                ? 'border-slate-300 text-slate-600 hover:bg-slate-100 hover:border-teal-400 hover:text-teal-600'
-                : 'border-slate-600/60 text-slate-400 hover:text-teal-400 hover:border-teal-500/60 hover:bg-teal-500/10'
+                ? 'border-gray-300 text-gray-600 hover:bg-gray-100 hover:border-red-400 hover:text-red-600'
+                : 'border-gray-600/60 text-gray-400 hover:text-red-400 hover:border-red-500/60 hover:bg-red-500/10'
             }`}
           >
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -885,10 +912,10 @@ export default function AiLessonEngine({
               speechRecognition.isListening ? 'Listening...' : 'Ask GRIO a question...'
             }
             readOnly={speechRecognition.isListening}
-            className={`flex-1 min-w-[12rem] rounded-xl px-4 sm:px-5 py-3 text-base focus:outline-none focus:ring-2 focus:ring-teal-500/50 ${
+            className={`flex-1 min-w-[12rem] rounded-xl px-4 sm:px-5 py-3 text-base focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 ${
               isLight
-                ? 'bg-slate-50 border border-slate-300 text-slate-900 placeholder-slate-400'
-                : 'bg-slate-800/60 border border-slate-600/40 text-white placeholder-slate-500'
+                ? 'bg-gray-50 border border-gray-300 text-gray-900 placeholder-gray-400'
+                : 'bg-gray-800/60 border border-gray-600/40 text-white placeholder-gray-500'
             } ${speechRecognition.isListening ? 'opacity-90' : ''}`}
           />
           {speechRecognition.isSupported && (
@@ -906,8 +933,8 @@ export default function AiLessonEngine({
                 speechRecognition.isListening
                   ? 'bg-red-500/20 border-red-400 text-red-400 hover:bg-red-500/30'
                   : isLight
-                  ? 'border-slate-300 text-slate-600 hover:bg-slate-100 hover:border-teal-400 hover:text-teal-600'
-                  : 'border-slate-600/60 text-slate-400 hover:text-teal-400 hover:border-teal-500/60 hover:bg-teal-500/10'
+                  ? 'border-gray-300 text-gray-600 hover:bg-gray-100 hover:border-red-400 hover:text-red-600'
+                  : 'border-gray-600/60 text-gray-400 hover:text-red-400 hover:border-red-500/60 hover:bg-red-500/10'
               } disabled:opacity-50`}
             >
               <svg
@@ -930,7 +957,7 @@ export default function AiLessonEngine({
           <button
             onClick={() => handleFollowUp()}
             disabled={!followUpQuestion.trim() || followUpLoading || speechRecognition.isListening}
-            className="px-5 sm:px-6 py-3 bg-teal-600 hover:bg-teal-500 disabled:bg-slate-300 disabled:text-slate-500 text-white font-semibold rounded-xl transition-colors text-base shadow-sm disabled:shadow-none"
+            className="px-5 sm:px-6 py-3 bg-red-600 hover:bg-red-700 active:bg-red-800 disabled:bg-gray-300 disabled:text-gray-500 text-white font-semibold rounded-xl transition-all duration-200 shadow-md hover:shadow-lg active:scale-95 disabled:shadow-none disabled:scale-100"
           >
             Ask
           </button>

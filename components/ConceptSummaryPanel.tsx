@@ -36,32 +36,32 @@ export default function ConceptSummaryPanel({ subject, topic, theme = 'dark' }: 
   if (loading) {
     return (
       <div className="p-5 sm:p-6 space-y-4">
-        <div className={`h-5 w-3/4 rounded animate-pulse ${isLight ? 'bg-slate-200' : 'bg-slate-700/50'}`} />
-        <div className={`h-16 rounded animate-pulse ${isLight ? 'bg-slate-200' : 'bg-slate-700/50'}`} />
-        <div className={`h-20 rounded animate-pulse ${isLight ? 'bg-slate-200' : 'bg-slate-700/50'}`} />
+        <div className={`h-5 w-3/4 rounded animate-pulse ${isLight ? 'bg-gray-200' : 'bg-gray-700/50'}`} />
+        <div className={`h-16 rounded animate-pulse ${isLight ? 'bg-gray-200' : 'bg-gray-700/50'}`} />
+        <div className={`h-20 rounded animate-pulse ${isLight ? 'bg-gray-200' : 'bg-gray-700/50'}`} />
       </div>
     );
   }
 
   if (!summary) {
     return (
-      <div className={`p-5 sm:p-6 text-sm ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
+      <div className={`p-5 sm:p-6 text-sm ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>
         No concept summary available for this topic.
       </div>
     );
   }
 
-  const sectionHeading = `text-xs font-semibold uppercase tracking-widest mb-2 ${isLight ? 'text-teal-600' : 'text-teal-400'}`;
-  const bodyText = `text-sm leading-relaxed ${isLight ? 'text-slate-600' : 'text-slate-300'}`;
+  const sectionHeading = `text-xs font-semibold uppercase tracking-widest mb-2 ${isLight ? 'text-red-600' : 'text-red-400'}`;
+  const bodyText = `text-sm leading-relaxed ${isLight ? 'text-gray-600' : 'text-gray-300'}`;
   const exampleBlock = `text-sm whitespace-pre-wrap font-sans rounded-xl p-3 border ${
-    isLight ? 'bg-slate-50 border-slate-200 text-slate-700' : 'bg-slate-800/60 border-slate-600/40 text-slate-300'
+    isLight ? 'bg-gray-50 border-gray-200 text-gray-700' : 'bg-gray-800/60 border-gray-600/40 text-gray-300'
   }`;
 
   return (
     <div className="p-5 sm:p-6 flex flex-col gap-6 overflow-y-auto h-full min-h-0">
       <h2
         className={`text-base sm:text-lg font-bold pb-2 border-b ${
-          isLight ? 'text-slate-900 border-slate-200' : 'text-white border-white/10'
+          isLight ? 'text-gray-900 border-gray-200' : 'text-white border-white/10'
         }`}
       >
         {subject} – {topic}

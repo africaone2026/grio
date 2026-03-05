@@ -25,8 +25,8 @@ export default function AdminLessonsPage() {
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900">Lessons</h1>
-        <p className="text-slate-500 text-sm mt-1">{lessons.length} lessons across all subjects</p>
+        <h1 className="text-2xl font-bold text-gray-900">Lessons</h1>
+        <p className="text-gray-500 text-sm mt-1">{lessons.length} lessons across all subjects</p>
       </div>
 
       <div className="flex gap-4 mb-6">
@@ -35,12 +35,12 @@ export default function AdminLessonsPage() {
           placeholder="Search lessons..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white w-64"
+          className="px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white w-64"
         />
         <select
           value={subjectFilter}
           onChange={(e) => setSubjectFilter(e.target.value)}
-          className="px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-slate-700"
+          className="px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-700"
         >
           <option value="">All Subjects</option>
           {ugSecSubjects.map((s) => (
@@ -51,30 +51,30 @@ export default function AdminLessonsPage() {
         </select>
       </div>
 
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-100 grid grid-cols-12 text-xs font-semibold text-slate-400 uppercase tracking-wide">
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-100 grid grid-cols-12 text-xs font-semibold text-gray-400 uppercase tracking-wide">
           <span className="col-span-5">Lesson</span>
           <span className="col-span-3">Subject</span>
           <span className="col-span-3">Topic</span>
           <span className="col-span-1 text-center">#</span>
         </div>
-        <div className="divide-y divide-slate-100 max-h-[600px] overflow-y-auto">
+        <div className="divide-y divide-gray-100 max-h-[600px] overflow-y-auto">
           {filtered.map((lesson) => (
             <div
               key={lesson.id}
-              className="px-6 py-4 grid grid-cols-12 gap-4 items-center hover:bg-slate-50 transition-colors"
+              className="px-6 py-4 grid grid-cols-12 gap-4 items-center hover:bg-gray-50 transition-colors"
             >
-              <p className="col-span-5 text-sm font-medium text-slate-800 truncate">
+              <p className="col-span-5 text-sm font-medium text-gray-800 truncate">
                 {lesson.title}
               </p>
-              <p className="col-span-3 text-sm text-slate-500 truncate">{lesson.subjectName}</p>
-              <p className="col-span-3 text-sm text-slate-400 truncate">{lesson.topicName}</p>
-              <span className="col-span-1 text-xs text-center text-slate-400">{lesson.order}</span>
+              <p className="col-span-3 text-sm text-gray-500 truncate">{lesson.subjectName}</p>
+              <p className="col-span-3 text-sm text-gray-400 truncate">{lesson.topicName}</p>
+              <span className="col-span-1 text-xs text-center text-gray-400">{lesson.order}</span>
             </div>
           ))}
         </div>
-        <div className="px-6 py-3 border-t border-slate-100 bg-slate-50">
-          <p className="text-xs text-slate-400">
+        <div className="px-6 py-3 border-t border-gray-100 bg-gray-50">
+          <p className="text-xs text-gray-400">
             Showing {filtered.length} of {lessons.length} lessons
           </p>
         </div>

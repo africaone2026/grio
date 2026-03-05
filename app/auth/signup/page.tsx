@@ -51,7 +51,7 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className="min-h-screen bg-gray-50 flex">
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-b from-[#071728] to-[#0f2a4a] flex-col justify-between p-12">
         <Link href="/" className="flex items-center gap-2">
           <span className="text-white font-bold text-xl">GRIO</span>
@@ -61,7 +61,7 @@ export default function SignupPage() {
           <h2 className="text-3xl font-bold text-white mb-4 leading-tight">
             Start your learning<br />journey today.
           </h2>
-          <p className="text-slate-400 text-base leading-relaxed">
+          <p className="text-gray-400 text-base leading-relaxed">
             Join learners across Uganda, Zambia and beyond studying with
             curriculum-aligned content built for examination success.
           </p>
@@ -76,7 +76,7 @@ export default function SignupPage() {
               <span className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
                 {item.icon}
               </span>
-              <span className="text-slate-300 text-sm">{item.text}</span>
+              <span className="text-gray-300 text-sm">{item.text}</span>
             </div>
           ))}
         </div>
@@ -91,8 +91,8 @@ export default function SignupPage() {
             </Link>
           </div>
 
-          <h1 className="text-2xl font-bold text-slate-900 mb-1">Create your account</h1>
-          <p className="text-slate-500 text-sm mb-8">
+          <h1 className="text-2xl font-bold text-gray-900 mb-1">Create your account</h1>
+          <p className="text-gray-500 text-sm mb-8">
             Already have an account?{' '}
             <Link href="/auth/login" className="text-blue-600 hover:text-blue-700 font-medium">
               Sign in
@@ -101,7 +101,7 @@ export default function SignupPage() {
 
           <form onSubmit={handleSubmit} className="space-y-5" noValidate>
             <div>
-              <label htmlFor="signup-name" className="block text-sm font-medium text-slate-700 mb-1.5">
+              <label htmlFor="signup-name" className="block text-sm font-medium text-gray-700 mb-1.5">
                 Full name
               </label>
               <input
@@ -112,12 +112,12 @@ export default function SignupPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Your full name"
-                className="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-slate-400 bg-white"
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400 bg-white"
                 aria-describedby={error ? 'signup-error' : undefined}
               />
             </div>
             <div>
-              <label htmlFor="signup-email" className="block text-sm font-medium text-slate-700 mb-1.5">
+              <label htmlFor="signup-email" className="block text-sm font-medium text-gray-700 mb-1.5">
                 Email address
               </label>
               <input
@@ -128,12 +128,12 @@ export default function SignupPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                className="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-slate-400 bg-white"
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400 bg-white"
                 aria-describedby={error ? 'signup-error' : undefined}
               />
             </div>
             <div>
-              <label htmlFor="signup-password" className="block text-sm font-medium text-slate-700 mb-1.5">
+              <label htmlFor="signup-password" className="block text-sm font-medium text-gray-700 mb-1.5">
                 Password
               </label>
               <input
@@ -145,15 +145,15 @@ export default function SignupPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Minimum 6 characters"
-                className="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-slate-400 bg-white"
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400 bg-white"
                 aria-describedby="signup-password-hint"
               />
-              <p id="signup-password-hint" className="mt-1 text-xs text-slate-400">
+              <p id="signup-password-hint" className="mt-1 text-xs text-gray-400">
                 Must be at least 6 characters.
               </p>
             </div>
             <div>
-              <label htmlFor="signup-country" className="block text-sm font-medium text-slate-700 mb-1.5">
+              <label htmlFor="signup-country" className="block text-sm font-medium text-gray-700 mb-1.5">
                 Country
               </label>
               <select
@@ -161,7 +161,7 @@ export default function SignupPage() {
                 required
                 value={countryId}
                 onChange={(e) => setCountryId(e.target.value)}
-                className="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-slate-700"
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-700"
               >
                 <option value="">Select your country...</option>
                 {countries.map((c) => (
@@ -172,7 +172,7 @@ export default function SignupPage() {
               </select>
             </div>
             <div>
-              <label htmlFor="signup-curriculum" className="block text-sm font-medium text-slate-700 mb-1.5">
+              <label htmlFor="signup-curriculum" className="block text-sm font-medium text-gray-700 mb-1.5">
                 Curriculum level
               </label>
               <select
@@ -182,7 +182,7 @@ export default function SignupPage() {
                 onChange={(e) => setCurriculumId(e.target.value)}
                 disabled={!countryId}
                 aria-disabled={!countryId}
-                className="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-slate-700 disabled:bg-slate-100 disabled:text-slate-400"
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-700 disabled:bg-gray-100 disabled:text-gray-400"
               >
                 <option value="">
                   {countryId ? 'Select your level...' : 'Select a country first'}
@@ -213,7 +213,7 @@ export default function SignupPage() {
             </button>
           </form>
 
-          <p className="mt-6 text-xs text-slate-400 text-center">
+          <p className="mt-6 text-xs text-gray-400 text-center">
             New accounts start with a 14-day trial. No credit card required.
           </p>
         </div>
