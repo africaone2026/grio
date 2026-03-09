@@ -122,8 +122,8 @@ export default function Navbar() {
     'px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 border-2 border-gray-300 hover:border-gray-500 rounded-lg transition-all duration-200';
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+    <header className="w-screen sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-200">
+      <div className="relative max-w-7xl mx-auto px-4 pr-16 sm:px-6 sm:pr-20 lg:pr-6 h-16 flex items-center justify-between gap-4">
         {/* Logo - left */}
         <Link
           href="/"
@@ -158,11 +158,11 @@ export default function Navbar() {
         </nav>
 
         {/* Right: CTA + mobile toggle */}
-        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+        <div className="ml-auto flex items-center gap-2 sm:gap-3 shrink-0">
           {user ? (
             <Link
               href={dashboardHref}
-              className="px-4 py-2 text-sm font-medium text-white bg-[#0f2a4a] rounded-lg hover:bg-[#1a3d6b] transition-colors duration-200"
+              className="hidden sm:inline-flex px-4 py-2 text-sm font-medium text-white bg-[#0f2a4a] rounded-lg hover:bg-[#1a3d6b] transition-colors duration-200"
             >
               Go to Dashboard
             </Link>
@@ -174,45 +174,49 @@ export default function Navbar() {
               >
                 Sign In
               </Link>
-              <Link href="/auth/signup" className={primaryButtonClass}>
+              <Link
+                href="/auth/signup"
+                className={`hidden sm:inline-flex ${primaryButtonClass}`}
+              >
                 Get Started
               </Link>
             </>
           )}
 
-          {/* Hamburger - visible <1024px */}
-          <button
-            ref={toggleButtonRef}
-            type="button"
-            className="lg:hidden p-2.5 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 active:bg-gray-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#F21825] focus:ring-offset-2"
-            onClick={handleToggleClick}
-            aria-expanded={mobileOpen}
-            aria-controls={MOBILE_MENU_ID}
-            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-          >
-            <span className="relative w-5 h-5 block" aria-hidden>
-              <span
-                className={`absolute left-0 w-5 h-0.5 bg-current rounded-full origin-center transition-all duration-[250ms] ease-out ${
-                  mobileOpen
-                    ? 'top-1/2 -translate-y-1/2 rotate-45'
-                    : 'top-1'
-                }`}
-              />
-              <span
-                className={`absolute left-0 w-5 h-0.5 bg-current rounded-full top-1/2 -translate-y-1/2 transition-all duration-[250ms] ease-out ${
-                  mobileOpen ? 'opacity-0 scale-x-0' : 'opacity-100 scale-x-100'
-                }`}
-              />
-              <span
-                className={`absolute left-0 w-5 h-0.5 bg-current rounded-full origin-center transition-all duration-[250ms] ease-out ${
-                  mobileOpen
-                    ? 'top-1/2 -translate-y-1/2 -rotate-45'
-                    : 'bottom-1'
-                }`}
-              />
-            </span>
-          </button>
         </div>
+
+        {/* Hamburger - visible <1024px */}
+        <button
+          ref={toggleButtonRef}
+          type="button"
+          className="absolute right-4 top-1/2 z-50 -translate-y-1/2 lg:hidden p-2.5 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 active:bg-gray-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#F21825] focus:ring-offset-2 sm:right-6"
+          onClick={handleToggleClick}
+          aria-expanded={mobileOpen}
+          aria-controls={MOBILE_MENU_ID}
+          aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+        >
+          <span className="relative w-5 h-5 block" aria-hidden>
+            <span
+              className={`absolute left-0 w-5 h-0.5 bg-current rounded-full origin-center transition-all duration-[250ms] ease-out ${
+                mobileOpen
+                  ? 'top-1/2 -translate-y-1/2 rotate-45'
+                  : 'top-1'
+              }`}
+            />
+            <span
+              className={`absolute left-0 w-5 h-0.5 bg-current rounded-full top-1/2 -translate-y-1/2 transition-all duration-[250ms] ease-out ${
+                mobileOpen ? 'opacity-0 scale-x-0' : 'opacity-100 scale-x-100'
+              }`}
+            />
+            <span
+              className={`absolute left-0 w-5 h-0.5 bg-current rounded-full origin-center transition-all duration-[250ms] ease-out ${
+                mobileOpen
+                  ? 'top-1/2 -translate-y-1/2 -rotate-45'
+                  : 'bottom-1'
+              }`}
+            />
+          </span>
+        </button>
       </div>
 
       {/* Mobile flyout: backdrop + panel */}
@@ -241,7 +245,7 @@ export default function Navbar() {
           role="dialog"
           aria-modal="true"
           aria-label="Mobile navigation"
-          className="absolute top-0 right-0 bottom-0 w-full max-w-sm bg-white shadow-xl flex flex-col transition-transform duration-[250ms] ease-out"
+          className="absolute top-0 right-0 bottom-0 w-full max-w-sm bg-white shadow-xl flex flex-col origin-right transition-transform duration-[250ms] ease-out"
           style={{
             transform: mobileOpen ? 'translateX(0)' : 'translateX(100%)',
           }}
@@ -261,24 +265,34 @@ export default function Navbar() {
               </Link>
             ))}
 
-            {!user && (
-              <div className="mt-4 pt-4 border-t border-gray-200 flex flex-col gap-2">
+            <div className="mt-4 pt-4 border-t border-gray-200 flex flex-col gap-2">
+              {user ? (
                 <Link
-                  href="/auth/login"
+                  href={dashboardHref}
                   onClick={closeMenu}
-                  className={`inline-flex justify-center ${secondaryButtonClass}`}
+                  className="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-[#0f2a4a] rounded-lg hover:bg-[#1a3d6b] transition-colors duration-200"
                 >
-                  Sign In
+                  Go to Dashboard
                 </Link>
-                <Link
-                  href="/auth/signup"
-                  onClick={closeMenu}
-                  className={`inline-flex justify-center ${primaryButtonClass}`}
-                >
-                  Get Started
-                </Link>
-              </div>
-            )}
+              ) : (
+                <>
+                  <Link
+                    href="/auth/login"
+                    onClick={closeMenu}
+                    className={`inline-flex justify-center ${secondaryButtonClass}`}
+                  >
+                    Sign In
+                  </Link>
+                  <Link
+                    href="/auth/signup"
+                    onClick={closeMenu}
+                    className={`inline-flex justify-center ${primaryButtonClass}`}
+                  >
+                    Get Started
+                  </Link>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>
