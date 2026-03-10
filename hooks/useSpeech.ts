@@ -32,10 +32,12 @@ export function useSpeech(): UseSpeechReturn {
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isMutedRef = useRef(isMuted);
-  isMutedRef.current = isMuted;
+  useEffect(() => {
+    isMutedRef.current = isMuted;
+  }, [isMuted]);
 
   useEffect(() => {
-    setIsSupported(typeof window !== 'undefined' && 'speechSynthesis' in window);
+    queueMicrotask(() => setIsSupported(typeof window !== 'undefined' && 'speechSynthesis' in window));
   }, []);
 
   useEffect(() => {

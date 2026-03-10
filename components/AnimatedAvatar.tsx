@@ -18,7 +18,7 @@ const GLOW_COLORS: Record<string, string> = {
   emerald: 'rgba(16, 185, 129, 0.4)',
 };
 
-function AvatarEyes({ state, isSpeaking }: { state: AvatarState; isSpeaking: boolean }) {
+function AvatarEyes({ state }: { state: AvatarState; isSpeaking: boolean }) {
   const [blinkPhase, setBlinkPhase] = useState(false);
 
   useEffect(() => {

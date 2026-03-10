@@ -130,27 +130,24 @@ export default function VirtualAcademicKeyboard() {
     };
   }, [isDragging]);
 
-  const handlePanelKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      const target = e.target as HTMLElement;
-      const isPanel = target === panelRef.current;
-      const isSymbolButton = target.closest('[data-symbol-button]');
-      if (!isPanel && !isSymbolButton) return;
-      const len = allSymbols.length;
-      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-        e.preventDefault();
-        setFocusedIndex((i) => (i + 1) % len);
-      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-        e.preventDefault();
-        setFocusedIndex((i) => (i - 1 + len) % len);
-      } else if (e.key === 'Enter') {
-        e.preventDefault();
-        const sym = allSymbols[focusedIndex];
-        if (sym) insertSymbol(sym.symbol);
-      }
-    },
-    [allSymbols, focusedIndex, insertSymbol]
-  );
+  const handlePanelKeyDown = (e: React.KeyboardEvent) => {
+    const target = e.target as HTMLElement;
+    const isPanel = target === panelRef.current;
+    const isSymbolButton = target.closest('[data-symbol-button]');
+    if (!isPanel && !isSymbolButton) return;
+    const len = allSymbols.length;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      setFocusedIndex((i) => (i + 1) % len);
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      setFocusedIndex((i) => (i - 1 + len) % len);
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      const sym = allSymbols[focusedIndex];
+      if (sym) insertSymbol(sym.symbol);
+    }
+  };
 
   useEffect(() => {
     const el = symbolButtonRefs.current[focusedIndex];
@@ -300,7 +297,7 @@ export default function VirtualAcademicKeyboard() {
               </button>
               {expanded && (
                 <div className="p-2 grid grid-cols-6 sm:grid-cols-8 gap-1 bg-gray-800/40">
-                  {symbols.map((s, i) => {
+                  {symbols.map((s) => {
                     const globalIndex = allSymbols.indexOf(s);
                     const isFocused = focusedIndex === globalIndex;
                     return (

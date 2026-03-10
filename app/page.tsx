@@ -342,7 +342,7 @@ export default function HomePage() {
             One Platform, Three Modes
             </h2>
             <p className="mt-5 text-lg text-gray-600 leading-relaxed opacity-90">
-            GRIO adapts to how you learn — whether you're a student studying independently, a teacher managing a class, or a school scaling its curriculum.
+            GRIO adapts to how you learn — whether you&apos;re a student studying independently, a teacher managing a class, or a school scaling its curriculum.
             </p>
           </div>
 

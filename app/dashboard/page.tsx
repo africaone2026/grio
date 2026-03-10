@@ -13,7 +13,7 @@ import { topics as allTopics } from '@/lib/mockData';
 
 export default function DashboardPage() {
   const { user } = useAuth();
-  const { subjects, userProgress, completedLessonIds, initForUser, isLoadingSubjects } = useApp();
+  const { subjects, userProgress, initForUser, isLoadingSubjects } = useApp();
 
   useEffect(() => {
     if (user) {

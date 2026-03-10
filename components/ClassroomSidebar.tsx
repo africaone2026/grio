@@ -34,17 +34,16 @@ export default function ClassroomSidebar({
   currentChatId,
   mode = 'teach'
 }: ClassroomSidebarProps) {
-  const { user } = useAuth();
-  // Hide Concept Summary for chat mode, open by default for other modes
+  useAuth(); // auth context for potential future use
   const [isConceptSummaryOpen, setIsConceptSummaryOpen] = useState(mode !== 'chat');
   const [isChatHistoryOpen, setIsChatHistoryOpen] = useState(true);
   
   // Update Concept Summary visibility when mode changes
   useEffect(() => {
     if (mode === 'chat') {
-      setIsConceptSummaryOpen(false);
+      queueMicrotask(() => setIsConceptSummaryOpen(false));
     } else {
-      setIsConceptSummaryOpen(true);
+      queueMicrotask(() => setIsConceptSummaryOpen(true));
     }
   }, [mode]);
   const [chatHistory, setChatHistory] = useState<ChatHistoryItem[]>([]);
@@ -58,11 +57,10 @@ export default function ClassroomSidebar({
         const stored = localStorage.getItem('grio_classroom_chat_history');
         if (stored) {
           const allHistory = JSON.parse(stored);
-          // Filter by current classroom if provided
           const filtered = currentClassroomId
             ? allHistory.filter((chat: ChatHistoryItem) => chat.classroomId === currentClassroomId)
             : allHistory;
-          setChatHistory(filtered);
+          queueMicrotask(() => setChatHistory(filtered));
         }
       } catch (error) {
         console.error('Failed to load chat history:', error);
