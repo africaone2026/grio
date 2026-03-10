@@ -3,6 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { getSchoolAnalytics, getSchool } from '@/lib/api';
+import StatCard from '@/components/StatCard';
+import DashboardCard from '@/components/DashboardCard';
+import SkeletonLoader from '@/components/SkeletonLoader';
 import type { SchoolAnalytics, School } from '@/lib/types';
 
 export default function SchoolAdminOverviewPage() {
@@ -27,6 +30,7 @@ export default function SchoolAdminOverviewPage() {
     return (
       <div className="p-8 animate-pulse space-y-6">
         <div className="h-8 w-64 bg-gray-200 rounded" />
+        <SkeletonLoader variant="stat" count={4} className="grid grid-cols-4 gap-6" />
         <div className="grid grid-cols-4 gap-6">
           {[...Array(4)].map((_, i) => (
             <div key={i} className="h-28 bg-gray-200 rounded-xl" />
@@ -56,22 +60,15 @@ export default function SchoolAdminOverviewPage() {
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
         {stats.map((s) => (
-          <div
-            key={s.label}
-            className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm"
-          >
-            <p className="text-3xl font-bold text-gray-900">{s.value}</p>
-            <p className="text-sm text-gray-500 mt-1">{s.label}</p>
-          </div>
+          <StatCard key={s.label} label={s.label} value={s.value} />
         ))}
       </div>
 
       <div className="grid lg:grid-cols-2 gap-8">
-        <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100">
-            <h2 className="text-sm font-semibold text-gray-700">Classroom Performance</h2>
-          </div>
-          <div className="divide-y divide-gray-100">
+        <DashboardCard
+          header={<h2 className="text-sm font-semibold text-gray-700">Classroom Performance</h2>}
+        >
+          <div className="divide-y divide-slate-100">
             {analytics.classroomBreakdown.map((cls) => (
               <div key={cls.classroomId} className="px-6 py-4 flex items-center justify-between">
                 <div>
@@ -92,13 +89,12 @@ export default function SchoolAdminOverviewPage() {
               </div>
             ))}
           </div>
-        </div>
+        </DashboardCard>
 
-        <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100">
-            <h2 className="text-sm font-semibold text-gray-700">Subject Completion</h2>
-          </div>
-          <div className="divide-y divide-gray-100">
+        <DashboardCard
+          header={<h2 className="text-sm font-semibold text-gray-700">Subject Completion</h2>}
+        >
+          <div className="divide-y divide-slate-100">
             {analytics.subjectBreakdown.map((sub) => (
               <div key={sub.subjectId} className="px-6 py-4 flex items-center justify-between">
                 <p className="text-sm font-medium text-gray-800 truncate max-w-[180px]">
@@ -118,7 +114,7 @@ export default function SchoolAdminOverviewPage() {
               </div>
             ))}
           </div>
-        </div>
+        </DashboardCard>
       </div>
     </div>
   );

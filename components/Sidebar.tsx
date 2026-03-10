@@ -6,6 +6,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useUI } from '@/context/UIContext';
 import { useState } from 'react';
 import type { UserRole } from '@/lib/types';
+import Logo from '@/components/Logo';
 
 interface NavItem {
   label: string;
@@ -88,13 +89,25 @@ export default function Sidebar() {
     }
   };
 
+  // Determine dashboard home based on user role
+  const getDashboardHome = () => {
+    if (!user) return '/dashboard';
+    switch (user.role) {
+      case 'teacher':
+        return '/teacher';
+      case 'school_admin':
+        return '/school-admin';
+      case 'super_admin':
+        return '/admin';
+      default:
+        return '/dashboard';
+    }
+  };
+
   return (
-    <aside data-sidebar className="w-64 bg-[#0b1f36] min-h-screen flex flex-col flex-shrink-0">
+    <aside data-sidebar className="w-64 bg-[#0f172a] min-h-screen flex flex-col flex-shrink-0">
       <div className="px-6 py-6 border-b border-white/10">
-        <Link href="/" className="flex items-center gap-2">
-          <span className="text-white font-bold text-xl tracking-tight">GRIO</span>
-          <span className="text-blue-300 text-xs font-medium bg-blue-900/50 px-2 py-0.5 rounded-full">AI</span>
-        </Link>
+        <Logo href={getDashboardHome()} />
       </div>
 
       <div className="px-4 py-4 border-b border-white/10">
@@ -123,10 +136,10 @@ export default function Sidebar() {
               key={item.href}
               href={item.href}
               aria-current={isActive ? 'page' : undefined}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-[#0f172a] ${
                 isActive
                   ? 'bg-blue-600 text-white font-medium'
-                  : 'text-gray-400 hover:text-white hover:bg-white/5'
+                  : 'text-slate-400 hover:text-white hover:bg-white/5 active:scale-[0.98]'
               }`}
             >
               <span className="text-base w-5 text-center" aria-hidden="true">{item.icon}</span>
@@ -142,7 +155,8 @@ export default function Sidebar() {
           <button
             type="button"
             onClick={toggleHighContrast}
-            className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
+            aria-label="Toggle high contrast mode"
+            className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-[#0f172a] active:scale-[0.98] ${
               highContrast
                 ? 'bg-blue-600/20 text-blue-300'
                 : 'text-gray-400 hover:text-white hover:bg-white/5'
@@ -159,7 +173,8 @@ export default function Sidebar() {
           <button
             type="button"
             onClick={toggleLargeTypography}
-            className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
+            aria-label="Toggle large typography mode"
+            className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-[#0f172a] active:scale-[0.98] ${
               largeTypography
                 ? 'bg-blue-600/20 text-blue-300'
                 : 'text-gray-400 hover:text-white hover:bg-white/5'
@@ -176,7 +191,8 @@ export default function Sidebar() {
           <button
             type="button"
             onClick={togglePresentationMode}
-            className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
+            aria-label="Toggle presentation mode"
+            className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-[#0f172a] active:scale-[0.98] ${
               presentationMode
                 ? 'bg-blue-600/20 text-blue-300'
                 : 'text-gray-400 hover:text-white hover:bg-white/5'
@@ -214,7 +230,7 @@ export default function Sidebar() {
         )}
         <button
           onClick={handleLogout}
-          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
+          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-[#0f172a] active:scale-[0.98] ${
             confirmingLogout
               ? 'bg-red-900/40 text-red-300 border border-red-700/40'
               : 'text-gray-400 hover:text-white hover:bg-white/5'
