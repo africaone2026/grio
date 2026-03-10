@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description:
     "AI-powered learning infrastructure for classrooms and independent learners across Africa.",
   icons: {
-    icon: '/favicon.ico',
+    icon: "/favi.svg",
   },
 };
 
