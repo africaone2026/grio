@@ -7,6 +7,8 @@ import { useApp } from '@/context/AppContext';
 import SubjectCard from '@/components/SubjectCard';
 import StatCard from '@/components/StatCard';
 import ProgressBar from '@/components/ProgressBar';
+import SkeletonLoader from '@/components/SkeletonLoader';
+import EmptyState from '@/components/EmptyState';
 import { topics as allTopics } from '@/lib/mockData';
 
 export default function DashboardPage() {
@@ -71,7 +73,7 @@ export default function DashboardPage() {
       {lastLesson && (
         <div className="mb-8 bg-[#0f2a4a] rounded-xl p-6 text-white flex items-center justify-between">
           <div>
-            <p className="text-blue-300 text-xs font-semibold uppercase tracking-wide mb-1">
+            <p className="text-blue-300 text-xs font-semibold tracking-wide mb-1">
               Resume where you left off
             </p>
             <p className="font-semibold text-lg">{lastLesson.lessonTitle}</p>
@@ -119,17 +121,19 @@ export default function DashboardPage() {
           <h2 className="text-lg font-bold text-gray-900">Your Subjects</h2>
           <Link
             href="/dashboard/subjects"
-            className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+            className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded"
           >
             View all →
           </Link>
         </div>
         {isLoadingSubjects ? (
-          <div className="grid lg:grid-cols-3 gap-6">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="h-40 bg-gray-200 rounded-xl animate-pulse" />
-            ))}
-          </div>
+          <SkeletonLoader variant="card" count={6} className="grid lg:grid-cols-3 gap-6" />
+        ) : subjects.length === 0 ? (
+          <EmptyState
+            icon="📚"
+            title="No subjects available"
+            description="Subjects will appear here once they are added to your curriculum."
+          />
         ) : (
           <div className="grid lg:grid-cols-3 gap-6">
             {subjects.slice(0, 6).map((subject) => {
