@@ -5,6 +5,8 @@ import { useAuth } from '@/context/AuthContext';
 import { useApp } from '@/context/AppContext';
 import SubjectCard from '@/components/SubjectCard';
 import ProgressBar from '@/components/ProgressBar';
+import SkeletonLoader from '@/components/SkeletonLoader';
+import EmptyState from '@/components/EmptyState';
 
 export default function SubjectsPage() {
   const { user } = useAuth();
@@ -51,11 +53,13 @@ export default function SubjectsPage() {
       )}
 
       {isLoadingSubjects ? (
-        <div className="grid lg:grid-cols-3 gap-6">
-          {[...Array(7)].map((_, i) => (
-            <div key={i} className="h-44 bg-gray-200 rounded-xl animate-pulse" />
-          ))}
-        </div>
+        <SkeletonLoader variant="card" count={6} className="grid lg:grid-cols-3 gap-6" />
+      ) : subjects.length === 0 ? (
+        <EmptyState
+          icon="📚"
+          title="No subjects available"
+          description="Subjects will appear here once they are added to your curriculum."
+        />
       ) : (
         <div className="grid lg:grid-cols-3 gap-6">
           {subjects.map((subject) => {

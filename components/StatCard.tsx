@@ -1,5 +1,7 @@
 'use client';
 
+import DashboardCard from './DashboardCard';
+
 interface StatCardProps {
   label: string;
   value: string | number;
@@ -22,7 +24,7 @@ export default function StatCard({
   };
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+    <DashboardCard variant="default">
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">
@@ -45,6 +47,6 @@ export default function StatCard({
           </div>
         )}
       </div>
-    </div>
+    </DashboardCard>
   );
 }

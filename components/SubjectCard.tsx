@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import ProgressBar from './ProgressBar';
+import DashboardCard from './DashboardCard';
 import type { Subject } from '@/lib/types';
 
 interface SubjectCardProps {
@@ -33,8 +34,8 @@ export default function SubjectCard({
 }: SubjectCardProps) {
   const icon = subjectIcons[subject.icon] ?? '📚';
 
-  const card = (
-    <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-all hover:-trangray-y-0.5 cursor-pointer group">
+  const cardContent = (
+    <DashboardCard variant="outlined" interactive={!!href} className="group">
       <div className="flex items-start gap-4">
         <div
           className="w-12 h-12 rounded-lg flex items-center justify-center text-xl flex-shrink-0"
@@ -69,12 +70,12 @@ export default function SubjectCard({
           </span>
         </div>
       </div>
-    </div>
+    </DashboardCard>
   );
 
   if (href) {
-    return <Link href={href}>{card}</Link>;
+    return <Link href={href}>{cardContent}</Link>;
   }
 
-  return card;
+  return cardContent;
 }
