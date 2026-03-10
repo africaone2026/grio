@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { getSubjects } from '@/lib/api';
-import { curricula, countries } from '@/lib/mockData';
+import { curricula } from '@/lib/mockData';
 import type { Subject } from '@/lib/types';
 
 export default function AdminSubjectsPage() {

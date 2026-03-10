@@ -102,7 +102,7 @@ export default function LearnWithGrioPage() {
         if (historyStr) {
           try {
             history = JSON.parse(historyStr);
-          } catch (e) {
+          } catch {
             history = [];
           }
         }

@@ -29,7 +29,7 @@ const MOCK_PASSWORDS: Record<string, string> = {
   'superadmin@grio.ai': 'admin123',
 };
 
-let usersStore: User[] = [...mockUsers];
+const usersStore: User[] = [...mockUsers];
 
 interface AuthContextValue {
   user: User | null;
@@ -47,17 +47,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (typeof window === 'undefined') {
-      setIsLoading(false);
+      queueMicrotask(() => setIsLoading(false));
       return;
     }
     try {
       const raw = localStorage.getItem(SESSION_KEY);
       if (raw) {
-        setUser(JSON.parse(raw));
+        const parsed = JSON.parse(raw) as User;
+        queueMicrotask(() => setUser(parsed));
       }
     } catch {
     }
-    setIsLoading(false);
+    queueMicrotask(() => setIsLoading(false));
   }, []);
 
   const login = useCallback(async (credentials: LoginCredentials): Promise<User> => {

@@ -35,7 +35,7 @@ export default function Navbar() {
   const closeMenu = useCallback(() => setMobileOpen(false), []);
 
   useEffect(() => {
-    closeMenu();
+    queueMicrotask(closeMenu);
   }, [pathname, closeMenu]);
 
   // Lock body scroll when flyout is open

@@ -27,7 +27,7 @@ export default function LearnSidebar({
   currentChatId 
 }: LearnSidebarProps) {
   const { subjects } = useApp();
-  const { user } = useAuth();
+  useAuth(); // auth context for potential future use
   const [isConceptSummaryOpen, setIsConceptSummaryOpen] = useState(true);
   const [isChatHistoryOpen, setIsChatHistoryOpen] = useState(true);
   const [chatHistory, setChatHistory] = useState<ChatHistoryItem[]>([]);
@@ -41,7 +41,7 @@ export default function LearnSidebar({
         const stored = localStorage.getItem('grio_chat_history');
         if (stored) {
           const history = JSON.parse(stored);
-          setChatHistory(history);
+          queueMicrotask(() => setChatHistory(history));
         }
       } catch (error) {
         console.error('Failed to load chat history:', error);

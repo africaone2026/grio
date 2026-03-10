@@ -47,7 +47,6 @@ export default function LoginPage() {
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-b from-[#071728] to-[#0f2a4a] flex-col justify-between p-12">
         <Link href="/" className="flex items-center gap-2">
           <span className="text-white font-bold text-xl">GRIO</span>
-          <span className="text-blue-300 text-xs font-medium bg-blue-900/50 px-2 py-0.5 rounded-full">AI</span>
         </Link>
         <div>
           <h2 className="text-3xl font-bold text-white mb-4 leading-tight">
@@ -72,7 +71,6 @@ export default function LoginPage() {
           <div className="lg:hidden mb-8">
             <Link href="/" className="flex items-center gap-2">
               <span className="text-[#0f2a4a] font-bold text-xl">GRIO</span>
-              <span className="text-blue-600 text-xs font-medium bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100">AI</span>
             </Link>
           </div>
 

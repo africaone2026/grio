@@ -62,7 +62,7 @@ export default function ClassroomPage() {
   const router = useRouter();
   const { user } = useAuth();
   const { addSession, subjects: contextSubjects, initForUser, loadTopics, topics: contextTopics } = useApp();
-  const { highContrast, largeTypography, presentationMode, toggleHighContrast, toggleLargeTypography, togglePresentationMode, setPresentationMode } = useUI();
+  const { highContrast, largeTypography, presentationMode, toggleHighContrast, toggleLargeTypography, togglePresentationMode } = useUI();
 
   const [classrooms, setClassrooms] = useState<Classroom[]>([]);
   const [selectedClassroom, setSelectedClassroom] = useState('');
@@ -80,6 +80,7 @@ export default function ClassroomPage() {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [theme, setTheme] = useState<Theme>(getStoredTheme);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
+  const [currentChatId, setCurrentChatId] = useState<string>('new');
 
   useEffect(() => {
     if (user) {
@@ -99,8 +100,10 @@ export default function ClassroomPage() {
   useEffect(() => {
     if (contextSubjects.length > 0 && !selectedSubjectId) {
       const first = contextSubjects[0];
-      setSelectedSubjectId(first.id);
-      setSelectedSubjectName(first.name);
+      queueMicrotask(() => {
+        setSelectedSubjectId(first.id);
+        setSelectedSubjectName(first.name);
+      });
     }
   }, [contextSubjects, selectedSubjectId]);
 
@@ -111,7 +114,7 @@ export default function ClassroomPage() {
 
   useEffect(() => {
     if (contextTopics.length > 0 && !selectedTopic) {
-      setSelectedTopic(contextTopics[0].name);
+      queueMicrotask(() => setSelectedTopic(contextTopics[0].name));
     }
   }, [contextTopics, selectedTopic]);
 
@@ -223,7 +226,6 @@ export default function ClassroomPage() {
     ? 'border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700 active:text-red-700 transition-colors duration-200'
     : 'border-red-500/50 text-red-400 hover:bg-red-900/20 hover:text-white hover:border-red-400 transition-colors duration-200';
 
-  const isTeachActive = phase === 'active' && selectedMode === 'teach';
   const isSessionActive = phase === 'active';
 
   return (
@@ -392,7 +394,24 @@ export default function ClassroomPage() {
       )}
 
       <div className="flex flex-1 overflow-hidden">
-        {phase === 'active' && !(isSessionActive && presentationMode) && (
+        {phase === 'active' && (selectedMode === 'teach' || selectedMode === 'chat') && !(isSessionActive && presentationMode) && (
+          <ClassroomSidebar
+            currentTopic={selectedTopic}
+            currentSubject={selectedSubjectName}
+            currentClassroomId={selectedClassroom}
+            theme={theme}
+            mode={selectedMode}
+            onChatSelect={(chatId) => {
+              if (chatId === 'new') {
+                setCurrentChatId(`chat_${Date.now()}`);
+              } else {
+                setCurrentChatId(chatId);
+              }
+            }}
+            currentChatId={currentChatId}
+          />
+        )}
+        {phase === 'active' && selectedMode !== 'teach' && selectedMode !== 'chat' && !(isSessionActive && presentationMode) && (
           <aside
             className={`flex-shrink-0 border-r flex flex-col transition-[width] duration-200 ${
               conceptPanelOpen ? 'w-80' : 'w-12'
@@ -541,7 +560,7 @@ export default function ClassroomPage() {
                 Mode
               </label>
               <div className="space-y-2">
-                {(['teach', 'quiz', 'revision'] as SessionMode[]).map((m) => (
+                {(['chat', 'teach', 'quiz', 'revision'] as SessionMode[]).map((m) => (
                   <button
                     key={m}
                     onClick={() => setSelectedMode(m)}
