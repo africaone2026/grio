@@ -10,6 +10,9 @@ export const metadata: Metadata = {
   title: "GRIO AI – Learning Infrastructure",
   description:
     "AI-powered learning infrastructure for classrooms and independent learners across Africa.",
+  icons: {
+    icon: "/favi.svg",
+  },
 };
 
 export default function RootLayout({
