@@ -16,7 +16,6 @@ import {
 import { useSpeech } from '@/hooks/useSpeech';
 import { useSpeechRecognition } from '@/hooks/useSpeechRecognition';
 import { useAcademicKeyboard } from '@/context/AcademicKeyboardContext';
-import AnimatedAvatar from '@/components/AnimatedAvatar';
 import type { AvatarState } from '@/components/AnimatedAvatar';
 
 type Theme = 'light' | 'dark';
@@ -43,21 +42,6 @@ interface QuizState {
 
 const QUIZ_TOTAL = 3;
 const REVISION_TOTAL = 3;
-
-function getGlowColor(type: string | undefined): string {
-  switch (type) {
-    case 'example':
-      return 'blue';
-    case 'question':
-      return 'amber';
-    case 'feedback':
-    case 'completed':
-    case 'score':
-      return 'emerald';
-    default:
-      return 'teal';
-  }
-}
 
 function getResponseLabel(type: string): string {
   switch (type) {
@@ -105,8 +89,8 @@ export default function AiLessonEngine({
   topic,
   mode,
   isPaused,
-  isMuted,
-  onToggleMute,
+  isMuted: _isMuted, // reserved for future mute UI
+  onToggleMute: _onToggleMute, // reserved for future mute UI
   onComplete,
   theme = 'dark',
 }: AiLessonEngineProps) {
@@ -139,7 +123,9 @@ export default function AiLessonEngine({
   const [confusionReported, setConfusionReported] = useState(false);
 
   const isPausedRef = useRef(isPaused);
-  isPausedRef.current = isPaused;
+  useEffect(() => {
+    isPausedRef.current = isPaused;
+  }, [isPaused]);
 
   const handleFollowUpRef = useRef<(q?: string) => void>(() => {});
   const speechRecognition = useSpeechRecognition({
@@ -167,12 +153,14 @@ export default function AiLessonEngine({
     } else {
       speech.resume();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- sync pause/resume to isPaused
   }, [isPaused]);
 
   useEffect(() => {
     return () => {
       speech.stop();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- speech.stop on unmount only
   }, []);
 
   const showResponse = useCallback((response: AiResponse) => {
@@ -191,16 +179,6 @@ export default function AiLessonEngine({
     [speech]
   );
 
-  useEffect(() => {
-    if (mode === 'teach') {
-      runTeachMode();
-    } else if (mode === 'quiz') {
-      runQuizMode(0);
-    } else if (mode === 'revision') {
-      runRevisionMode();
-    }
-  }, []);
-
   const waitIfPaused = () =>
     new Promise<void>((resolve) => {
       const check = () => {
@@ -210,7 +188,7 @@ export default function AiLessonEngine({
       check();
     });
 
-  const avatarState: AvatarState = (() => {
+  const _avatarState: AvatarState = (() => {
     if (isLoading) return 'thinking';
     if (engineState === 'completed') return 'celebrating';
     if (lastCorrect === true && engineState === 'feedback') return 'celebrating';
@@ -218,6 +196,7 @@ export default function AiLessonEngine({
     if (speech.isSpeaking) return 'speaking';
     return 'idle';
   })();
+  void _avatarState; // reserved for avatar display
 
   async function runTeachMode() {
     setEngineState('explaining');
@@ -384,6 +363,19 @@ export default function AiLessonEngine({
     speakResponse(revisionData);
   }
 
+  useEffect(() => {
+    if (mode === 'teach') {
+      runTeachMode();
+    } else if (mode === 'quiz') {
+      runQuizMode(0);
+    } else if (mode === 'revision') {
+      runRevisionMode();
+    } else if (mode === 'chat') {
+      runTeachMode();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount based on mode
+  }, [mode]);
+
   async function startRevisionQuestions() {
     setSocraticHintLevel(0);
     setConfusionReported(false);
@@ -465,7 +457,10 @@ export default function AiLessonEngine({
     speech.speak(response.content);
     setFollowUpQuestion('');
   }
-  handleFollowUpRef.current = handleFollowUp;
+  useEffect(() => {
+    handleFollowUpRef.current = handleFollowUp;
+  }, [handleFollowUp]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- ref updated intentionally on each handleFollowUp
 
   async function handleSkipQuestion() {
     speech.stop();
@@ -543,7 +538,7 @@ export default function AiLessonEngine({
 
   const currentQ = quizState.responses[quizState.currentQuestion];
   const questionIndex =
-    mode === 'teach' ? 0 : mode === 'quiz' ? quizState.currentQuestion : revisionQuestionIndex;
+    mode === 'teach' || mode === 'chat' ? 0 : mode === 'quiz' ? quizState.currentQuestion : revisionQuestionIndex;
   const answered =
     currentResponse?.type === 'question' &&
     (revisionPhase === 'questions' ? revisionAnswer !== null : quizState.selectedAnswer !== null);
@@ -567,20 +562,13 @@ export default function AiLessonEngine({
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- handlers are stable, only re-subscribe when question/answered/mode changes
   }, [currentResponse?.type, currentQ?.options?.length, answered, mode]);
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex-1 min-h-0 flex flex-col items-center px-8 pb-4 overflow-y-auto">
-        <div className="flex-shrink-0 pt-4">
-          <AnimatedAvatar
-            state={avatarState}
-            isSpeaking={speech.isSpeaking}
-            glowColor={getGlowColor(currentResponse?.type)}
-          />
-        </div>
-
-        {isLoading && !currentResponse && (
+      <div className="flex-1 min-h-0 flex flex-col items-center justify-center px-8 pb-4 overflow-y-auto">
+        {mode !== 'chat' && isLoading && !currentResponse && (
           <motion.div
             className={`text-lg ${isLight ? 'text-gray-500' : 'text-gray-400'}`}
             animate={{ opacity: [0.4, 1, 0.4] }}
@@ -591,7 +579,7 @@ export default function AiLessonEngine({
         )}
 
         <AnimatePresence mode="wait">
-          {currentResponse && (
+          {mode !== 'chat' && currentResponse && (
             <motion.div
               key={responseKey}
               className="w-full max-w-3xl flex-shrink-0"
@@ -809,7 +797,7 @@ export default function AiLessonEngine({
 
               {mode === 'teach' && engineState === 'asking_question' && currentResponse?.type === 'question' && (
                 <div className="mt-3 px-1">
-                  <span className={`text-sm ${isLight ? 'text-gray-600' : 'text-gray-500'}`}>
+                  <span className={`text-sm ${isLight ? 'text-slate-600' : 'text-slate-500'}`}>
                     Practice question (1 of 1)
                   </span>
                 </div>
@@ -824,38 +812,40 @@ export default function AiLessonEngine({
           isLight ? 'border-gray-200' : 'border-white/5'
         }`}
       >
-        <div
-          className={`mb-4 p-4 rounded-xl border ${
+        {mode !== 'teach' && mode !== 'chat' && (
+          <div
+            className={`mb-4 p-4 rounded-xl border ${
             isLight ? 'bg-white border-gray-200 shadow-sm' : 'bg-gray-800/60 border-gray-600/40'
-          }`}
-        >
+            }`}
+          >
           <p className={`text-xs uppercase tracking-widest font-semibold mb-1 ${isLight ? 'text-red-600' : 'text-red-400'}`}>
-            GRIO Response
-          </p>
-          {showFollowUp && followUpLoading ? (
-            <motion.p
+              GRIO Response
+            </p>
+            {showFollowUp && followUpLoading ? (
+              <motion.p
               className={`text-sm ${isLight ? 'text-gray-500' : 'text-gray-400'}`}
-              animate={{ opacity: [0.4, 1, 0.4] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-            >
-              GRIO is thinking...
-            </motion.p>
-          ) : showFollowUp && followUpResponse ? (
+                animate={{ opacity: [0.4, 1, 0.4] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+              >
+                GRIO is thinking...
+              </motion.p>
+            ) : showFollowUp && followUpResponse ? (
             <p className={`text-sm leading-relaxed ${isLight ? 'text-gray-700' : 'text-gray-300'}`}>
-              {followUpResponse.content}
-            </p>
-          ) : currentResponse?.type === 'question' && currentQ ? (
+                {followUpResponse.content}
+              </p>
+            ) : currentResponse?.type === 'question' && currentQ ? (
             <p className={`text-sm leading-relaxed ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>
-              Select an answer above. Need help? Ask GRIO a question below or click &quot;Get a hint&quot;.
-            </p>
-          ) : (
+                Select an answer above. Need help? Ask GRIO a question below or click &quot;Get a hint&quot;.
+              </p>
+            ) : (
             <p className={`text-sm leading-relaxed ${isLight ? 'text-gray-600' : 'text-gray-400'}`}>
-              Ask GRIO a question below for more help with this lesson.
-            </p>
-          )}
-        </div>
+                Ask GRIO a question below for more help with this lesson.
+              </p>
+            )}
+          </div>
+        )}
         <div className="flex gap-3 flex-wrap items-center">
-          {currentResponse?.type === 'question' && !showFollowUp && (
+          {mode !== 'teach' && currentResponse?.type === 'question' && !showFollowUp && (
             <button
               type="button"
               onClick={async () => {
@@ -863,7 +853,7 @@ export default function AiLessonEngine({
                 setShowFollowUp(true);
                 speech.stop();
                 const questionIndex =
-                  mode === 'teach' ? 0 : mode === 'quiz' ? quizState.currentQuestion : revisionQuestionIndex;
+                  mode === 'chat' ? 0 : mode === 'quiz' ? quizState.currentQuestion : revisionQuestionIndex;
                 const response = await generateSocraticHint(subject, topic, questionIndex, socraticHintLevel);
                 setSocraticHintLevel((prev) => prev + 1);
                 setFollowUpLoading(false);

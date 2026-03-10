@@ -69,12 +69,14 @@ export function useSpeechRecognition(options?: {
   const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
   const fullTranscriptRef = useRef('');
   const onResultRef = useRef(onResult);
-  onResultRef.current = onResult;
+  useEffect(() => {
+    onResultRef.current = onResult;
+  }, [onResult]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const Recognition = window.SpeechRecognition ?? window.webkitSpeechRecognition;
-    setIsSupported(!!Recognition);
+    queueMicrotask(() => setIsSupported(!!Recognition));
     if (!Recognition) return;
 
     const recognition = new Recognition() as SpeechRecognitionInstance;
@@ -141,7 +143,7 @@ export function useSpeechRecognition(options?: {
     if (!recognitionRef.current) return;
     try {
       recognitionRef.current.start();
-    } catch (e) {
+    } catch {
       setError('Could not start microphone');
     }
   }, []);

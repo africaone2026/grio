@@ -64,6 +64,7 @@ export default function AdminCurriculumPage() {
   }
 
   const selectedCurriculum = curricula.find((c) => c.id === selectedCurriculumId);
+  void selectedCurriculum; // reserved for future use
 
   return (
     <div className="p-8">

@@ -18,7 +18,7 @@ export default function ConceptSummaryPanel({ subject, topic, theme = 'dark' }: 
 
   useEffect(() => {
     let cancelled = false;
-    setLoading(true);
+    queueMicrotask(() => setLoading(true));
     getConceptSummary(subject, topic)
       .then((data) => {
         if (!cancelled) setSummary(data);

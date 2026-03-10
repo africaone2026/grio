@@ -34,11 +34,10 @@ export default function Logo({
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={logoSrc}
-        alt="GRIO AI"
+        alt="GRIO"
         height={logoHeight}
         className="h-8 w-auto object-contain"
       />
-      <span className="text-blue-300 text-xs font-medium bg-blue-900/50 px-2 py-0.5 rounded-full">AI</span>
     </div>
   );
 
@@ -46,7 +45,7 @@ export default function Logo({
     <Link 
       href={href}
       className={`flex items-center ${variant === 'compact' ? 'justify-center' : ''} ${className}`}
-      aria-label="GRIO AI - Go to dashboard"
+      aria-label="GRIO - Go to dashboard"
     >
       {logoContent}
     </Link>
