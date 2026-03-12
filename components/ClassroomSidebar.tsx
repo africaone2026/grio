@@ -32,7 +32,7 @@ export default function ClassroomSidebar({
   theme = 'dark',
   onChatSelect,
   currentChatId,
-  mode = 'teach'
+  mode = 'chat'
 }: ClassroomSidebarProps) {
   useAuth(); // auth context for potential future use
   const [isConceptSummaryOpen, setIsConceptSummaryOpen] = useState(mode !== 'chat');

@@ -69,7 +69,7 @@ export default function ClassroomPage() {
   const [selectedSubjectId, setSelectedSubjectId] = useState('');
   const [selectedSubjectName, setSelectedSubjectName] = useState('');
   const [selectedTopic, setSelectedTopic] = useState('');
-  const [selectedMode, setSelectedMode] = useState<SessionMode>('teach');
+  const [selectedMode, setSelectedMode] = useState<SessionMode>('chat');
   const [phase, setPhase] = useState<SessionPhase>('setup');
   const [isPaused, setIsPaused] = useState(false);
   const [isMuted, setIsMuted] = useState(getStoredMute);
@@ -287,6 +287,8 @@ export default function ClassroomPage() {
                       ? 'AI-guided lesson'
                       : selectedMode === 'quiz'
                       ? 'Direct practice'
+                      : selectedMode === 'chat'
+                      ? 'Summary bullets and rapid-fire questions'
                       : 'Key points + rapid-fire'
                   }
                   className={`px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide ${
@@ -298,6 +300,10 @@ export default function ClassroomPage() {
                       ? isLight
                         ? 'bg-blue-100 text-blue-800 border border-blue-200'
                         : 'bg-blue-900/50 text-blue-300 border border-blue-700/40'
+                      : selectedMode === 'chat'
+                      ? isLight
+                        ? 'bg-gray-100 text-gray-800 border border-gray-300'
+                        : 'bg-gray-700/50 text-gray-300 border border-gray-600/40'
                       : isLight
                       ? 'bg-amber-100 text-amber-800 border border-amber-200'
                       : 'bg-amber-900/50 text-amber-300 border border-amber-700/40'

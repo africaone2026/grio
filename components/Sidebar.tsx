@@ -105,7 +105,7 @@ export default function Sidebar() {
   };
 
   return (
-    <aside data-sidebar className="w-64 bg-[#0f172a] min-h-screen flex flex-col flex-shrink-0">
+    <aside data-sidebar className="w-64 bg-gradient-to-br from-[#0B1220] via-[#0F172A] to-[#0B1220] min-h-screen flex flex-col flex-shrink-0">
       <div className="px-6 py-6 border-b border-white/10">
         <Logo href={getDashboardHome()} />
       </div>
@@ -113,7 +113,7 @@ export default function Sidebar() {
       <div className="px-4 py-4 border-b border-white/10">
         <div className="flex items-center gap-3">
           <div
-            className="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold text-sm flex-shrink-0"
+            className="w-9 h-9 rounded-full bg-[#F21825] flex items-center justify-center text-white font-semibold text-sm flex-shrink-0"
             aria-hidden="true"
           >
             {user.name.charAt(0).toUpperCase()}
@@ -138,7 +138,7 @@ export default function Sidebar() {
               aria-current={isActive ? 'page' : undefined}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-[#0f172a] ${
                 isActive
-                  ? 'bg-blue-600 text-white font-medium'
+                  ? 'bg-[#F21825] text-white font-medium'
                   : 'text-slate-400 hover:text-white hover:bg-white/5 active:scale-[0.98]'
               }`}
             >
@@ -158,7 +158,7 @@ export default function Sidebar() {
             aria-label="Toggle high contrast mode"
             className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-[#0f172a] active:scale-[0.98] ${
               highContrast
-                ? 'bg-blue-600/20 text-blue-300'
+                ? 'bg-[#F21825]/20 text-blue-300'
                 : 'text-gray-400 hover:text-white hover:bg-white/5'
             }`}
           >
@@ -166,7 +166,7 @@ export default function Sidebar() {
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20z"/></svg>
               High Contrast
             </span>
-            <span className={`text-[10px] px-1.5 py-0.5 rounded ${highContrast ? 'bg-blue-600/40 text-blue-200' : 'bg-white/5 text-gray-500'}`}>
+            <span className={`text-[10px] px-1.5 py-0.5 rounded ${highContrast ? 'bg-[#F21825]/40 text-blue-200' : 'bg-white/5 text-gray-500'}`}>
               {highContrast ? 'ON' : 'OFF'}
             </span>
           </button>
@@ -176,7 +176,7 @@ export default function Sidebar() {
             aria-label="Toggle large typography mode"
             className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-[#0f172a] active:scale-[0.98] ${
               largeTypography
-                ? 'bg-blue-600/20 text-blue-300'
+                ? 'bg-[#F21825]/20 text-blue-300'
                 : 'text-gray-400 hover:text-white hover:bg-white/5'
             }`}
           >
@@ -184,7 +184,7 @@ export default function Sidebar() {
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
               Large Text
             </span>
-            <span className={`text-[10px] px-1.5 py-0.5 rounded ${largeTypography ? 'bg-blue-600/40 text-blue-200' : 'bg-white/5 text-gray-500'}`}>
+            <span className={`text-[10px] px-1.5 py-0.5 rounded ${largeTypography ? 'bg-[#F21825]/40 text-blue-200' : 'bg-white/5 text-gray-500'}`}>
               {largeTypography ? 'ON' : 'OFF'}
             </span>
           </button>
@@ -194,7 +194,7 @@ export default function Sidebar() {
             aria-label="Toggle presentation mode"
             className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-[#0f172a] active:scale-[0.98] ${
               presentationMode
-                ? 'bg-blue-600/20 text-blue-300'
+                ? 'bg-[#F21825]/20 text-blue-300'
                 : 'text-gray-400 hover:text-white hover:bg-white/5'
             }`}
           >
@@ -202,7 +202,7 @@ export default function Sidebar() {
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>
               Presentation
             </span>
-            <span className={`text-[10px] px-1.5 py-0.5 rounded ${presentationMode ? 'bg-blue-600/40 text-blue-200' : 'bg-white/5 text-gray-500'}`}>
+            <span className={`text-[10px] px-1.5 py-0.5 rounded ${presentationMode ? 'bg-[#F21825]/40 text-blue-200' : 'bg-white/5 text-gray-500'}`}>
               {presentationMode ? 'ON' : 'OFF'}
             </span>
           </button>
